@@ -75,69 +75,74 @@ const Board = () => {
 
   return (
     <BoardContainer>
-      {/* Road Title - vertical text */}
-      <RoadTitle>
-        {'财务自由路'.split('').map((char, i) => (
-          <RoadChar key={i}>{char}</RoadChar>
-        ))}
-      </RoadTitle>
+      {/* Left side - Road area */}
+      <RoadArea>
+        {/* Road Title - vertical text */}
+        <RoadTitle>
+          {'财务自由路'.split('').map((char, i) => (
+            <RoadChar key={i}>{char}</RoadChar>
+          ))}
+        </RoadTitle>
 
-      {/* Lane markings */}
-      <LaneMarkings>
-        <LaneLine side="left" />
-        <CenterLine />
-        <LaneLine side="right" />
-      </LaneMarkings>
+        {/* Lane markings */}
+        <LaneMarkings>
+          <LaneLine side="left" />
+          <CenterLine />
+          <LaneLine side="right" />
+        </LaneMarkings>
 
-      {/* Player Character */}
-      <PlayerSection>
-        <CharacterBody>
-          <CharacterHead />
-          <CharacterTorso />
-        </CharacterBody>
-        {showDice && (
-          <DiceDisplay rolling={isRolling}>
-            {diceValue}
-          </DiceDisplay>
-        )}
-      </PlayerSection>
+        {/* Player Character */}
+        <PlayerSection>
+          <CharacterBody>
+            <CharacterHead />
+            <CharacterTorso />
+          </CharacterBody>
+          {showDice && (
+            <DiceDisplay rolling={isRolling}>
+              {diceValue}
+            </DiceDisplay>
+          )}
+        </PlayerSection>
 
-      {/* Slots along the road */}
-      <SlotsContainer>
-        {visibleSlots.map((slot, index) => {
-          const config = SLOT_CONFIG[slot.type] || SLOT_CONFIG.opportunity
-          const isCurrent = slot.offset === 0
-          return (
-            <SlotCard 
-              key={`${slot.id}-${index}`} 
-              color={config.color}
-              isCurrent={isCurrent}
-              offset={slot.offset}
-            >
-              <SlotConnector color={isCurrent ? config.color : 'rgba(255,255,255,0.2)'} />
-              <SlotContent>
-                <SlotIcon>{config.icon}</SlotIcon>
-                <SlotName>{config.name}</SlotName>
-              </SlotContent>
-            </SlotCard>
-          )
-        })}
-      </SlotsContainer>
+        {/* Roll Button */}
+        <RollButtonWrapper>
+          <RollButton onClick={handleRoll} disabled={isRolling}>
+            <RollButtonInner rolling={isRolling}>
+              <FingerprintIcon viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M12 2v4M12 18v4" stroke="currentColor" strokeWidth="1.5"/>
+              </FingerprintIcon>
+            </RollButtonInner>
+            <RollLabel>{isRolling ? '掷骰中...' : '点击掷骰'}</RollLabel>
+          </RollButton>
+        </RollButtonWrapper>
+      </RoadArea>
 
-      {/* Roll Button - positioned on the board */}
-      <RollButtonWrapper>
-        <RollButton onClick={handleRoll} disabled={isRolling}>
-          <RollButtonInner rolling={isRolling}>
-            <FingerprintIcon viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M12 2v4M12 18v4" stroke="currentColor" strokeWidth="1.5"/>
-            </FingerprintIcon>
-          </RollButtonInner>
-          <RollLabel>{isRolling ? '掷骰中...' : '点击掷骰'}</RollLabel>
-        </RollButton>
-      </RollButtonWrapper>
+      {/* Right side - Slots */}
+      <SlotsArea>
+        <SlotsContainer>
+          {visibleSlots.map((slot, index) => {
+            const config = SLOT_CONFIG[slot.type] || SLOT_CONFIG.opportunity
+            const isCurrent = slot.offset === 0
+            return (
+              <SlotCard 
+                key={`${slot.id}-${index}`} 
+                color={config.color}
+                isCurrent={isCurrent}
+                offset={slot.offset}
+              >
+                <SlotConnector color={isCurrent ? config.color : 'rgba(255,255,255,0.2)'} />
+                <SlotContent isCurrent={isCurrent} color={config.color}>
+                  <SlotIcon>{config.icon}</SlotIcon>
+                  <SlotName>{config.name}</SlotName>
+                </SlotContent>
+              </SlotCard>
+            )
+          })}
+        </SlotsContainer>
+      </SlotsArea>
     </BoardContainer>
   )
 }
@@ -157,36 +162,45 @@ const shake = keyframes`
 `
 
 const BoardContainer = styled.div({
-  position: 'relative',
+  display: 'flex',
   width: '100%',
   height: '100%',
   background: 'linear-gradient(180deg, #3D4B6A 0%, #2A3550 100%)',
   overflow: 'hidden',
 })
 
+const RoadArea = styled.div({
+  width: '140px',
+  minWidth: '140px',
+  height: '100%',
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+})
+
 const RoadTitle = styled.div({
   position: 'absolute',
-  left: '16px',
+  left: '12px',
   top: '50%',
   transform: 'translateY(-50%)',
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px',
+  gap: '12px',
   zIndex: 1,
 })
 
 const RoadChar = styled.span({
   color: 'rgba(255, 255, 255, 0.12)',
-  fontSize: '32px',
+  fontSize: '24px',
   fontWeight: 700,
 })
 
 const LaneMarkings = styled.div({
   position: 'absolute',
-  left: '70px',
+  left: '50px',
   top: 0,
   bottom: 0,
-  width: '80px',
+  width: '70px',
 })
 
 const LaneLine = styled.div(({ side }) => ({
@@ -194,13 +208,13 @@ const LaneLine = styled.div(({ side }) => ({
   [side]: 0,
   top: 0,
   bottom: 0,
-  width: '4px',
+  width: '3px',
   background: `repeating-linear-gradient(
     to bottom,
     #B8956E 0px,
-    #B8956E 24px,
-    transparent 24px,
-    transparent 48px
+    #B8956E 20px,
+    transparent 20px,
+    transparent 40px
   )`,
 }))
 
@@ -210,25 +224,24 @@ const CenterLine = styled.div({
   transform: 'translateX(-50%)',
   top: 0,
   bottom: 0,
-  width: '3px',
+  width: '2px',
   background: `repeating-linear-gradient(
     to bottom,
     #fff 0px,
-    #fff 16px,
-    transparent 16px,
-    transparent 32px
+    #fff 12px,
+    transparent 12px,
+    transparent 24px
   )`,
   opacity: 0.3,
 })
 
 const PlayerSection = styled.div({
   position: 'absolute',
-  left: '85px',
-  top: '45%',
-  transform: 'translateY(-50%)',
+  left: '60px',
+  top: '35%',
   display: 'flex',
   alignItems: 'center',
-  gap: '12px',
+  gap: '8px',
   zIndex: 10,
 })
 
@@ -239,88 +252,41 @@ const CharacterBody = styled.div({
 })
 
 const CharacterHead = styled.div({
-  width: '32px',
-  height: '32px',
+  width: '28px',
+  height: '28px',
   borderRadius: '50%',
   background: 'linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%)',
   boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
 })
 
 const CharacterTorso = styled.div({
-  width: '40px',
-  height: '28px',
+  width: '36px',
+  height: '24px',
   background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
-  borderRadius: '20px 20px 0 0',
-  marginTop: '-8px',
+  borderRadius: '18px 18px 0 0',
+  marginTop: '-6px',
 })
 
 const DiceDisplay = styled.div(({ rolling }) => ({
   background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
   color: '#fff',
-  width: '40px',
-  height: '40px',
-  borderRadius: '8px',
+  width: '36px',
+  height: '36px',
+  borderRadius: '6px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '22px',
+  fontSize: '18px',
   fontWeight: 700,
   boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
   animation: rolling ? `${shake} 0.15s infinite` : 'none',
 }))
 
-const SlotsContainer = styled.div({
-  position: 'absolute',
-  right: '12px',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '6px',
-  width: '130px',
-})
-
-const SlotCard = styled.div(({ color, isCurrent, offset }) => ({
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  transform: isCurrent ? 'scale(1.08) translateX(-4px)' : `scale(${1 - Math.abs(offset) * 0.04})`,
-  opacity: isCurrent ? 1 : 0.7 - Math.abs(offset) * 0.08,
-  transition: 'all 0.3s ease',
-}))
-
-const SlotConnector = styled.div(({ color }) => ({
-  width: '20px',
-  height: '2px',
-  background: color,
-  marginRight: '4px',
-}))
-
-const SlotContent = styled.div({
-  flex: 1,
-  background: 'rgba(255, 255, 255, 0.08)',
-  borderRadius: '10px',
-  padding: '8px 10px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  backdropFilter: 'blur(4px)',
-})
-
-const SlotIcon = styled.span({
-  fontSize: '18px',
-})
-
-const SlotName = styled.span({
-  color: '#fff',
-  fontSize: '12px',
-  fontWeight: 500,
-})
-
 const RollButtonWrapper = styled.div({
   position: 'absolute',
-  left: '70px',
-  bottom: '24px',
+  left: '50%',
+  bottom: '20px',
+  transform: 'translateX(-50%)',
   zIndex: 20,
 })
 
@@ -328,7 +294,7 @@ const RollButton = styled.button(({ disabled }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '6px',
+  gap: '4px',
   background: 'none',
   border: 'none',
   cursor: disabled ? 'not-allowed' : 'pointer',
@@ -340,31 +306,81 @@ const RollButton = styled.button(({ disabled }) => ({
 }))
 
 const RollButtonInner = styled.div(({ rolling }) => ({
-  width: '64px',
-  height: '64px',
+  width: '56px',
+  height: '56px',
   borderRadius: '50%',
   background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
-  border: '3px solid rgba(255, 255, 255, 0.25)',
+  border: '2px solid rgba(255, 255, 255, 0.25)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  boxShadow: '0 4px 20px rgba(0,0,0,0.5), inset 0 -2px 10px rgba(255,255,255,0.1)',
+  boxShadow: '0 4px 16px rgba(0,0,0,0.5)',
   transition: 'all 0.2s ease',
   animation: rolling ? `${pulse} 0.5s infinite` : 'none',
-  '&:hover': {
-    borderColor: 'rgba(255, 255, 255, 0.5)',
-  },
 }))
 
 const FingerprintIcon = styled.svg({
-  width: '36px',
-  height: '36px',
+  width: '28px',
+  height: '28px',
   color: 'rgba(255, 255, 255, 0.85)',
 })
 
 const RollLabel = styled.span({
-  color: 'rgba(255, 255, 255, 0.8)',
-  fontSize: '12px',
+  color: 'rgba(255, 255, 255, 0.7)',
+  fontSize: '10px',
+  fontWeight: 500,
+})
+
+const SlotsArea = styled.div({
+  flex: 1,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '16px 12px',
+  overflow: 'hidden',
+})
+
+const SlotsContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+  width: '100%',
+  maxWidth: '200px',
+})
+
+const SlotCard = styled.div(({ color, isCurrent, offset }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  transform: isCurrent ? 'scale(1.05) translateX(-4px)' : `scale(${1 - Math.abs(offset) * 0.03})`,
+  opacity: isCurrent ? 1 : 0.65 - Math.abs(offset) * 0.06,
+  transition: 'all 0.3s ease',
+}))
+
+const SlotConnector = styled.div(({ color }) => ({
+  width: '16px',
+  height: '2px',
+  background: color,
+  flexShrink: 0,
+}))
+
+const SlotContent = styled.div(({ isCurrent, color }) => ({
+  flex: 1,
+  background: isCurrent ? `${color}22` : 'rgba(255, 255, 255, 0.06)',
+  border: isCurrent ? `1px solid ${color}66` : '1px solid transparent',
+  borderRadius: '8px',
+  padding: '10px 12px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+}))
+
+const SlotIcon = styled.span({
+  fontSize: '16px',
+})
+
+const SlotName = styled.span({
+  color: '#fff',
+  fontSize: '13px',
   fontWeight: 500,
 })
 //#endregion styled components
