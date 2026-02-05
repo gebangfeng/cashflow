@@ -147,21 +147,23 @@ const HeaderBadge = styled.div({
 
 const MainContent = styled.main({
   flex: 1,
-  overflow: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'hidden',
   paddingBottom: '70px',
 })
 
 const GameSection = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  height: '100%',
-  padding: '16px',
+  flex: 1,
+  overflow: 'hidden',
 })
 
 const BoardArea = styled.div({
   flex: 1,
   display: 'flex',
-  justifyContent: 'center',
+  overflow: 'hidden',
 })
 
 const StatementSection = styled.div({
