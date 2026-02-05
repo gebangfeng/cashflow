@@ -1,7 +1,6 @@
-// import React from 'react'
 import styled from '@emotion/styled'
-import { Box, Container, Divider, LinearProgress } from '@mui/material'
-import { colors } from '../styles'
+import { Box, LinearProgress } from '@mui/material'
+import { colors, breakpoints } from '../styles'
 import {
   currencyFormatter,
   getPassiveIncome,
@@ -13,64 +12,62 @@ import { useContext } from 'react'
 
 const FinancialStatus = () => {
   const { playerData } = useContext(GameContext)
+  const passiveIncome = getPassiveIncome(playerData.incomes)
+  const totalExpenses = getTotalExpenseAmount(playerData)
+  const progressValue = Math.min((passiveIncome / totalExpenses) * 100, 100)
 
   return (
     <StyledContainer>
-      <Title>INCREASE PASSIVE INCOME TO ESCAPE THE RAT RACE</Title>
-      <ProgressContainer>
-        <ProgressTopTitle>
-          TOTAL EXPENSES: $
-          {currencyFormatter.format(getTotalExpenseAmount(playerData))}
-        </ProgressTopTitle>
+      <TopSection>
+        <TitleSection>
+          <Title>Escape the Rat Race</Title>
+          <TitleDescription>Increase passive income above total expenses</TitleDescription>
+        </TitleSection>
+        <CashDisplay>
+          <CashLabel>Cash Balance</CashLabel>
+          <CashAmount>${currencyFormatter.format(playerData.cash)}</CashAmount>
+        </CashDisplay>
+      </TopSection>
+      
+      <ProgressSection>
+        <ProgressLabels>
+          <ProgressLabel>
+            <LabelText>Passive Income</LabelText>
+            <LabelAmount positive>${currencyFormatter.format(passiveIncome)}</LabelAmount>
+          </ProgressLabel>
+          <ProgressLabel>
+            <LabelText>Total Expenses</LabelText>
+            <LabelAmount>${currencyFormatter.format(totalExpenses)}</LabelAmount>
+          </ProgressLabel>
+        </ProgressLabels>
         <Box sx={{ width: '100%' }}>
-          <Progress
-            variant="determinate"
-            value={
-              (getPassiveIncome(playerData.incomes) /
-                getTotalExpenseAmount(playerData)) *
-                100 >
-              100
-                ? 100
-                : (getPassiveIncome(playerData.incomes) /
-                    getTotalExpenseAmount(playerData)) *
-                  100
-            }
-          />
-          <ProgressBottomTitle>
-            PASSIVE INCOME: $
-            {currencyFormatter.format(getPassiveIncome(playerData.incomes))}
-          </ProgressBottomTitle>
+          <Progress variant="determinate" value={progressValue} />
         </Box>
-      </ProgressContainer>
-      <DashboardContainer>
-        <DashboardTopRow>
-          <span>CASH</span>
-          <span>${currencyFormatter.format(playerData.cash)}</span>
-        </DashboardTopRow>
-        <DashboardRow>
-          <span>Total Income:</span>
-          <span>
+        <ProgressPercentage>{Math.round(progressValue)}% to freedom</ProgressPercentage>
+      </ProgressSection>
+
+      <StatsGrid>
+        <StatCard>
+          <StatLabel>Total Income</StatLabel>
+          <StatValue positive>
             ${currencyFormatter.format(getTotalIncomeAmount(playerData))}
-          </span>
-        </DashboardRow>
-        <DashboardRow>
-          <span>Total Expenses:</span>
-          <span>
-            $-{currencyFormatter.format(getTotalExpenseAmount(playerData))}
-          </span>
-        </DashboardRow>
-        <StyledDivider />
-        <DashboardRow>
-          <span>PAYDAY</span>
-          <span>
-            $
-            {currencyFormatter.format(
-              getTotalIncomeAmount(playerData) -
-                getTotalExpenseAmount(playerData)
+          </StatValue>
+        </StatCard>
+        <StatCard>
+          <StatLabel>Total Expenses</StatLabel>
+          <StatValue negative>
+            -${currencyFormatter.format(totalExpenses)}
+          </StatValue>
+        </StatCard>
+        <StatCard highlight>
+          <StatLabel>Payday</StatLabel>
+          <StatValue large>
+            ${currencyFormatter.format(
+              getTotalIncomeAmount(playerData) - totalExpenses
             )}
-          </span>
-        </DashboardRow>
-      </DashboardContainer>
+          </StatValue>
+        </StatCard>
+      </StatsGrid>
     </StyledContainer>
   )
 }
@@ -78,75 +75,172 @@ const FinancialStatus = () => {
 export default FinancialStatus
 
 //#region styled Components
-const StyledContainer = styled(Container)({
-  marginTop: '1rem',
+const StyledContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
+  gap: '1rem',
+  padding: '1rem',
+  backgroundColor: colors.white,
+  borderRadius: '0.75rem',
+  boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+  [`@media (min-width: ${breakpoints.md})`]: {
+    padding: '1.25rem',
+  },
 })
 
-const Title = styled.h1({
-  color: colors.red.base,
-  fontSize: '1.125rem',
-  textAlign: 'center',
-  width: '100%',
-  marginBottom: '.5rem',
+const TopSection = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.75rem',
+  [`@media (min-width: ${breakpoints.sm})`]: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
 })
 
-const ProgressContainer = styled.div({
+const TitleSection = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.25rem',
+})
+
+const Title = styled.h2({
+  margin: 0,
+  fontSize: '1rem',
+  fontWeight: 700,
+  color: colors.neutral[900],
+  [`@media (min-width: ${breakpoints.md})`]: {
+    fontSize: '1.125rem',
+  },
+})
+
+const TitleDescription = styled.p({
+  fontSize: '0.75rem',
+  color: colors.neutral[500],
+  margin: 0,
+})
+
+const CashDisplay = styled.div({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
-  width: '70%',
-  marginBottom: '.5rem',
+  padding: '0.5rem 0.75rem',
+  backgroundColor: colors.neutral[50],
+  borderRadius: '0.5rem',
+  [`@media (min-width: ${breakpoints.sm})`]: {
+    alignItems: 'flex-end',
+  },
 })
+
+const CashLabel = styled.span({
+  fontSize: '0.625rem',
+  fontWeight: 600,
+  color: colors.neutral[500],
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+})
+
+const CashAmount = styled.span({
+  fontSize: '1.25rem',
+  fontWeight: 800,
+  color: colors.neutral[900],
+  [`@media (min-width: ${breakpoints.md})`]: {
+    fontSize: '1.5rem',
+  },
+})
+
+const ProgressSection = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.5rem',
+})
+
+const ProgressLabels = styled.div({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+})
+
+const ProgressLabel = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.125rem',
+  '&:last-child': {
+    alignItems: 'flex-end',
+  },
+})
+
+const LabelText = styled.span({
+  fontSize: '0.625rem',
+  fontWeight: 600,
+  color: colors.neutral[500],
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+})
+
+const LabelAmount = styled.span(({ positive }) => ({
+  fontSize: '0.875rem',
+  fontWeight: 700,
+  color: positive ? colors.primary[600] : colors.neutral[700],
+}))
 
 const Progress = styled(LinearProgress)({
-  border: `3px solid ${colors.purple.dark}`,
   '&.MuiLinearProgress-root': {
-    height: '1rem',
-    backgroundColor: colors.silver.base,
+    height: '0.625rem',
+    borderRadius: '0.5rem',
+    backgroundColor: colors.neutral[200],
   },
   '& .MuiLinearProgress-bar': {
-    backgroundColor: colors.purple.base,
+    borderRadius: '0.5rem',
+    background: `linear-gradient(90deg, ${colors.primary[400]} 0%, ${colors.primary[600]} 100%)`,
   },
 })
 
-const ProgressTopTitle = styled.p({
-  fontSize: '.85rem',
-  fontWeight: 700,
-})
-const ProgressBottomTitle = styled.p({
-  fontSize: '.85rem',
-  fontWeight: 700,
+const ProgressPercentage = styled.span({
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  color: colors.primary[600],
+  textAlign: 'center',
 })
 
-const DashboardContainer = styled.div({
+const StatsGrid = styled.div({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gap: '0.5rem',
+  [`@media (min-width: ${breakpoints.md})`]: {
+    gap: '0.75rem',
+  },
+})
+
+const StatCard = styled.div(({ highlight }) => ({
   display: 'flex',
-  alignSelf: 'center',
   flexDirection: 'column',
-  width: '60%',
+  gap: '0.25rem',
+  padding: '0.5rem',
+  backgroundColor: highlight ? colors.neutral[900] : colors.neutral[50],
+  borderRadius: '0.5rem',
+  textAlign: 'center',
+  [`@media (min-width: ${breakpoints.md})`]: {
+    padding: '0.75rem',
+  },
+}))
+
+const StatLabel = styled.span({
+  fontSize: '0.625rem',
+  fontWeight: 600,
+  color: 'inherit',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  opacity: 0.7,
 })
 
-const DashboardRow = styled.div({
-  display: 'flex',
-  fontSize: '.9rem',
-  flexDirection: 'row',
-  margin: '.25rem 0',
-  justifyContent: 'space-between',
-})
-
-const DashboardTopRow = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  fontSize: '1.25rem',
-  fontWeight: '700',
-  margin: '.25rem 0',
-  justifyContent: 'space-between',
-})
-
-const StyledDivider = styled(Divider)({
-  backgroundColor: colors.black.base,
-  height: '1px',
-})
+const StatValue = styled.span(({ positive, negative, large }) => ({
+  fontSize: large ? '1rem' : '0.875rem',
+  fontWeight: 700,
+  color: positive ? colors.primary[600] : negative ? colors.error.base : colors.white,
+  [`@media (min-width: ${breakpoints.md})`]: {
+    fontSize: large ? '1.125rem' : '0.875rem',
+  },
+}))
 // #endregion styled components

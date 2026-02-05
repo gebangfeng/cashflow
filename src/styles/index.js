@@ -1,2 +1,2 @@
 export { default as GlobalTheme } from './Global'
-export { colors } from './styles'
+export { colors, spacing, borderRadius, shadows, breakpoints } from './styles'
