@@ -1,10 +1,10 @@
 import styled from '@emotion/styled'
 import { colors } from '@/styles'
 import { useContext, useState } from 'react'
-import { GameContext, rollDice, playSFX, BOARD_SLOTS } from '@/utils'
+import { GameContext, rollDice, playSFX, BOARD_SLOTS, drawCard } from '@/utils'
 
 const Board = () => {
-  const { currentSlot, setCurrentSlot, setPrevSlot, setActionType, playerData } = useContext(GameContext)
+  const { currentSlot, setCurrentSlot, setPrevSlot, setActionType, playerData, setPlayerData, setCard } = useContext(GameContext)
   const [diceValues, setDiceValues] = useState([0, 0, 0])
   const [isRolling, setIsRolling] = useState(false)
 
@@ -38,6 +38,20 @@ const Board = () => {
     setIsRolling(true)
     playSFX('/assets/sounds/roll.mp3')
     
+    // Handle charity effect (multiple dice)
+    if (playerData.charityTurnLeft === 1) {
+      setPlayerData((prev) => ({
+        ...prev,
+        diceNum: 1,
+      }))
+    }
+    if (playerData.charityTurnLeft > 0) {
+      setPlayerData((prev) => ({
+        ...prev,
+        charityTurnLeft: playerData.charityTurnLeft - 1,
+      }))
+    }
+    
     // Animate dice
     let count = 0
     const interval = setInterval(() => {
@@ -60,7 +74,10 @@ const Board = () => {
         setCurrentSlot(newSlot)
         setIsRolling(false)
         
-        // Set action based on slot type
+        // Draw card and set action based on slot type
+        const card = drawCard(BOARD_SLOTS[newSlot].type)
+        setCard(card)
+        
         setTimeout(() => {
           setActionType(BOARD_SLOTS[newSlot].type)
         }, 500)

@@ -27,7 +27,8 @@ const Action = () => {
     switch (actionType) {
       case 'start':
       case 'payday':
-        setDialog(<StartDialog />)
+        // No dialog for start/payday - player uses fingerprint button to roll
+        setDialog(null)
         break
       case 'repay':
         setDialog(<RepayDialog {...mockRepayDialog} />)
