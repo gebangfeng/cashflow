@@ -29,9 +29,6 @@ function App() {
       <MainContent>
         {activeTab === 'game' ? (
           <GameSection>
-            <ActionArea>
-              <Action />
-            </ActionArea>
             <BoardArea>
               <Board />
             </BoardArea>
@@ -42,6 +39,9 @@ function App() {
           </StatementSection>
         )}
       </MainContent>
+
+      {/* Action Modal */}
+      <Action />
 
       {/* Bottom Navigation */}
       <BottomNav>
@@ -155,14 +155,11 @@ const GameSection = styled.div({
   display: 'flex',
   flexDirection: 'column',
   height: '100%',
-})
-
-const ActionArea = styled.div({
   padding: '16px',
 })
 
 const BoardArea = styled.div({
-  padding: '16px',
+  flex: 1,
   display: 'flex',
   justifyContent: 'center',
 })
