@@ -6,14 +6,22 @@ import { currencyFormatter } from '@/utils'
 const Expenses = ({ expenses }) => {
   return (
     <CardContainer>
-      <CardHeader>EXPENSES</CardHeader>
+      <CardHeader>
+        <HeaderIcon>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="23,18 13.5,8.5 8.5,13.5 1,6" />
+            <polyline points="17,18 23,18 23,12" />
+          </svg>
+        </HeaderIcon>
+        <HeaderTitle>Expenses</HeaderTitle>
+      </CardHeader>
       <CardBody>
-        <ListItemHeader>
-          <ListItemLeft>Name</ListItemLeft>
-          <ListItemRight>Amount</ListItemRight>
-        </ListItemHeader>
+        <ListHeader>
+          <span>Category</span>
+          <span>Amount</span>
+        </ListHeader>
         <StyledList>
-          {expenses &&
+          {expenses && expenses.length > 0 ? (
             expenses.map((i) => (
               <ListItem key={i.id}>
                 <ListItemLeft>{i.name}</ListItemLeft>
@@ -21,7 +29,10 @@ const Expenses = ({ expenses }) => {
                   ${currencyFormatter.format(i.amount)}
                 </ListItemRight>
               </ListItem>
-            ))}
+            ))
+          ) : (
+            <EmptyState>No expenses recorded</EmptyState>
+          )}
         </StyledList>
       </CardBody>
     </CardContainer>
@@ -41,69 +52,99 @@ export default Expenses
 //#region styled components
 const CardContainer = styled.div({
   backgroundColor: colors.white,
-  border: `1px solid ${colors.purple.base}`,
-  borderRadius: '12px',
+  borderRadius: '0.75rem',
+  boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
   height: '100%',
-  maxWidth: '400px',
-  margin: 0,
-  padding: 0,
   display: 'flex',
   flexDirection: 'column',
+  overflow: 'hidden',
 })
 
-const CardHeader = styled.h3({
-  backgroundColor: colors.red.dark,
-  borderRadius: '10px 10px 0 0',
+const CardHeader = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+  padding: '0.75rem 1rem',
+  backgroundColor: colors.error.base,
   color: colors.white,
-  fontWeight: 700,
+})
+
+const HeaderIcon = styled.span({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '1.5rem',
   height: '1.5rem',
+  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  borderRadius: '0.375rem',
+})
+
+const HeaderTitle = styled.h3({
   margin: 0,
-  padding: '.25rem',
-  textAlign: 'center',
+  fontSize: '0.875rem',
+  fontWeight: 700,
+  letterSpacing: '0.025em',
 })
 
 const CardBody = styled.div({
-  margin: '.25rem 1rem 0',
-  paddingRight: '1rem',
-  height: '70%',
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  padding: '0.75rem',
+  minHeight: 0,
 })
 
 const StyledList = styled.ul({
-  overflowY: 'scroll',
-  height: '100%',
-  scrollbarWidth: 'none',
+  flex: 1,
+  overflowY: 'auto',
   paddingInlineStart: 0,
   margin: 0,
+  listStyle: 'none',
 })
 
-const ListItemHeader = styled.div({
+const ListHeader = styled.div({
   display: 'flex',
-  flexDirection: 'row',
   justifyContent: 'space-between',
-  margin: 0,
-  '& span': {
-    fontWeight: 800,
-  },
+  fontSize: '0.625rem',
+  fontWeight: 700,
+  color: colors.neutral[500],
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  paddingBottom: '0.5rem',
+  marginBottom: '0.5rem',
+  borderBottom: `1px solid ${colors.neutral[200]}`,
 })
 
 const ListItem = styled.li({
   display: 'flex',
-  flexDirection: 'row',
   justifyContent: 'space-between',
-  padding: '.375rem 0',
-  columnGap: '10px',
+  alignItems: 'center',
+  padding: '0.5rem 0',
+  borderBottom: `1px solid ${colors.neutral[100]}`,
+  '&:last-child': {
+    borderBottom: 'none',
+  },
 })
 
 const ListItemLeft = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
-  flex: '1 1 150px',
-  fontSize: '.875rem',
-  textAlign: 'left',
+  fontSize: '0.8125rem',
+  color: colors.neutral[700],
+  fontWeight: 500,
 })
+
 const ListItemRight = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
-  flex: '1 1 auto',
-  fontSize: '.875rem',
-  textAlign: 'right',
+  fontSize: '0.8125rem',
+  fontWeight: 600,
+  color: colors.error.base,
+})
+
+const EmptyState = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flex: 1,
+  fontSize: '0.75rem',
+  color: colors.neutral[400],
+  fontStyle: 'italic',
 })
 //#endregion styled components

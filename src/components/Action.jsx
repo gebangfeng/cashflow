@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { colors } from '@/styles'
+import { colors, breakpoints } from '@/styles'
 import { useContext, useEffect, useState } from 'react'
 import { GameContext } from '@/utils'
 import {
@@ -76,14 +76,17 @@ export default Action
 
 //#region styled components
 const Container = styled.div({
-  alignItems: 'space-between',
-  border: `2px solid ${colors.grey.base}`,
-  borderRadius: '10px',
-  boxShadow: 'rgba(12,12,12, 0.8) 4px 4px 4px',
   display: 'flex',
   flexDirection: 'column',
-  height: '90%',
-  padding: '1.25rem 2rem',
+  backgroundColor: colors.white,
+  borderRadius: '0.75rem',
+  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+  padding: '1rem',
   width: '100%',
+  height: '100%',
+  minHeight: '200px',
+  [`@media (min-width: ${breakpoints.md})`]: {
+    padding: '1.5rem',
+  },
 })
 //#endregion styled components

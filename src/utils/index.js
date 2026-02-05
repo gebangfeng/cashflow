@@ -15,5 +15,7 @@ export {
   takeLoan,
   checkWinningCondition,
   checkLosingCondition,
+  PROFESSIONS,
+  PROFESSION_TIERS,
 } from './helpers'
 export { GameContext } from './contexts'
