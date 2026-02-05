@@ -6,9 +6,9 @@ import { currencyFormatter } from '@/utils/helpers'
 const Income = ({ incomes }) => {
   return (
     <CardContainer>
-      <CardHeader>INCOME</CardHeader>
+      <CardHeader>收入</CardHeader>
       <CardBody>
-        <ListHeader>Cash Flow</ListHeader>
+        <ListHeader>现金流</ListHeader>
         <StyledList>
           {incomes &&
             incomes.map((i) => (
@@ -35,8 +35,8 @@ export default Income
 
 //#region styled components
 const CardContainer = styled.div({
-  backgroundColor: colors.white,
-  border: `1px solid ${colors.purple.base}`,
+  backgroundColor: colors.blilet.darker,
+  border: `1px solid ${colors.blilet.dark}`,
   borderRadius: '12px',
   maxWidth: '400px',
   margin: 0,
@@ -51,38 +51,40 @@ const CardHeader = styled.h3({
   borderRadius: '10px 10px 0 0',
   color: colors.white,
   fontWeight: 700,
-  height: '1.5rem',
+  height: '1.75rem',
   margin: 0,
   padding: '.25rem',
   textAlign: 'center',
+  fontSize: '0.9rem',
 })
 
 const CardBody = styled.div({
-  margin: '.25rem 1rem 0',
-  paddingRight: '1rem',
+  margin: '.5rem .75rem 0',
+  paddingRight: '.5rem',
   height: '70%',
 })
 
 const StyledList = styled.ul({
-  overflowY: 'scroll',
+  overflowY: 'auto',
   height: '100%',
-  scrollbarWidth: 'none',
+  scrollbarWidth: 'thin',
   paddingInlineStart: 0,
   margin: 0,
 })
 
 const ListHeader = styled.div({
   textAlign: 'right',
-  fontSize: '.875rem',
+  fontSize: '.75rem',
   margin: 0,
-  fontWeight: 800,
-  padding: 0,
-  borderBottom: `1px solid ${colors.purple.light}`,
+  fontWeight: 700,
+  padding: '0 0 .25rem 0',
+  borderBottom: `1px solid ${colors.blilet.dark}`,
+  color: colors.grey.light,
 })
 
 const ListItem = styled.li({
   display: 'flex',
-  fontSize: '.875rem',
+  fontSize: '.8rem',
   flexDirection: 'row',
   justifyContent: 'space-between',
   padding: '.375rem 0',
@@ -90,15 +92,17 @@ const ListItem = styled.li({
 })
 
 const ListItemLeft = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
+  borderBottom: `1px solid ${colors.blilet.dark}`,
   flex: '1 1 150px',
-  fontSize: '.875rem',
+  fontSize: '.8rem',
   textAlign: 'left',
+  color: colors.grey.lighter,
 })
 const ListItemRight = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
+  borderBottom: `1px solid ${colors.blilet.dark}`,
   flex: '1 1 auto',
-  fontSize: '.875rem',
+  fontSize: '.8rem',
   textAlign: 'right',
+  color: colors.green.light,
 })
 //#endregion styled components

@@ -1,4 +1,9 @@
 export const colors = {
+  // Game-specific colors
+  gameBackground: '#1B2240',
+  sidebarBg: '#252E50',
+  cardBg: '#2A3558',
+  roadBg: '#3D4B6A',
   pink: {
     darkest: '#661f4e',
     darker: '#832363',

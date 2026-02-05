@@ -34,11 +34,11 @@ const Assets = ({ assets }) => {
 
   return (
     <CardContainer>
-      <CardHeader>ASSETS</CardHeader>
+      <CardHeader>资产</CardHeader>
       <CardBody>
         <ListItemHeader>
-          <ListItemLeft>Name</ListItemLeft>
-          <ListItemRight>Cost</ListItemRight>
+          <ListItemLeft>名称</ListItemLeft>
+          <ListItemRight>成本</ListItemRight>
           <ListItemIcon />
         </ListItemHeader>
         <StyledList>
@@ -81,8 +81,8 @@ export default Assets
 
 //#region styled components
 const CardContainer = styled.div({
-  backgroundColor: colors.white,
-  border: `1px solid ${colors.purple.base}`,
+  backgroundColor: colors.blilet.darker,
+  border: `1px solid ${colors.blilet.dark}`,
   borderRadius: '12px',
   height: '100%',
   maxWidth: '400px',
@@ -97,22 +97,23 @@ const CardHeader = styled.h3({
   borderRadius: '10px 10px 0 0',
   color: colors.white,
   fontWeight: 700,
-  height: '1.5rem',
+  height: '1.75rem',
   margin: 0,
   padding: '.25rem',
   textAlign: 'center',
+  fontSize: '0.9rem',
 })
 
 const CardBody = styled.div({
-  margin: '.25rem 1rem 0',
-  paddingRight: '1rem',
+  margin: '.5rem .75rem 0',
+  paddingRight: '.5rem',
   height: '70%',
 })
 
 const StyledList = styled.ul({
-  overflowY: 'scroll',
+  overflowY: 'auto',
   height: '100%',
-  scrollbarWidth: 'none',
+  scrollbarWidth: 'thin',
   paddingInlineStart: 0,
   margin: 0,
 })
@@ -122,8 +123,12 @@ const ListItemHeader = styled.div({
   flexDirection: 'row',
   justifyContent: 'space-between',
   margin: 0,
+  paddingBottom: '.25rem',
+  borderBottom: `1px solid ${colors.blilet.dark}`,
   '& span': {
-    fontWeight: 800,
+    fontWeight: 700,
+    color: colors.grey.light,
+    fontSize: '.75rem',
   },
 })
 
@@ -136,21 +141,23 @@ const ListItem = styled.li({
 })
 
 const ListItemLeft = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
+  borderBottom: `1px solid ${colors.blilet.dark}`,
   flex: '1 1 150px',
-  fontSize: '.875rem',
+  fontSize: '.8rem',
   textAlign: 'left',
+  color: colors.grey.lighter,
 })
 const ListItemRight = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
+  borderBottom: `1px solid ${colors.blilet.dark}`,
   flex: '1 1 20px',
-  fontSize: '.875rem',
+  fontSize: '.8rem',
   textAlign: 'right',
+  color: colors.blue.light,
 })
 
 const ListItemIcon = styled.span({
   flex: '1 1 24px',
-  fontSize: '.875rem',
+  fontSize: '.8rem',
   textAlign: 'left',
   alignSelf: 'flex-start',
   '&:hover': {

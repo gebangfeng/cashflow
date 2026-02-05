@@ -1,23 +1,21 @@
 import styled from '@emotion/styled'
 import './App.css'
 import { Board, FinancialStatement, Action } from '@/components'
+import { colors } from '@/styles'
 
 function App() {
   return (
     <Container>
-      <LeftSection>
+      <LeftSidebar>
         <FinancialStatement />
-      </LeftSection>
-      <RightSection>
-        <RightTopSection>
+      </LeftSidebar>
+      <MainArea>
+        <GameBoard>
           <Action />
-        </RightTopSection>
-        <RightBottomSection>
           <Board />
-        </RightBottomSection>
-      </RightSection>
+        </GameBoard>
+      </MainArea>
     </Container>
-    // </GameProvider>
   )
 }
 
@@ -28,37 +26,38 @@ const Container = styled.div({
   display: 'flex',
   flexDirection: 'row',
   width: '100vw',
-  height: '97vh',
+  height: '100vh',
+  backgroundColor: colors.midnight.darkest,
+  overflow: 'hidden',
 })
 
-const LeftSection = styled.div({
-  margin: '.25rem auto',
+const LeftSidebar = styled.div({
+  width: '280px',
+  minWidth: '280px',
   height: '100%',
-  width: '45%',
+  backgroundColor: colors.blilet.darkest,
+  borderRight: `1px solid ${colors.blilet.dark}`,
+  overflowY: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
 })
 
-const RightSection = styled.div({
-  flex: '1 auto',
+const MainArea = styled.div({
+  flex: 1,
   display: 'flex',
   flexDirection: 'column',
   height: '100%',
-  width: '55%',
-  rowGap: '1rem',
+  background: `linear-gradient(180deg, ${colors.midnight.darkest} 0%, ${colors.midnight.darker} 100%)`,
+  position: 'relative',
 })
 
-const RightTopSection = styled.div({
+const GameBoard = styled.div({
+  flex: 1,
   display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-  margin: '.5rem 2rem',
-  height: '40%',
-})
-
-const RightBottomSection = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
+  flexDirection: 'column',
   alignItems: 'center',
-  height: '60%',
+  justifyContent: 'center',
+  position: 'relative',
+  padding: '1rem',
 })
 //#endregion styled components
