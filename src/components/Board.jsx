@@ -6,14 +6,14 @@ const Board = () => {
   const { currentSlot, setCurrentSlot, setPrevSlot, setActionType, playerData, setPlayerData, setCard } = useContext(GameContext)
   const [diceValues, setDiceValues] = useState([0, 0, 0])
   const [isRolling, setIsRolling] = useState(false)
-  const [scrollOffset, setScrollOffset] = useState(0)
+  const [isAnimating, setIsAnimating] = useState(false)
   const prevSlotRef = useRef(currentSlot)
 
   // When current slot changes, animate the road scrolling
   useEffect(() => {
     if (prevSlotRef.current !== currentSlot) {
-      const diff = (currentSlot - prevSlotRef.current + 24) % 24
-      setScrollOffset(prev => prev + diff)
+      setIsAnimating(true)
+      setTimeout(() => setIsAnimating(false), 600)
       prevSlotRef.current = currentSlot
     }
   }, [currentSlot])
@@ -84,15 +84,15 @@ const Board = () => {
     }, 100)
   }
 
-  // Generate slots to display - show slots around current position
+  // Generate slots to display - show 7 slots around current position (all on right side like trees)
   const getSlotsToRender = () => {
     const slots = []
-    // Show 7 slots: 3 passed and 3 ahead
+    // Show 7 slots: 3 behind, current, 3 ahead
     for (let i = -3; i <= 3; i++) {
       const slotIndex = (currentSlot + i + 24) % 24
       slots.push({
         ...BOARD_SLOTS[slotIndex],
-        relativePosition: i, // negative = passed, positive = upcoming
+        relativePosition: i,
         slotIndex
       })
     }
@@ -103,46 +103,24 @@ const Board = () => {
 
   return (
     <BoardContainer>
-      {/* Road with scrolling slots */}
+      {/* Main game area */}
       <RoadSection>
-        {/* Left side slots (trees) */}
-        <SlotColumn side="left">
-          {slotsToRender.filter((_, i) => i % 2 === 0).map((slot) => {
-            const config = getSlotDisplay(slot)
-            const isPassed = slot.relativePosition < 0
-            const isCurrent = slot.relativePosition === 0
-            
-            return (
-              <SlotCard 
-                key={`left-${slot.slotIndex}`}
-                color={config.color}
-                isPassed={isPassed}
-                isCurrent={isCurrent}
-                position={slot.relativePosition}
-              >
-                <SlotIcon isCurrent={isCurrent}>{config.icon}</SlotIcon>
-                <SlotLabel>{config.label}</SlotLabel>
-              </SlotCard>
-            )
-          })}
-        </SlotColumn>
-
-        {/* Center Road */}
-        <RoadCenter>
+        {/* Left side - Road with character */}
+        <RoadArea>
           {/* Lane markings */}
           <LaneMarking side="left" />
           <LaneMarking side="right" />
           
-          {/* Road text */}
+          {/* Road text - vertical "财务自由路" */}
           <RoadText>
-            <RoadChar style={{ opacity: 0.6 }}>财</RoadChar>
-            <RoadChar style={{ opacity: 0.7 }}>务</RoadChar>
-            <RoadChar style={{ opacity: 0.85 }}>自</RoadChar>
-            <RoadChar style={{ opacity: 0.9 }}>由</RoadChar>
+            <RoadChar style={{ opacity: 0.5 }}>财</RoadChar>
+            <RoadChar style={{ opacity: 0.6 }}>务</RoadChar>
+            <RoadChar style={{ opacity: 0.75 }}>自</RoadChar>
+            <RoadChar style={{ opacity: 0.85 }}>由</RoadChar>
             <RoadChar>路</RoadChar>
           </RoadText>
 
-          {/* Player character - stays in center */}
+          {/* Player character - fixed in center */}
           <PlayerCharacter>
             <CharacterBody>
               <CharacterHat />
@@ -151,31 +129,33 @@ const Board = () => {
             </CharacterBody>
           </PlayerCharacter>
 
-          {/* Money sign indicator */}
+          {/* Money sign next to character */}
           <MoneySign>钱</MoneySign>
-        </RoadCenter>
+        </RoadArea>
 
-        {/* Right side slots (trees) */}
-        <SlotColumn side="right">
-          {slotsToRender.filter((_, i) => i % 2 === 1).map((slot) => {
+        {/* Right side - All slots like trees along the road */}
+        <SlotsArea isAnimating={isAnimating}>
+          {slotsToRender.map((slot, index) => {
             const config = getSlotDisplay(slot)
             const isPassed = slot.relativePosition < 0
             const isCurrent = slot.relativePosition === 0
             
             return (
               <SlotCard 
-                key={`right-${slot.slotIndex}`}
+                key={`slot-${slot.slotIndex}`}
                 color={config.color}
                 isPassed={isPassed}
                 isCurrent={isCurrent}
                 position={slot.relativePosition}
+                index={index}
               >
                 <SlotIcon isCurrent={isCurrent}>{config.icon}</SlotIcon>
                 <SlotLabel>{config.label}</SlotLabel>
+                {isCurrent && <CurrentIndicator />}
               </SlotCard>
             )
           })}
-        </SlotColumn>
+        </SlotsArea>
       </RoadSection>
 
       {/* Dice and Roll Section */}
@@ -195,7 +175,7 @@ const Board = () => {
 
         {/* Music toggle */}
         <MusicToggle>
-          <MusicNote>♪</MusicNote>
+          <MusicNote>&#9835;</MusicNote>
         </MusicToggle>
       </ControlSection>
     </BoardContainer>
@@ -218,103 +198,35 @@ const RoadSection = styled.div({
   flex: 1,
   display: 'flex',
   alignItems: 'stretch',
-  justifyContent: 'center',
   width: '100%',
   position: 'relative',
   overflow: 'hidden',
-  padding: '1rem 0',
 })
 
-const SlotColumn = styled.div(({ side }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-around',
-  alignItems: side === 'left' ? 'flex-end' : 'flex-start',
-  padding: '1.5rem 0.5rem',
-  width: '40%',
-  gap: '0.75rem',
-}))
-
-const SlotCard = styled.div(({ color, isPassed, isCurrent, position }) => {
-  const colorMap = {
-    cyan: { bg: '#00BCD4', border: '#00ACC1' },
-    pink: { bg: '#E91E63', border: '#D81B60' },
-    green: { bg: '#4CAF50', border: '#43A047' },
-    blue: { bg: '#2196F3', border: '#1E88E5' },
-    yellow: { bg: '#FFC107', border: '#FFB300' },
-    red: { bg: '#F44336', border: '#E53935' },
-    purple: { bg: '#9C27B0', border: '#8E24AA' },
-    grey: { bg: '#607D8B', border: '#546E7A' },
-  }
-  const colors = colorMap[color] || colorMap.grey
-  
-  // Scale based on position - closer to player = larger
-  const scale = isCurrent ? 1.1 : Math.max(0.75, 1 - Math.abs(position) * 0.1)
-  const opacity = isPassed ? 0.5 : 1
-  
-  return {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.5rem 0.75rem',
-    borderRadius: '8px',
-    backgroundColor: colors.bg,
-    border: isCurrent ? '3px solid #FFD700' : `2px solid ${colors.border}`,
-    color: '#fff',
-    fontWeight: 600,
-    fontSize: '0.8rem',
-    boxShadow: isCurrent 
-      ? '0 0 20px rgba(255, 215, 0, 0.7), 0 4px 15px rgba(0,0,0,0.4)' 
-      : '0 3px 10px rgba(0,0,0,0.3)',
-    transition: 'all 0.5s ease',
-    whiteSpace: 'nowrap',
-    transform: `scale(${scale})`,
-    opacity,
-    zIndex: isCurrent ? 10 : 5 - Math.abs(position),
-  }
-})
-
-const SlotIcon = styled.span(({ isCurrent }) => ({
-  width: '24px',
-  height: '24px',
-  borderRadius: '50%',
-  backgroundColor: isCurrent ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.25)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: '0.8rem',
-  flexShrink: 0,
-}))
-
-const SlotLabel = styled.span({
-  fontSize: '0.85rem',
-})
-
-const RoadCenter = styled.div({
-  width: '90px',
-  minWidth: '90px',
+const RoadArea = styled.div({
+  width: '100px',
+  minWidth: '100px',
   backgroundColor: '#3D4B6A',
-  borderRadius: '45px',
   position: 'relative',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  boxShadow: 'inset 0 0 30px rgba(0,0,0,0.5), 0 0 20px rgba(0,0,0,0.3)',
+  boxShadow: 'inset 0 0 30px rgba(0,0,0,0.5), 4px 0 20px rgba(0,0,0,0.3)',
 })
 
 const LaneMarking = styled.div(({ side }) => ({
   position: 'absolute',
-  top: '5%',
-  bottom: '5%',
-  [side]: '18px',
-  width: '3px',
+  top: '0',
+  bottom: '0',
+  [side]: '15px',
+  width: '4px',
   background: `repeating-linear-gradient(
     to bottom,
     #C4A574 0px,
-    #C4A574 20px,
-    transparent 20px,
-    transparent 35px
+    #C4A574 25px,
+    transparent 25px,
+    transparent 45px
   )`,
 }))
 
@@ -322,13 +234,13 @@ const RoadText = styled.div({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '1rem',
+  gap: '1.5rem',
   zIndex: 1,
 })
 
 const RoadChar = styled.span({
   color: '#5A6B8A',
-  fontSize: '1.5rem',
+  fontSize: '1.8rem',
   fontWeight: 700,
   textShadow: '0 2px 4px rgba(0,0,0,0.3)',
 })
@@ -348,66 +260,147 @@ const CharacterBody = styled.div({
 })
 
 const CharacterHat = styled.div({
-  width: '30px',
-  height: '10px',
+  width: '32px',
+  height: '12px',
   backgroundColor: '#6B21A8',
   borderRadius: '50% 50% 0 0',
   position: 'relative',
   '&::after': {
     content: '""',
     position: 'absolute',
-    bottom: '-2px',
-    left: '-4px',
-    right: '-4px',
-    height: '5px',
+    bottom: '-3px',
+    left: '-5px',
+    right: '-5px',
+    height: '6px',
     backgroundColor: '#6B21A8',
     borderRadius: '2px',
   },
 })
 
 const CharacterFace = styled.div({
-  width: '32px',
-  height: '32px',
+  width: '36px',
+  height: '36px',
   borderRadius: '50%',
   backgroundColor: '#F5F5F5',
-  marginTop: '2px',
+  marginTop: '3px',
   position: 'relative',
   boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
 })
 
 const CharacterTorso = styled.div({
-  width: '38px',
-  height: '25px',
+  width: '42px',
+  height: '28px',
   backgroundColor: '#7C3AED',
-  borderRadius: '19px 19px 0 0',
-  marginTop: '-6px',
+  borderRadius: '21px 21px 0 0',
+  marginTop: '-8px',
   boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
 })
 
 const MoneySign = styled.div({
   position: 'absolute',
-  top: '48%',
-  right: '-40px',
+  top: '50%',
+  right: '-35px',
+  transform: 'translateY(-50%)',
   backgroundColor: '#FBBF24',
   color: '#1F2937',
-  padding: '0.3rem 0.5rem',
+  padding: '0.4rem 0.6rem',
   borderRadius: '4px',
   fontWeight: 700,
-  fontSize: '0.75rem',
+  fontSize: '0.85rem',
   boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-  zIndex: 5,
+  zIndex: 15,
   '&::before': {
     content: '""',
     position: 'absolute',
-    left: '-6px',
+    left: '-8px',
     top: '50%',
     transform: 'translateY(-50%)',
     width: '0',
     height: '0',
-    borderTop: '5px solid transparent',
-    borderBottom: '5px solid transparent',
-    borderRight: '6px solid #FBBF24',
+    borderTop: '6px solid transparent',
+    borderBottom: '6px solid transparent',
+    borderRight: '8px solid #FBBF24',
   },
+})
+
+const SlotsArea = styled.div(({ isAnimating }) => ({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  padding: '1rem 1rem 1rem 2.5rem',
+  gap: '0.6rem',
+  transition: isAnimating ? 'transform 0.5s ease-out' : 'none',
+}))
+
+const SlotCard = styled.div(({ color, isPassed, isCurrent, position }) => {
+  const colorMap = {
+    cyan: { bg: '#00BCD4', border: '#00ACC1' },
+    pink: { bg: '#E91E63', border: '#D81B60' },
+    green: { bg: '#4CAF50', border: '#43A047' },
+    blue: { bg: '#2196F3', border: '#1E88E5' },
+    yellow: { bg: '#FFC107', border: '#FFB300' },
+    red: { bg: '#F44336', border: '#E53935' },
+    purple: { bg: '#9C27B0', border: '#8E24AA' },
+    grey: { bg: '#607D8B', border: '#546E7A' },
+  }
+  const colors = colorMap[color] || colorMap.grey
+  
+  // Scale and opacity based on position
+  const scale = isCurrent ? 1.08 : Math.max(0.8, 1 - Math.abs(position) * 0.06)
+  const opacity = isPassed ? 0.45 : 1
+  
+  return {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.6rem',
+    padding: isCurrent ? '0.65rem 1rem' : '0.5rem 0.85rem',
+    borderRadius: '10px',
+    backgroundColor: colors.bg,
+    border: isCurrent ? '3px solid #FFD700' : `2px solid ${colors.border}`,
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: isCurrent ? '0.95rem' : '0.85rem',
+    boxShadow: isCurrent 
+      ? '0 0 25px rgba(255, 215, 0, 0.6), 0 6px 20px rgba(0,0,0,0.4)' 
+      : '0 3px 12px rgba(0,0,0,0.25)',
+    transition: 'all 0.4s ease',
+    whiteSpace: 'nowrap',
+    transform: `scale(${scale})`,
+    transformOrigin: 'left center',
+    opacity,
+    zIndex: isCurrent ? 10 : 5 - Math.abs(position),
+    position: 'relative',
+  }
+})
+
+const SlotIcon = styled.span(({ isCurrent }) => ({
+  width: isCurrent ? '28px' : '24px',
+  height: isCurrent ? '28px' : '24px',
+  borderRadius: '50%',
+  backgroundColor: isCurrent ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.25)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: isCurrent ? '0.9rem' : '0.8rem',
+  flexShrink: 0,
+}))
+
+const SlotLabel = styled.span({
+  fontSize: 'inherit',
+})
+
+const CurrentIndicator = styled.div({
+  position: 'absolute',
+  left: '-18px',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  width: '0',
+  height: '0',
+  borderTop: '8px solid transparent',
+  borderBottom: '8px solid transparent',
+  borderLeft: '10px solid #FFD700',
 })
 
 const ControlSection = styled.div({
