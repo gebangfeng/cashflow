@@ -14,13 +14,16 @@ const OpportunityEstateDetails = () => {
   const { card, playerData, setPlayerData, setActionType } =
     useContext(GameContext)
 
+  //#region Event handlers
   const handleBuy = () => {
     let newPlayerData = playerData
+    // > Take a loan if cash is insufficient (cash < downpay). Otherwise just deduce the player's cash
     if (newPlayerData.cash < card.arg2) {
       newPlayerData = takeLoan(newPlayerData, card.arg2)
     } else {
       newPlayerData.cash -= card.arg2
     }
+    // > Add new item to the player's Assets
     let newAsset = {
       id:
         newPlayerData.assets.length === 0
@@ -37,6 +40,19 @@ const OpportunityEstateDetails = () => {
     }
     newPlayerData.assets.push(newAsset)
 
+    // > TODO: Add new item to the player's Liabilities (Will add in the future after repay is implemented)
+    // let newLiability = {
+    //   id:
+    //     newPlayerData.liabilities.length === 0
+    //       ? 1
+    //       : newPlayerData.liabilities.at(-1).id + 1,
+    //   name: card.title,
+    //   type: 'estate',
+    //   subtype: card.subtype,
+    //   amount: card.arg3,
+    // }
+
+    // > Add to player's income, if stock has positive cashflow
     if (card.arg4 > 0) {
       let newIncome = {
         id:
@@ -49,13 +65,16 @@ const OpportunityEstateDetails = () => {
       newPlayerData.incomes.push(newIncome)
       checkWinningCondition(newPlayerData)
     }
+    // > Update the context player context data
     setPlayerData(newPlayerData)
+
     setActionType('start')
   }
 
   const handleCancel = () => {
     setActionType('start')
   }
+  //#endregion Event handlers
 
   return (
     <>
@@ -69,19 +88,19 @@ const OpportunityEstateDetails = () => {
             <Note>{card.info}</Note>
             <Details>
               <DetailsColumn>
-                <Note>成本: ${currencyFormatter.format(card.arg1)}</Note>
+                <Note>Cost: ${currencyFormatter.format(card.arg1)}</Note>
                 {card.type === 'estate' && (
-                  <Note>现金流: ${currencyFormatter.format(card.arg4)}</Note>
+                  <Note>Cashflow: ${currencyFormatter.format(card.arg4)}</Note>
                 )}
                 {card.type === 'estate' && (
-                  <Note>首付: ${currencyFormatter.format(card.arg2)}</Note>
+                  <Note>Downpay: ${currencyFormatter.format(card.arg2)}</Note>
                 )}
               </DetailsColumn>
             </Details>
             {card.arg2 > playerData.cash && (
-              <ImportantNote>{`（你没有足够的现金。需要贷款 $${currencyFormatter.format(
+              <ImportantNote>{`(You don't have enough cash. Must take a loan of $${currencyFormatter.format(
                 getLoanAmount(card.arg2 - playerData.cash)
-              )}）`}</ImportantNote>
+              )})`}</ImportantNote>
             )}
           </Left>
           <Right>
@@ -99,10 +118,10 @@ const OpportunityEstateDetails = () => {
         <Bottom>
           <MainActions>
             <ActionButton variant="contained" onClick={handleBuy}>
-              购买
+              BUY
             </ActionButton>
             <ActionButton variant="contained" onClick={handleCancel}>
-              取消
+              CANCEL
             </ActionButton>
           </MainActions>
         </Bottom>

@@ -8,9 +8,10 @@ const OpportunityStockSplitDetails = () => {
   const { card, playerData, setPlayerData, setActionType } =
     useContext(GameContext)
 
+  //#region Event handlers
   const handleOK = () => {
     let newPlayerData = playerData
-    // 正常拆股：所有股票数量翻倍
+    // > Case 1 - Normal split: Doubling all the stocks in player's assets
     if (!card.arg1) {
       newPlayerData.assets.map((a) => {
         if (a.type === 'stock' && a.name === card.title) {
@@ -18,7 +19,7 @@ const OpportunityStockSplitDetails = () => {
         }
       })
     } else {
-      // 反向拆股：所有股票数量减半
+      // > Case 2 - Reverse split: Halving all the stocks in player's assets
       newPlayerData.assets.map((a) => {
         if (a.type === 'stock' && a.name === card.title) {
           a.quantity = Math.floor(a.quantity / 2)
@@ -30,20 +31,24 @@ const OpportunityStockSplitDetails = () => {
     setActionType('start')
   }
 
+  //#endregion Event handlers
+
   return (
     <>
       <Title>{card.title}</Title>
       <Description>{card.description}</Description>
       <NoteImportant>{card.info}</NoteImportant>
       <Note>
-        {`你持有此股票 ${playerData.assets
+        {`You are having
+        ${playerData.assets
           .filter((a) => a.type === 'stock' && a.name === card.title)
-          .reduce((total, asset) => total + asset.quantity, 0)} 股`}
+          .reduce((total, asset) => total + asset.quantity, 0)}
+        shares of this stock.`}
       </Note>
       <span style={{ flex: 1 }} />
       <MainActions>
         <ActionButton variant="contained" onClick={handleOK}>
-          确定
+          OK
         </ActionButton>
       </MainActions>
     </>

@@ -5,16 +5,19 @@ import { Board, FinancialStatement, Action } from '@/components'
 function App() {
   return (
     <Container>
-      <LeftSidebar>
+      <LeftSection>
         <FinancialStatement />
-      </LeftSidebar>
-      <MainArea>
-        <GameBoard>
+      </LeftSection>
+      <RightSection>
+        <RightTopSection>
           <Action />
+        </RightTopSection>
+        <RightBottomSection>
           <Board />
-        </GameBoard>
-      </MainArea>
+        </RightBottomSection>
+      </RightSection>
     </Container>
+    // </GameProvider>
   )
 }
 
@@ -25,50 +28,37 @@ const Container = styled.div({
   display: 'flex',
   flexDirection: 'row',
   width: '100vw',
-  height: '100vh',
-  backgroundColor: '#1B2240',
-  overflow: 'hidden',
+  height: '97vh',
 })
 
-const LeftSidebar = styled.div({
-  width: '260px',
-  minWidth: '260px',
+const LeftSection = styled.div({
+  margin: '.25rem auto',
   height: '100%',
-  backgroundColor: '#1E2642',
-  borderRight: '1px solid #3D4B6A',
-  overflowY: 'auto',
-  display: 'flex',
-  flexDirection: 'column',
-  /* Custom scrollbar */
-  '&::-webkit-scrollbar': {
-    width: '4px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: '#1E2642',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: '#3D4B6A',
-    borderRadius: '2px',
-  },
+  width: '45%',
 })
 
-const MainArea = styled.div({
-  flex: 1,
+const RightSection = styled.div({
+  flex: '1 auto',
   display: 'flex',
   flexDirection: 'column',
   height: '100%',
-  background: 'linear-gradient(180deg, #1B2240 0%, #252E50 100%)',
-  position: 'relative',
+  width: '55%',
+  rowGap: '1rem',
 })
 
-const GameBoard = styled.div({
-  flex: 1,
+const RightTopSection = styled.div({
   display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
+  flexDirection: 'row',
   justifyContent: 'center',
-  position: 'relative',
-  padding: '1rem',
-  overflow: 'hidden',
+  margin: '.5rem 2rem',
+  height: '40%',
+})
+
+const RightBottomSection = styled.div({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '60%',
 })
 //#endregion styled components

@@ -99,35 +99,35 @@ export const generatePlayerData = () => {
     cash: p.cash,
     childNum: 0,
     incomes: [
-      { id: 1, name: `${p.name}工资`, amount: p.salary, type: 'salary' },
+      { id: 1, name: `${p.name} Salary`, amount: p.salary, type: 'salary' },
     ],
     assets: [],
     liabilities: [...p.liabilities],
     expenses: [
-      { id: 1, name: '个人所得税', amount: p.salary * 0.18 },
+      { id: 1, name: 'Taxes', amount: p.salary * 0.18 },
       {
         id: 2,
-        name: '房贷月供',
+        name: 'Home Mortgage Payment',
         amount: getMonthlyLoanPayment(p.liabilities[0]),
       },
       {
         id: 3,
-        name: '车贷月供',
+        name: 'Car Loan Payment',
         amount: getMonthlyLoanPayment(p.liabilities[1]),
       },
       {
         id: 4,
-        name: '信用卡还款',
+        name: 'Credit Card Payment',
         amount: getMonthlyLoanPayment(p.liabilities[2]),
       },
       {
         id: 5,
-        name: '消费贷还款',
+        name: 'Retail Payment',
         amount: getMonthlyLoanPayment(p.liabilities[3]),
       },
       {
         id: 6,
-        name: '其他支出',
+        name: 'Other Expenses',
         amount: p.otherExpenses,
       },
     ],
@@ -253,10 +253,10 @@ export const drawCard = (type, isBigOpportunity = false) => {
 export const takeLoan = (playerData, cost) => {
   let loanAmount = getLoanAmount(cost - playerData.cash)
   playerData.cash += loanAmount - cost
-  let idx = playerData.liabilities.findIndex((l) => l.name === '银行贷款')
+  let idx = playerData.liabilities.findIndex((l) => l.name === 'Loans')
   if (idx > -1) {
     playerData.liabilities[idx].amount += loanAmount
-    playerData.expenses.find((e) => e.name === '银行贷款还款').amount +=
+    playerData.expenses.find((e) => e.name === 'Loans Payment').amount +=
       loanAmount * 0.1
   } else {
     playerData.liabilities.push({
@@ -264,13 +264,13 @@ export const takeLoan = (playerData, cost) => {
         playerData.liabilities.length === 0
           ? 1
           : playerData.liabilities.at(-1).id + 1,
-      name: '银行贷款',
+      name: 'Loans',
       amount: loanAmount,
       type: 'bank',
     })
     playerData.expenses.push({
       id: playerData.expenses.length + 1,
-      name: '银行贷款还款',
+      name: 'Loans Payment',
       amount: loanAmount * 0.1,
     })
   }
@@ -288,13 +288,13 @@ export const checkWinningCondition = (data) => {
   let totalExpense = getTotalExpenseAmount(data)
   if (passiveIncome > totalExpense) {
     Swal.fire({
-      title: '恭喜你！',
-      text: '你的被动收入已经超过了总支出。你已经跳出了老鼠赛跑，可以去追寻你的梦想了！',
+      title: 'CONGRATULATIONS!',
+      text: 'Your passive income now exceeds your total expenses. You are out of the Rat Race and ready to pursue your dreams!',
       imageUrl: 'https://cdn-icons-png.flaticon.com/128/9281/9281540.png',
       imageWidth: 96,
       imageHeight: 96,
-      imageAlt: '财务自由',
-      confirmButtonText: '开始新游戏',
+      imageAlt: 'Rat Race - Win',
+      confirmButtonText: 'Start a new game',
       allowOutsideClick: false,
     }).then(() => {
       window.location.reload() // > Start new game by refresh the browser
@@ -315,13 +315,13 @@ export const checkLosingCondition = (data) => {
     setTimeout(() => {
       playSFX('/assets/sounds/gameover.mp3')
       Swal.fire({
-        title: '游戏结束！',
-        text: '你的月现金流为负数。你已经破产出局了。',
+        title: 'YOU LOSE!',
+        text: 'Your monthly cashflow is negative. You are officially out of the game.',
         imageUrl: 'https://cdn-icons-png.flaticon.com/128/9995/9995982.png',
         imageWidth: 96,
         imageHeight: 96,
-        imageAlt: '破产',
-        confirmButtonText: '开始新游戏',
+        imageAlt: 'Lose',
+        confirmButtonText: 'Start a new game',
         allowOutsideClick: false,
       }).then(() => {
         window.location.reload()
@@ -359,30 +359,30 @@ export const LOAN_DETAILS = {
 
 //#region Board slots
 export const BOARD_SLOTS = [
-  { id: 0, name: '发薪日', type: 'payday' },
-  { id: 1, name: '机会', type: 'opportunity' },
-  { id: 2, name: '市场风云', type: 'market' },
-  { id: 3, name: '机会', type: 'opportunity' },
-  { id: 4, name: '生活小插曲', type: 'doodads' },
-  { id: 5, name: '机会', type: 'opportunity' },
-  { id: 6, name: '生孩子', type: 'baby' },
-  { id: 7, name: '机会', type: 'opportunity' },
-  { id: 8, name: '发薪日', type: 'payday' },
-  { id: 9, name: '机会', type: 'opportunity' },
-  { id: 10, name: '市场风云', type: 'market' },
-  { id: 11, name: '机会', type: 'opportunity' },
-  { id: 12, name: '生活小插曲', type: 'doodads' },
-  { id: 13, name: '机会', type: 'opportunity' },
-  { id: 14, name: '被裁员', type: 'downsized' },
-  { id: 15, name: '机会', type: 'opportunity' },
-  { id: 16, name: '发薪日', type: 'payday' },
-  { id: 17, name: '机会', type: 'opportunity' },
-  { id: 18, name: '市场风云', type: 'market' },
-  { id: 19, name: '机会', type: 'opportunity' },
-  { id: 20, name: '生活小插曲', type: 'doodads' },
-  { id: 21, name: '机会', type: 'opportunity' },
-  { id: 22, name: '慈善捐款', type: 'charity' },
-  { id: 23, name: '机会', type: 'opportunity' },
+  { id: 0, name: 'Payday', type: 'payday' },
+  { id: 1, name: 'Opportunity', type: 'opportunity' },
+  { id: 2, name: 'Market', type: 'market' },
+  { id: 3, name: 'Opportunity', type: 'opportunity' },
+  { id: 4, name: 'Doodads', type: 'doodads' },
+  { id: 5, name: 'Opportunity', type: 'opportunity' },
+  { id: 6, name: 'Baby', type: 'baby' },
+  { id: 7, name: 'Opportunity', type: 'opportunity' },
+  { id: 8, name: 'Payday', type: 'payday' },
+  { id: 9, name: 'Opportunity', type: 'opportunity' },
+  { id: 10, name: 'Market', type: 'market' },
+  { id: 11, name: 'Opportunity', type: 'opportunity' },
+  { id: 12, name: 'Doodads', type: 'doodads' },
+  { id: 13, name: 'Opportunity', type: 'opportunity' },
+  { id: 14, name: 'Downsized', type: 'downsized' },
+  { id: 15, name: 'Opportunity', type: 'opportunity' },
+  { id: 16, name: 'Payday', type: 'payday' },
+  { id: 17, name: 'Opportunity', type: 'opportunity' },
+  { id: 18, name: 'Market', type: 'market' },
+  { id: 19, name: 'Opportunity', type: 'opportunity' },
+  { id: 20, name: 'Doodads', type: 'doodads' },
+  { id: 21, name: 'Opportunity', type: 'opportunity' },
+  { id: 22, name: 'Charity', type: 'charity' },
+  { id: 23, name: 'Opportunity', type: 'opportunity' },
 ]
 //#endregion Board slots
 
@@ -2430,72 +2430,72 @@ export const MARKETS = [
 export const PROFESSIONS = [
   {
     id: 1,
-    name: '医生',
+    name: 'Doctor',
     salary: 13200,
     cash: 400,
     expensePerChild: 640,
     otherExpenses: 2880,
     liabilities: [
-      { id: 1, name: '房屋贷款', amount: 202000, type: 'home' },
-      { id: 2, name: '汽车贷款', amount: 19000, type: 'car' },
-      { id: 3, name: '信用卡债务', amount: 9000, type: 'credit' },
-      { id: 4, name: '消费贷款', amount: 1000, type: 'retail' },
+      { id: 1, name: 'Home Mortgage', amount: 202000, type: 'home' }, // Home Mortgage
+      { id: 2, name: 'Car Loans', amount: 19000, type: 'car' }, // Car Loans
+      { id: 3, name: 'Credit Cards', amount: 9000, type: 'credit' }, // Credit Cards
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
     ],
   },
   {
     id: 2,
-    name: '机械师',
+    name: 'Mechanic',
     salary: 2000,
     cash: 400,
     expensePerChild: 110,
     otherExpenses: 450,
     liabilities: [
-      { id: 1, name: '房屋贷款', amount: 31000, type: 'home' },
-      { id: 2, name: '汽车贷款', amount: 3000, type: 'car' },
-      { id: 3, name: '信用卡债务', amount: 2000, type: 'credit' },
-      { id: 4, name: '消费贷款', amount: 1000, type: 'retail' },
+      { id: 1, name: 'Home Mortgage', amount: 31000, type: 'home' }, // Home Mortgage
+      { id: 2, name: 'Car Loans', amount: 3000, type: 'car' }, // Car Loans
+      { id: 3, name: 'Credit Cards', amount: 2000, type: 'credit' }, // Credit Cards
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
     ],
   },
   {
     id: 3,
-    name: '护士',
+    name: 'Nurse',
     salary: 3100,
     cash: 480,
     expensePerChild: 170,
     otherExpenses: 710,
     liabilities: [
-      { id: 1, name: '房屋贷款', amount: 47000, type: 'home' },
-      { id: 2, name: '汽车贷款', amount: 5000, type: 'car' },
-      { id: 3, name: '信用卡债务', amount: 3000, type: 'credit' },
-      { id: 4, name: '消费贷款', amount: 1000, type: 'retail' },
+      { id: 1, name: 'Home Mortgage', amount: 47000, type: 'home' }, // Home Mortgage
+      { id: 2, name: 'Car Loans', amount: 5000, type: 'car' }, // Car Loans
+      { id: 3, name: 'Credit Cards', amount: 3000, type: 'credit' }, // Credit Cards
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
     ],
   },
   {
     id: 4,
-    name: '工程师',
+    name: 'Engineer',
     salary: 4900,
     cash: 500,
     expensePerChild: 250,
     otherExpenses: 1090,
     liabilities: [
-      { id: 1, name: '房屋贷款', amount: 75000, type: 'home' },
-      { id: 2, name: '汽车贷款', amount: 7000, type: 'car' },
-      { id: 3, name: '信用卡债务', amount: 4000, type: 'credit' },
-      { id: 4, name: '消费贷款', amount: 1000, type: 'retail' },
+      { id: 1, name: 'Home Mortgage', amount: 75000, type: 'home' }, // Home Mortgage
+      { id: 2, name: 'Car Loans', amount: 7000, type: 'car' }, // Car Loans
+      { id: 3, name: 'Credit Cards', amount: 4000, type: 'credit' }, // Credit Cards
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
     ],
   },
   {
     id: 5,
-    name: '企业经理',
+    name: 'Business Manager',
     salary: 4600,
     cash: 400,
     expensePerChild: 480,
     otherExpenses: 1000,
     liabilities: [
-      { id: 1, name: '房屋贷款', amount: 75000, type: 'home' },
-      { id: 2, name: '汽车贷款', amount: 6000, type: 'car' },
-      { id: 3, name: '信用卡债务', amount: 3000, type: 'credit' },
-      { id: 4, name: '消费贷款', amount: 1000, type: 'retail' },
+      { id: 1, name: 'Home Mortgage', amount: 75000, type: 'home' }, // Home Mortgage
+      { id: 2, name: 'Car Loans', amount: 6000, type: 'car' }, // Car Loans
+      { id: 3, name: 'Credit Cards', amount: 3000, type: 'credit' }, // Credit Cards
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
     ],
   },
 ]

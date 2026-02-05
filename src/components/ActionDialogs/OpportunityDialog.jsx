@@ -45,12 +45,12 @@ const OpportunityDialog = () => {
   return (
     <>
       <Header>
-        <Title>投资机会</Title>
-        <ThumbnailImg src="./assets/images/opportunity-thumb.png" alt="opportunity" />
+        <Title>DEAL OPPORTUNITY</Title>
+        <ThumbnailImg src="./assets/images/opportunity-thumb.png" />
       </Header>
-      <Description>你想要哪种交易类型？</Description>
+      <Description>Which deal type do you want?</Description>
       <Note>
-        小交易成本在$5,000以下，大交易成本在$6,000以上。
+        Small deals cost $5,000 or less. Big deals cost $6,000 or more.
       </Note>
       <Note style={{ flex: 1 }} />
       <MainActions>
@@ -59,15 +59,15 @@ const OpportunityDialog = () => {
           disableRipple
           onClick={handleSmallDeal}
         >
-          小交易
+          SMALL
         </ActionButton>
         <ActionButton
           variant="contained"
           disableRipple
           onClick={handleBigDeal}
-          big
+          style={{ alignSelf: 'flex-end' }}
         >
-          大交易
+          BIG
         </ActionButton>
       </MainActions>
     </>
@@ -81,62 +81,49 @@ const Header = styled.div({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  alignItems: 'flex-start',
   width: '100%',
-  marginBottom: '0.75rem',
 })
 
 const ThumbnailImg = styled.img({
-  width: '64px',
-  borderRadius: '8px',
+  width: '80px',
 })
 
 const Title = styled.h2({
-  color: colors.teal.base,
+  color: colors.red.base,
   margin: 0,
-  fontSize: '1.5rem',
-  fontWeight: 700,
 })
 
 const Description = styled.span({
   fontWeight: 500,
   width: '100%',
   alignSelf: 'flex-start',
-  color: colors.white,
-  marginBottom: '0.5rem',
 })
 
 const Note = styled.span({
-  fontWeight: 400,
+  fontWeight: 700,
   alignSelf: 'flex-start',
-  color: colors.grey.light,
-  fontSize: '0.875rem',
 })
 
 const MainActions = styled.div({
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   columnGap: '1rem',
   width: '100%',
-  marginTop: '1rem',
+  '& button': {
+    fontSize: '20px',
+  },
+  '& img': {
+    width: '36px',
+  },
 })
 
-const ActionButton = styled(Button)(({ big }) => ({
-  fontWeight: 700,
-  padding: '0.75rem 1.5rem',
-  borderRadius: '8px',
-  backgroundColor: big ? colors.pink.base : colors.teal.base,
-  color: colors.white,
-  textTransform: 'none',
-  fontSize: '1rem',
-  minWidth: '100px',
-  '&:hover': {
-    backgroundColor: big ? colors.pink.dark : colors.teal.dark,
-  },
+const ActionButton = styled(Button)({
+  fontWeight: 800,
+  width: '120px',
   '&:active': {
     opacity: 0.8,
-    transform: 'scale(0.95)',
+    transform: 'scale(0.9)',
   },
-}))
+})
 //#endregion styled components

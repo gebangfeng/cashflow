@@ -1,5 +1,6 @@
+// import React from 'react'
 import styled from '@emotion/styled'
-import { Box, LinearProgress } from '@mui/material'
+import { Box, Container, Divider, LinearProgress } from '@mui/material'
 import { colors } from '../styles'
 import {
   currencyFormatter,
@@ -15,10 +16,11 @@ const FinancialStatus = () => {
 
   return (
     <StyledContainer>
-      <Title>提高被动收入，逃离老鼠赛跑</Title>
+      <Title>INCREASE PASSIVE INCOME TO ESCAPE THE RAT RACE</Title>
       <ProgressContainer>
         <ProgressTopTitle>
-          总支出: ${currencyFormatter.format(getTotalExpenseAmount(playerData))}
+          TOTAL EXPENSES: $
+          {currencyFormatter.format(getTotalExpenseAmount(playerData))}
         </ProgressTopTitle>
         <Box sx={{ width: '100%' }}>
           <Progress
@@ -35,30 +37,31 @@ const FinancialStatus = () => {
             }
           />
           <ProgressBottomTitle>
-            被动收入: ${currencyFormatter.format(getPassiveIncome(playerData.incomes))}
+            PASSIVE INCOME: $
+            {currencyFormatter.format(getPassiveIncome(playerData.incomes))}
           </ProgressBottomTitle>
         </Box>
       </ProgressContainer>
       <DashboardContainer>
         <DashboardTopRow>
-          <span>现金</span>
+          <span>CASH</span>
           <span>${currencyFormatter.format(playerData.cash)}</span>
         </DashboardTopRow>
         <DashboardRow>
-          <span>总收入:</span>
+          <span>Total Income:</span>
           <span>
             ${currencyFormatter.format(getTotalIncomeAmount(playerData))}
           </span>
         </DashboardRow>
         <DashboardRow>
-          <span>总支出:</span>
+          <span>Total Expenses:</span>
           <span>
             $-{currencyFormatter.format(getTotalExpenseAmount(playerData))}
           </span>
         </DashboardRow>
         <StyledDivider />
-        <DashboardRow highlight>
-          <span>月现金流</span>
+        <DashboardRow>
+          <span>PAYDAY</span>
           <span>
             $
             {currencyFormatter.format(
@@ -75,37 +78,34 @@ const FinancialStatus = () => {
 export default FinancialStatus
 
 //#region styled Components
-const StyledContainer = styled.div({
-  marginTop: '0.75rem',
+const StyledContainer = styled(Container)({
+  marginTop: '1rem',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '0 0.5rem',
 })
 
 const Title = styled.h1({
   color: colors.red.base,
-  fontSize: '0.875rem',
+  fontSize: '1.125rem',
   textAlign: 'center',
   width: '100%',
   marginBottom: '.5rem',
-  fontWeight: 600,
 })
 
 const ProgressContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
-  width: '100%',
+  width: '70%',
   marginBottom: '.5rem',
 })
 
 const Progress = styled(LinearProgress)({
-  border: `2px solid ${colors.purple.dark}`,
-  borderRadius: '4px',
+  border: `3px solid ${colors.purple.dark}`,
   '&.MuiLinearProgress-root': {
-    height: '0.875rem',
-    backgroundColor: colors.blilet.darker,
+    height: '1rem',
+    backgroundColor: colors.silver.base,
   },
   '& .MuiLinearProgress-bar': {
     backgroundColor: colors.purple.base,
@@ -113,51 +113,40 @@ const Progress = styled(LinearProgress)({
 })
 
 const ProgressTopTitle = styled.p({
-  fontSize: '.75rem',
-  fontWeight: 600,
-  color: colors.grey.light,
-  marginBottom: '0.25rem',
+  fontSize: '.85rem',
+  fontWeight: 700,
 })
 const ProgressBottomTitle = styled.p({
-  fontSize: '.75rem',
-  fontWeight: 600,
-  color: colors.grey.light,
-  marginTop: '0.25rem',
+  fontSize: '.85rem',
+  fontWeight: 700,
 })
 
 const DashboardContainer = styled.div({
   display: 'flex',
   alignSelf: 'center',
   flexDirection: 'column',
-  width: '100%',
-  backgroundColor: colors.blilet.darker,
-  borderRadius: '8px',
-  padding: '0.5rem 0.75rem',
+  width: '60%',
 })
 
-const DashboardRow = styled.div(({ highlight }) => ({
+const DashboardRow = styled.div({
   display: 'flex',
-  fontSize: '.8rem',
+  fontSize: '.9rem',
   flexDirection: 'row',
   margin: '.25rem 0',
   justifyContent: 'space-between',
-  color: highlight ? colors.teal.light : colors.grey.lighter,
-  fontWeight: highlight ? 600 : 400,
-}))
+})
 
 const DashboardTopRow = styled.div({
   display: 'flex',
   flexDirection: 'row',
-  fontSize: '1rem',
+  fontSize: '1.25rem',
   fontWeight: '700',
   margin: '.25rem 0',
   justifyContent: 'space-between',
-  color: colors.yellow.base,
 })
 
-const StyledDivider = styled.div({
-  backgroundColor: colors.blilet.dark,
+const StyledDivider = styled(Divider)({
+  backgroundColor: colors.black.base,
   height: '1px',
-  margin: '0.25rem 0',
 })
 // #endregion styled components

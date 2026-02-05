@@ -9,35 +9,26 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 const BorrowDialog = () => {
   const { setActionType } = useContext(GameContext)
 
-  const [amount, setAmount] = useState(1000)
+  const [amount, setAmount] = useState(0)
 
   const handleBorrow = (e) => {
     e.preventDefault()
     alert('Borrow Logic is not implemented at the moment')
     setActionType('start')
   }
-
-  const increaseAmount = () => {
-    setAmount(prev => prev + 1000)
-  }
-
-  const decreaseAmount = () => {
-    setAmount(prev => Math.max(0, prev - 1000))
-  }
-
   return (
     <>
       <Header>
-        <Title>银行贷款</Title>
-        <ThumbnailImg src="./assets/images/borrow-thumb.png" alt="borrow" />
+        <Title>TAKE OUT A LOAN!</Title>
+        <ThumbnailImg src="./assets/images/borrow-thumb.png" />
       </Header>
       <Description>
-        贷款必须是$1,000的倍数，月利率为10%。
+        Loan must be in multiples of $1,000 at 10% interest per month.
       </Description>
       <Note style={{ flex: 1 }} />
       <BorrowForm onSubmit={handleBorrow}>
         <InputContainer>
-          <InputLabel>金额: $</InputLabel>
+          {/* <span>Amount: $</span> */}
           <StyledInput
             type="text"
             value={amount}
@@ -47,27 +38,28 @@ const BorrowDialog = () => {
             }}
           />
           <InputActions>
-            <InputButton aria-label="increase" size="small" onClick={increaseAmount}>
-              <ArrowDropUpIcon sx={{ color: colors.grey.light }} />
+            <InputButton aria-label="delete" size="small">
+              <ArrowDropUpIcon />
             </InputButton>
-            <InputButton aria-label="decrease" size="small" onClick={decreaseAmount}>
-              <ArrowDropDownIcon sx={{ color: colors.grey.light }} />
+            <InputButton aria-label="delete" size="small">
+              <ArrowDropDownIcon />
             </InputButton>
           </InputActions>
         </InputContainer>
         <MainActions>
-          <ActionButton type="submit" variant="contained" disableRipple primary>
-            借款
+          <ActionButton type="submit" variant="contained" disableRipple>
+            BUY
           </ActionButton>
-          <CancelButton
+          <ActionButton
             variant="contained"
             disableRipple
             onClick={() => {
               setActionType('start')
             }}
+            style={{ alignSelf: 'flex-end' }}
           >
-            取消
-          </CancelButton>
+            CANCEL
+          </ActionButton>
         </MainActions>
       </BorrowForm>
     </>
@@ -81,35 +73,26 @@ const Header = styled.div({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  alignItems: 'flex-start',
   width: '100%',
-  marginBottom: '0.75rem',
 })
 
 const ThumbnailImg = styled.img({
-  width: '64px',
-  borderRadius: '8px',
+  width: '80px',
 })
 
 const Title = styled.h2({
-  color: colors.orange.base,
+  color: colors.red.base,
   margin: 0,
-  fontSize: '1.5rem',
-  fontWeight: 700,
 })
 
 const Description = styled.span({
   fontWeight: 500,
   alignSelf: 'flex-start',
-  color: colors.white,
-  marginBottom: '0.5rem',
 })
 
 const Note = styled.span({
-  fontWeight: 400,
+  fontWeight: 700,
   alignSelf: 'flex-start',
-  color: colors.grey.light,
-  fontSize: '0.875rem',
 })
 
 const BorrowForm = styled.form({
@@ -123,12 +106,6 @@ const InputContainer = styled.div({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  gap: '0.5rem',
-})
-
-const InputLabel = styled.span({
-  color: colors.grey.light,
-  fontSize: '1rem',
 })
 
 const InputActions = styled.div({
@@ -137,72 +114,36 @@ const InputActions = styled.div({
 })
 
 const InputButton = styled(IconButton)({
-  height: '20px',
-  width: '20px',
-  backgroundColor: colors.blilet.dark,
-  borderRadius: '4px',
-  '&:hover': {
-    backgroundColor: colors.blilet.light,
-  },
+  height: '18px',
+  width: '18px',
 })
 
 const StyledInput = styled.input({
-  fontSize: '1.25rem',
-  width: '120px',
-  padding: '0.5rem 0.75rem',
-  borderRadius: '8px',
-  border: `1px solid ${colors.blilet.dark}`,
-  backgroundColor: colors.blilet.darker,
-  color: colors.white,
-  textAlign: 'right',
-  '&:focus': {
-    outline: 'none',
-    borderColor: colors.orange.base,
-  },
+  fontSize: '1.3rem',
+  width: '30%',
+  height: '70%',
 })
 
 const MainActions = styled.div({
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   columnGap: '1rem',
   width: '100%',
-  marginTop: '0.5rem',
+  '& button': {
+    fontSize: '20px',
+  },
+  '& img': {
+    width: '36px',
+  },
 })
 
 const ActionButton = styled(Button)({
-  fontWeight: 700,
-  padding: '0.75rem 1.5rem',
-  borderRadius: '8px',
-  backgroundColor: colors.orange.base,
-  color: colors.white,
-  textTransform: 'none',
-  fontSize: '1rem',
-  minWidth: '100px',
-  '&:hover': {
-    backgroundColor: colors.orange.dark,
-  },
+  fontWeight: 800,
+  width: '120px',
   '&:active': {
     opacity: 0.8,
-    transform: 'scale(0.95)',
-  },
-})
-
-const CancelButton = styled(Button)({
-  fontWeight: 700,
-  padding: '0.75rem 1.5rem',
-  borderRadius: '8px',
-  backgroundColor: colors.grey.dark,
-  color: colors.white,
-  textTransform: 'none',
-  fontSize: '1rem',
-  minWidth: '100px',
-  '&:hover': {
-    backgroundColor: colors.grey.base,
-  },
-  '&:active': {
-    opacity: 0.8,
-    transform: 'scale(0.95)',
+    transform: 'scale(0.9)',
   },
 })
 

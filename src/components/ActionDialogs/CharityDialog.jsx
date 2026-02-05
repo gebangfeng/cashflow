@@ -24,14 +24,14 @@ const CharityDialog = () => {
   return (
     <>
       <Header>
-        <Title>是否进行慈善捐款？</Title>
+        <Title>GIVE TO CHARITY?</Title>
         <ThumbnailImg src="./assets/images/charity-thumb.png" />
       </Header>
       <Description>
-        捐出总收入的10%，接下来3回合可以掷2个骰子
+        Donate 10% of your total income to roll 2 dice over the next 3 turns.
       </Description>
       <Note>
-        捐款金额：$
+        Donate $
         {currencyFormatter.format(
           Math.floor(getTotalIncomeAmount(playerData) * 0.1)
         )}
@@ -39,7 +39,7 @@ const CharityDialog = () => {
       <Note style={{ flex: 1 }} />
       <MainActions>
         <ActionButton variant="contained" disableRipple onClick={handleCharity}>
-          捐款
+          DONATE
         </ActionButton>
         <ActionButton
           variant="contained"
@@ -47,7 +47,7 @@ const CharityDialog = () => {
           onClick={handlePass}
           style={{ alignSelf: 'flex-end' }}
         >
-          跳过
+          PASS
         </ActionButton>
       </MainActions>
     </>

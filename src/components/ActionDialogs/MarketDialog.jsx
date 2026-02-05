@@ -21,10 +21,12 @@ const MarketDialog = () => {
     }
   }, [playerData])
 
+  //#region event handlers
   const handlePass = () => {
     setIsSellingAssets(false)
     setActionType('start')
   }
+  //#endregion event handlers
 
   return (
     <Container>
@@ -40,13 +42,13 @@ const MarketDialog = () => {
               asset.type === card.type && asset.subtype === card.subtype
           ).length === 0 ? (
             <ImportantNote>
-              你没有符合此市场卡片条件的资产
+              You have no assets that match this market card.
             </ImportantNote>
           ) : (
             <ImportantNote>
-              点击资产列表中的卖出按钮{' '}
+              Click on the Sell icon button{' '}
               {<PaymentIcon color="warning" style={{ alignSelf: 'center' }} />}
-              来进行此交易
+              for an asset on your Assets list to take this deal.
             </ImportantNote>
           )}
           <Details></Details>
@@ -63,7 +65,7 @@ const MarketDialog = () => {
             onClick={handlePass}
             style={{ alignSelf: 'flex-end' }}
           >
-            跳过
+            PASS
           </ActionButton>
         </MainActions>
       </Bottom>
@@ -171,3 +173,5 @@ const Details = styled.div({
 })
 
 //#endregion styled components
+
+//#endregion

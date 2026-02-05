@@ -13,22 +13,28 @@ const OpportunityEstateAutoDetails = () => {
   const { card, playerData, setPlayerData, setActionType } =
     useContext(GameContext)
 
+  //#region Event handlers
   const handleOK = () => {
+    // > Pay if own any real estate
     if (
       playerData.assets.filter((asset) => asset.type === 'estate').length > 0
     ) {
       let newPlayerData = playerData
 
+      // > Take loan if cash is insufficient
       if (card.arg1 > newPlayerData.cash) {
         newPlayerData = takeLoan(newPlayerData, card.arg1)
       } else {
         newPlayerData.cash -= card.arg1
       }
 
+      // > Update the context player context data
       setPlayerData(newPlayerData)
     }
     setActionType('start')
   }
+
+  //#endregion Event handlers
 
   return (
     <>
@@ -43,16 +49,16 @@ const OpportunityEstateAutoDetails = () => {
             {card.type === 'estate' && (
               <Details>
                 <DetailsColumn>
-                  <Note>成本: ${currencyFormatter.format(card.arg1)}</Note>
-                  <Note>现金流: ${currencyFormatter.format(card.arg4)}</Note>
-                  <Note>首付: ${currencyFormatter.format(card.arg2)}</Note>
+                  <Note>Cost: ${currencyFormatter.format(card.arg1)}</Note>
+                  <Note>Cashflow: ${currencyFormatter.format(card.arg4)}</Note>
+                  <Note>Downpay: ${currencyFormatter.format(card.arg2)}</Note>
                 </DetailsColumn>
               </Details>
             )}
             {card.arg1 > playerData.cash && (
-              <ImportantNote>{`（你没有足够的现金。需要贷款 $${currencyFormatter.format(
+              <ImportantNote>{`(You don't have enough cash. Must take a loan of $${currencyFormatter.format(
                 getLoanAmount(card.arg1 - playerData.cash)
-              )}）`}</ImportantNote>
+              )})`}</ImportantNote>
             )}
           </Left>
           <Right>
@@ -62,7 +68,7 @@ const OpportunityEstateAutoDetails = () => {
         <Bottom>
           <MainActions>
             <ActionButton variant="contained" onClick={handleOK}>
-              确定
+              OK
             </ActionButton>
           </MainActions>
         </Bottom>

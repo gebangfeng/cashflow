@@ -22,17 +22,17 @@ const BabyDialog = () => {
       newPlayerData.childNum += 1
       newPlayerData.expenses.push({
         id: newPlayerData.expenses.length + 1,
-        name: `子女抚养费 (${newPlayerData.childNum})`,
+        name: `Child Expenses (${newPlayerData.childNum})`,
         amount: newPlayerData.childNum * newPlayerData.expensePerChild,
       })
     } else if (childNum < 3) {
       let idx = newPlayerData.expenses.findIndex(
-        (e) => e.name === `子女抚养费 (${playerData.childNum})`
+        (e) => e.name === `Child Expenses (${playerData.childNum})`
       )
       newPlayerData.childNum += 1
       newPlayerData.expenses[
         idx
-      ].name = `子女抚养费 (${newPlayerData.childNum})`
+      ].name = `Child Expenses (${newPlayerData.childNum})`
       newPlayerData.expenses[idx].amount =
         newPlayerData.childNum * newPlayerData.expensePerChild
     }
@@ -44,25 +44,25 @@ const BabyDialog = () => {
     <>
       <Header>
         <Title>
-          {playerData.childNum < 3 ? '喜得贵子！' : '已达到孩子数量上限！'}
+          {playerData.childNum < 3 ? 'NEW BABY!' : 'BABY LIMIT REACHED!'}
         </Title>
         <ThumbnailImg src="./assets/images/baby-thumb.png" />
       </Header>
       <Description>
         {playerData.childNum < 3
-          ? '恭喜！你的家庭新添了一个孩子'
-          : '每位玩家最多只能有3个孩子'}
+          ? 'Congratulations! One child has been added to your dependents'
+          : 'Each player cannot have more than 3 child.'}
       </Description>
       {childNum < 3 && (
         <Note style={{ color: colors.red.base }}>
-          子女抚养费将增加 $
+          Child Expenses will be increased by $
           {currencyFormatter.format(playerData.expensePerChild)}
         </Note>
       )}
       <Note style={{ flex: 1 }} />
       <MainActions>
         <ActionButton variant="contained" disableRipple onClick={handleBaby}>
-          确定
+          OK
         </ActionButton>
       </MainActions>
     </>
@@ -122,3 +122,5 @@ const ActionButton = styled(Button)({
 })
 
 //#endregion styled components
+
+//#endregion

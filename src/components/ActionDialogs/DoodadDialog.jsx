@@ -25,19 +25,21 @@ const DoodadDialog = () => {
     <>
       <Header>
         <Title>{doodads.title}</Title>
-        <ThumbnailImg src="./assets/images/doodads-thumb.png" alt="doodads" />
+        <ThumbnailImg src="./assets/images/doodads-thumb.png" />
       </Header>
       <Description>{doodads.description}</Description>
       {doodads.info && <Note>{doodads.info}</Note>}
       {playerData.cash < doodads.cost && (
-        <WarningNote>
-          (你没有足够的现金。你需要贷款 ${getLoanAmount(doodads.cost - playerData.cash)} 来支付。)
-        </WarningNote>
+        <Note
+          style={{ color: colors.red.base }}
+        >{`(You don't have enough cash.You must take a loan of $${getLoanAmount(
+          doodads.cost - playerData.cash
+        )} to afford this.)`}</Note>
       )}
       <Note style={{ flex: 1 }} />
       <MainActions>
         <ActionButton variant="contained" disableRipple onClick={handleDoodads}>
-          支付
+          PAY
         </ActionButton>
       </MainActions>
     </>
@@ -51,67 +53,47 @@ const Header = styled.div({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  alignItems: 'flex-start',
   width: '100%',
-  marginBottom: '0.75rem',
 })
 
 const ThumbnailImg = styled.img({
-  width: '64px',
-  borderRadius: '8px',
+  width: '80px',
 })
 
 const Title = styled.h2({
-  color: colors.pink.base,
+  color: colors.red.base,
   margin: 0,
-  fontSize: '1.375rem',
-  fontWeight: 700,
 })
 
 const Description = styled.span({
-  fontWeight: 500,
+  fontWeight: 700,
   alignSelf: 'flex-start',
-  color: colors.white,
-  marginBottom: '0.5rem',
 })
 
 const Note = styled.span({
-  fontWeight: 400,
+  fontWeight: 700,
   alignSelf: 'flex-start',
-  color: colors.grey.light,
-  fontSize: '0.875rem',
-})
-
-const WarningNote = styled.span({
-  fontWeight: 500,
-  alignSelf: 'flex-start',
-  color: colors.red.base,
-  fontSize: '0.875rem',
-  marginTop: '0.5rem',
 })
 
 const MainActions = styled.div({
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   width: '100%',
-  marginTop: '1rem',
+  '& button': {
+    fontSize: '20px',
+  },
+  '& img': {
+    width: '36px',
+  },
 })
 
 const ActionButton = styled(Button)({
-  fontWeight: 700,
-  padding: '0.75rem 2rem',
-  borderRadius: '8px',
-  backgroundColor: colors.pink.base,
-  color: colors.white,
-  textTransform: 'none',
-  fontSize: '1rem',
-  '&:hover': {
-    backgroundColor: colors.pink.dark,
-  },
+  fontWeight: 800,
+  width: '120px',
   '&:active': {
     opacity: 0.8,
-    transform: 'scale(0.95)',
+    transform: 'scale(0.9)',
   },
 })
 

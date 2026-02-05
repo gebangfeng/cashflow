@@ -28,7 +28,7 @@ const BuyDialog = ({
     <>
       <BuyForm onSubmit={handleSubmit}>
         <div>
-          购买{' '}
+          Buy{' '}
           <StyledInput
             type="text"
             value={amount}
@@ -37,11 +37,11 @@ const BuyDialog = ({
               setAmount(isNaN(num) ? 0 : num)
             }}
           />{' '}
-          份，共 <span>${currencyFormatter.format(amount * cost)}</span>
+          for <span>${currencyFormatter.format(amount * cost)}</span>
         </div>
         <MainActions>
           <ActionButton type="submit" variant="contained" disableRipple>
-            购买
+            BUY
           </ActionButton>
           <ActionButton
             variant="contained"
@@ -51,7 +51,7 @@ const BuyDialog = ({
             }}
             style={{ alignSelf: 'flex-end' }}
           >
-            取消
+            CANCEL
           </ActionButton>
         </MainActions>
       </BuyForm>

@@ -52,46 +52,49 @@ const StartDialog = () => {
   return (
     <>
       <Header>
-        <Title>轮到你了</Title>
+        <Title>{`Player's turn.`}</Title>
       </Header>
       <Description>
-        准备好后，掷骰子开始你的回合
+        When you are ready, roll the dice and take your turn
       </Description>
       <Note>
-        开始之前，先查看你的财务报表。你也可以在此时还贷或借款。
+        Before you start your turn, review your financial statement. You may
+        also use this time to repay liabilities or borrow money.
       </Note>
       <SubActions>
         <ActionButton
           variant="contained"
-          startIcon={<img src="/assets/images/bank.png" alt="borrow" />}
+          color="warning"
+          startIcon={<img src="/assets/images/bank.png" />}
           disableRipple
           onClick={() => {
             setActionType('borrow')
           }}
         >
-          借款
+          BORROW
         </ActionButton>
         <ActionButton
           variant="contained"
-          startIcon={<img src="/assets/images/repay.png" alt="repay" />}
+          color="warning"
+          startIcon={<img src="/assets/images/repay.png" />}
           disableRipple
           onClick={() => {
             setActionType('repay')
           }}
         >
-          还款
+          REPAY
         </ActionButton>
       </SubActions>
       <Note style={{ flex: 1 }} />
       <MainActions>
-        <RollButton
+        <ActionButton
           variant="contained"
-          startIcon={<img src="/assets/images/dice.png" alt="dice" />}
+          startIcon={<img src="/assets/images/dice.png" />}
           disableRipple
           onClick={handleRoll}
         >
-          掷骰子
-        </RollButton>
+          ROLL
+        </ActionButton>
       </MainActions>
     </>
   )
@@ -105,90 +108,63 @@ const Header = styled.div({
   flexDirection: 'row',
   justifyContent: 'space-between',
   width: '100%',
-  marginBottom: '0.75rem',
 })
 
 const Title = styled.h2({
-  color: colors.teal.base,
+  color: colors.red.base,
   margin: 0,
-  fontSize: '1.5rem',
-  fontWeight: 700,
 })
 
 const Description = styled.span({
   fontWeight: 500,
   alignSelf: 'flex-start',
-  color: colors.white,
-  marginBottom: '0.5rem',
 })
 
 const Note = styled.span({
-  fontWeight: 400,
+  fontWeight: 700,
   alignSelf: 'flex-start',
   flex: 1,
-  color: colors.grey.light,
-  fontSize: '0.875rem',
-  marginBottom: '1rem',
 })
 
 const MainActions = styled.div({
   display: 'flex',
   flexDirection: 'row',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   columnGap: '1rem',
   width: '100%',
-  marginTop: '0.5rem',
+  '& button': {
+    fontSize: '20px',
+  },
+  '& img': {
+    width: '36px',
+  },
 })
 
 const SubActions = styled.div({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
-  columnGap: '1rem',
-  margin: '1rem 0',
+  columnGap: '2rem',
+  margin: '1rem',
   width: '100%',
+  '& button': {
+    fontSize: '16px',
+    width: '128px',
+  },
+  '& img': {
+    width: '24px',
+  },
 })
 
 const ActionButton = styled(Button)({
-  fontWeight: 700,
-  padding: '0.625rem 1.25rem',
-  borderRadius: '8px',
-  backgroundColor: colors.orange.base,
-  color: colors.white,
-  textTransform: 'none',
-  fontSize: '0.9rem',
-  '&:hover': {
-    backgroundColor: colors.orange.dark,
-  },
+  fontWeight: 800,
+  width: '120px',
   '&:active': {
     opacity: 0.8,
-    transform: 'scale(0.95)',
-  },
-  '& img': {
-    width: '20px',
-    height: '20px',
-  },
-})
-
-const RollButton = styled(Button)({
-  fontWeight: 700,
-  padding: '0.75rem 2rem',
-  borderRadius: '8px',
-  backgroundColor: colors.teal.base,
-  color: colors.white,
-  textTransform: 'none',
-  fontSize: '1.125rem',
-  '&:hover': {
-    backgroundColor: colors.teal.dark,
-  },
-  '&:active': {
-    opacity: 0.8,
-    transform: 'scale(0.95)',
-  },
-  '& img': {
-    width: '28px',
-    height: '28px',
+    transform: 'scale(0.9)',
   },
 })
 
 //#endregion styled components
+
+//#endregion

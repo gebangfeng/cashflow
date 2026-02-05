@@ -22,13 +22,11 @@ import { mockRepayDialog } from '@/__mocks__'
 const Action = () => {
   const { actionType } = useContext(GameContext)
   const [dialog, setDialog] = useState(null)
-  
   useEffect(() => {
     switch (actionType) {
       case 'start':
       case 'payday':
-        // No dialog for start/payday - player uses fingerprint button to roll
-        setDialog(null)
+        setDialog(<StartDialog />)
         break
       case 'repay':
         setDialog(<RepayDialog {...mockRepayDialog} />)
@@ -71,9 +69,6 @@ const Action = () => {
         break
     }
   }, [actionType])
-  
-  if (!dialog) return null
-  
   return <Container>{dialog}</Container>
 }
 
@@ -81,21 +76,14 @@ export default Action
 
 //#region styled components
 const Container = styled.div({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  zIndex: 100,
-  backgroundColor: colors.midnight.darker,
-  border: `2px solid ${colors.blilet.dark}`,
-  borderRadius: '16px',
-  boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+  alignItems: 'space-between',
+  border: `2px solid ${colors.grey.base}`,
+  borderRadius: '10px',
+  boxShadow: 'rgba(12,12,12, 0.8) 4px 4px 4px',
   display: 'flex',
   flexDirection: 'column',
-  padding: '1.5rem',
-  minWidth: '350px',
-  maxWidth: '450px',
-  maxHeight: '80vh',
-  overflowY: 'auto',
+  height: '90%',
+  padding: '1.25rem 2rem',
+  width: '100%',
 })
 //#endregion styled components
