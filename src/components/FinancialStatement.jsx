@@ -11,6 +11,7 @@ const FinancialStatement = () => {
   const totalIncome = getTotalIncomeAmount(playerData)
   const freedomProgress = totalExpense > 0 ? Math.min((passiveIncome / totalExpense) * 100, 100) : 0
   const cashflow = totalIncome - totalExpense
+  const bankLoan = playerData.liabilities.find(l => l.type === 'bank')?.amount || 0
 
   return (
     <Container>
@@ -118,11 +119,15 @@ const FinancialStatement = () => {
       {/* Bottom Buttons */}
       <BottomButtons>
         <ActionButton variant="report">
-          <ButtonIcon>📊</ButtonIcon>
+          <ButtonIconWrapper>
+            <ReportIcon />
+          </ButtonIconWrapper>
           报表
         </ActionButton>
         <ActionButton variant="bank" onClick={() => setActionType('borrow')}>
-          <ButtonIcon>🏦</ButtonIcon>
+          <ButtonIconWrapper>
+            <BankIcon />
+          </ButtonIconWrapper>
           银行
         </ActionButton>
       </BottomButtons>
@@ -146,19 +151,19 @@ const FinancialStatement = () => {
           </StatItem>
           <StatItem>
             <StatLabel>银行贷款</StatLabel>
-            <StatValue>{currencyFormatter.format(playerData.liabilities.find(l => l.type === 'bank')?.amount || 0)}</StatValue>
+            <StatValue>{currencyFormatter.format(bankLoan)}</StatValue>
           </StatItem>
         </StatRow>
         <StatDivider />
-        <StatRow>
+        <StatRow highlight>
           <StatItem>
-            <StatIcon color={colors.teal.base}>≈</StatIcon>
-            <StatLabel>月现金流</StatLabel>
-            <StatValue highlight>{currencyFormatter.format(cashflow)}</StatValue>
+            <StatIcon color="#00BCD4">≈</StatIcon>
+            <StatLabel highlight>月现金流</StatLabel>
+            <StatValue gold>{currencyFormatter.format(cashflow)}</StatValue>
           </StatItem>
           <StatItem>
-            <StatIcon color={colors.blue.light}>◉</StatIcon>
-            <StatLabel>现金</StatLabel>
+            <StatIcon color="#42A5F5">◉</StatIcon>
+            <StatLabel highlight>现金</StatLabel>
             <StatValue>{currencyFormatter.format(playerData.cash)}</StatValue>
           </StatItem>
         </StatRow>
@@ -169,13 +174,52 @@ const FinancialStatement = () => {
 
 export default FinancialStatement
 
+// Icons
+const SettingsIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round">
+    <circle cx="12" cy="12" r="3" />
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+  </svg>
+)
+
+const CalendarIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8" y1="2" x2="8" y2="6"/>
+    <line x1="3" y1="10" x2="21" y2="10"/>
+  </svg>
+)
+
+const ReportIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+    <line x1="3" y1="9" x2="21" y2="9"/>
+    <line x1="9" y1="21" x2="9" y2="9"/>
+  </svg>
+)
+
+const BankIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M3 21h18"/>
+    <path d="M3 10h18"/>
+    <path d="M5 6l7-3 7 3"/>
+    <path d="M4 10v11"/>
+    <path d="M20 10v11"/>
+    <path d="M8 14v3"/>
+    <path d="M12 14v3"/>
+    <path d="M16 14v3"/>
+  </svg>
+)
+
 //#region styled components
 const Container = styled.div({
   display: 'flex',
   flexDirection: 'column',
   height: '100%',
   padding: '0.75rem',
-  gap: '0.625rem',
+  gap: '0.5rem',
+  backgroundColor: '#1E2642',
 })
 
 const Header = styled.div({
@@ -187,46 +231,31 @@ const Header = styled.div({
 const SettingsButton = styled.button({
   width: '44px',
   height: '44px',
-  borderRadius: '10px',
-  backgroundColor: colors.blilet.darker,
-  border: `2px solid ${colors.blilet.dark}`,
+  borderRadius: '12px',
+  backgroundColor: '#252D4A',
+  border: `2px solid #3D4B6A`,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
   transition: 'all 0.2s',
   '&:hover': {
-    backgroundColor: colors.blilet.dark,
+    backgroundColor: '#2D3654',
+    borderColor: '#4D5B7A',
   },
 })
-
-const SettingsIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={colors.grey.light} strokeWidth="2">
-    <circle cx="12" cy="12" r="3" />
-    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-  </svg>
-)
 
 const AgeBadge = styled.div({
   display: 'flex',
   alignItems: 'center',
   gap: '0.5rem',
-  backgroundColor: colors.teal.base,
-  color: colors.white,
-  padding: '0.5rem 0.875rem',
+  backgroundColor: '#00BCD4',
+  color: '#fff',
+  padding: '0.625rem 1rem',
   borderRadius: '8px',
   fontWeight: 600,
-  fontSize: '0.85rem',
+  fontSize: '0.9rem',
 })
-
-const CalendarIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" strokeWidth="2"/>
-    <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" strokeWidth="2"/>
-    <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" strokeWidth="2"/>
-    <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2"/>
-  </svg>
-)
 
 const ProfileSection = styled.div({
   display: 'flex',
@@ -235,12 +264,12 @@ const ProfileSection = styled.div({
 })
 
 const Avatar = styled.div({
-  width: '52px',
-  height: '52px',
-  borderRadius: '10px',
+  width: '56px',
+  height: '56px',
+  borderRadius: '12px',
   overflow: 'hidden',
-  border: `2px solid ${colors.purple.base}`,
-  backgroundColor: colors.blilet.darker,
+  border: '2px solid #7C3AED',
+  backgroundColor: '#252D4A',
 })
 
 const AvatarImage = styled.img({
@@ -252,22 +281,23 @@ const AvatarImage = styled.img({
 const PlayerInfo = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.25rem',
+  gap: '0.375rem',
 })
 
 const PlayerName = styled.span({
-  color: colors.teal.light,
-  fontSize: '1rem',
+  color: '#4DD0E1',
+  fontSize: '1.1rem',
   fontWeight: 600,
 })
 
 const ProfessionBadge = styled.span({
-  backgroundColor: colors.purple.dark,
-  color: colors.white,
-  padding: '0.25rem 0.625rem',
+  backgroundColor: '#7C3AED',
+  color: '#fff',
+  padding: '0.3rem 0.75rem',
   borderRadius: '6px',
-  fontSize: '0.75rem',
+  fontSize: '0.8rem',
   fontWeight: 500,
+  display: 'inline-block',
 })
 
 const FreedomSection = styled.div({
@@ -283,33 +313,33 @@ const FreedomHeader = styled.div({
 })
 
 const FreedomLabel = styled.span({
-  color: colors.grey.light,
+  color: '#9CA3AF',
   fontSize: '0.8rem',
 })
 
 const FreedomValue = styled.span({
-  color: colors.grey.light,
+  color: '#9CA3AF',
   fontSize: '0.8rem',
 })
 
 const ProgressBar = styled.div({
-  height: '5px',
-  backgroundColor: colors.blilet.darker,
+  height: '6px',
+  backgroundColor: '#252D4A',
   borderRadius: '3px',
   overflow: 'hidden',
 })
 
 const ProgressFill = styled.div({
   height: '100%',
-  backgroundColor: colors.purple.base,
+  backgroundColor: '#7C3AED',
   borderRadius: '3px',
   transition: 'width 0.3s ease',
 })
 
 const Section = styled.div(({ small }) => ({
-  backgroundColor: colors.blilet.darker,
+  backgroundColor: '#252D4A',
   borderRadius: '10px',
-  border: `1px solid ${colors.blilet.dark}`,
+  border: '1px solid #3D4B6A',
   overflow: 'hidden',
   ...(small && { minHeight: 'auto' }),
 }))
@@ -318,21 +348,21 @@ const SectionHeader = styled.div({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  padding: '0.5rem 0.75rem',
-  backgroundColor: colors.blilet.dark,
-  color: colors.white,
+  padding: '0.5rem 0.875rem',
+  backgroundColor: '#3D4B6A',
+  color: '#fff',
   fontSize: '0.85rem',
   fontWeight: 600,
 })
 
 const SectionContent = styled.div({
-  padding: '0.375rem 0.75rem',
+  padding: '0.5rem 0.875rem',
 })
 
 const ChildrenContent = styled.div({
-  padding: '0.375rem 0.75rem',
+  padding: '0.5rem 0.875rem',
   display: 'flex',
-  gap: '0.25rem',
+  gap: '0.375rem',
 })
 
 const ChildIcon = styled.span({
@@ -340,40 +370,40 @@ const ChildIcon = styled.span({
 })
 
 const EmptyText = styled.span({
-  color: colors.grey.dark,
+  color: '#6B7280',
   fontSize: '0.8rem',
 })
 
 const SkillList = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.125rem',
+  gap: '0.2rem',
 })
 
 const SkillItem = styled.div(({ inactive }) => ({
-  color: inactive ? colors.grey.dark : colors.teal.light,
-  fontSize: '0.75rem',
-  padding: '0.125rem 0',
+  color: inactive ? '#6B7280' : '#4DD0E1',
+  fontSize: '0.8rem',
+  padding: '0.15rem 0',
 }))
 
 const InvestmentList = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.125rem',
+  gap: '0.2rem',
 })
 
 const InvestmentItem = styled.div(({ hasValue }) => ({
   display: 'flex',
   alignItems: 'center',
-  gap: '0.375rem',
-  color: hasValue ? colors.teal.light : colors.grey.dark,
-  fontSize: '0.8rem',
-  padding: '0.125rem 0',
+  gap: '0.5rem',
+  color: hasValue ? '#4DD0E1' : '#6B7280',
+  fontSize: '0.85rem',
+  padding: '0.15rem 0',
 }))
 
 const InvestmentDash = styled.span({
-  color: colors.yellow.base,
-  fontSize: '0.7rem',
+  color: '#FBBF24',
+  fontSize: '0.75rem',
 })
 
 const BottomButtons = styled.div({
@@ -387,43 +417,49 @@ const ActionButton = styled.button(({ variant }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: '0.5rem',
-  padding: '0.75rem',
-  borderRadius: '10px',
+  gap: '0.625rem',
+  padding: '0.875rem',
+  borderRadius: '12px',
   border: 'none',
-  fontSize: '0.9rem',
+  fontSize: '1rem',
   fontWeight: 700,
   cursor: 'pointer',
   transition: 'all 0.2s',
-  backgroundColor: colors.orange.base,
-  color: colors.white,
+  backgroundColor: '#F59E0B',
+  color: '#fff',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
   '&:hover': {
-    transform: 'translateY(-1px)',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+    transform: 'translateY(-2px)',
+    boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
   },
   '&:active': {
     transform: 'translateY(0)',
   },
 }))
 
-const ButtonIcon = styled.span({
-  fontSize: '1.125rem',
+const ButtonIconWrapper = styled.span({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 })
 
 const BottomStats = styled.div({
-  backgroundColor: colors.midnight.darker,
-  borderRadius: '8px',
-  padding: '0.5rem 0.625rem',
+  backgroundColor: '#161D33',
+  borderRadius: '10px',
+  padding: '0.625rem 0.75rem',
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.25rem',
+  gap: '0.375rem',
 })
 
-const StatRow = styled.div({
+const StatRow = styled.div(({ highlight }) => ({
   display: 'flex',
   justifyContent: 'space-between',
-  gap: '0.5rem',
-})
+  gap: '0.75rem',
+  ...(highlight && {
+    paddingTop: '0.25rem',
+  }),
+}))
 
 const StatItem = styled.div({
   display: 'flex',
@@ -432,26 +468,27 @@ const StatItem = styled.div({
   flex: 1,
 })
 
-const StatLabel = styled.span({
-  color: colors.grey.base,
-  fontSize: '0.7rem',
-})
-
-const StatValue = styled.span(({ highlight }) => ({
-  color: highlight ? colors.yellow.base : colors.white,
+const StatLabel = styled.span(({ highlight }) => ({
+  color: highlight ? '#D1D5DB' : '#9CA3AF',
   fontSize: '0.75rem',
+}))
+
+const StatValue = styled.span(({ highlight, gold }) => ({
+  color: gold ? '#FBBF24' : (highlight ? '#FBBF24' : '#fff'),
+  fontSize: '0.8rem',
   fontWeight: 600,
   marginLeft: 'auto',
 }))
 
 const StatIcon = styled.span(({ color }) => ({
   color: color,
-  fontSize: '0.8rem',
+  fontSize: '0.85rem',
+  fontWeight: 700,
 }))
 
 const StatDivider = styled.div({
   height: '1px',
-  backgroundColor: colors.blilet.dark,
+  backgroundColor: '#3D4B6A',
   margin: '0.25rem 0',
 })
 //#endregion styled components

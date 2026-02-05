@@ -1,12 +1,36 @@
 import styled from '@emotion/styled'
 import { colors } from '@/styles'
 import { useContext, useState } from 'react'
-import { GameContext, rollDice, playSFX } from '@/utils'
+import { GameContext, rollDice, playSFX, BOARD_SLOTS } from '@/utils'
 
 const Board = () => {
   const { currentSlot, setCurrentSlot, setPrevSlot, setActionType, playerData } = useContext(GameContext)
   const [diceValues, setDiceValues] = useState([0, 0, 0])
   const [isRolling, setIsRolling] = useState(false)
+
+  // Get visible slots around current position
+  const getVisibleSlots = () => {
+    const slots = []
+    // Show 5 slots: 2 ahead, current, 2 behind (on the road)
+    for (let i = -2; i <= 2; i++) {
+      const slotIndex = (currentSlot + i + 24) % 24
+      slots.push({ ...BOARD_SLOTS[slotIndex], offset: i })
+    }
+    return slots
+  }
+
+  const getSlotDisplay = (slot) => {
+    const slotConfig = {
+      'Payday': { label: '发薪日', color: 'green', icon: '💰' },
+      'Opportunity': { label: '机会', color: 'cyan', icon: '?' },
+      'Market': { label: '市场风云', color: 'blue', icon: '📈' },
+      'Doodads': { label: '生活小插曲', color: 'pink', icon: '🎵' },
+      'Baby': { label: '添丁', color: 'yellow', icon: '👶' },
+      'Downsized': { label: '失业', color: 'red', icon: '📉' },
+      'Charity': { label: '慈善', color: 'purple', icon: '❤️' },
+    }
+    return slotConfig[slot.name] || { label: slot.name, color: 'grey', icon: '?' }
+  }
 
   const handleRoll = () => {
     if (isRolling) return
@@ -38,25 +62,23 @@ const Board = () => {
         
         // Set action based on slot type
         setTimeout(() => {
-          const slotTypes = ['payday', 'opportunity', 'market', 'opportunity', 'doodads', 'opportunity', 
-                           'baby', 'opportunity', 'payday', 'opportunity', 'market', 'opportunity',
-                           'doodads', 'opportunity', 'downsized', 'opportunity', 'payday', 'opportunity',
-                           'market', 'opportunity', 'doodads', 'opportunity', 'charity', 'opportunity']
-          setActionType(slotTypes[newSlot])
+          setActionType(BOARD_SLOTS[newSlot].type)
         }, 500)
       }
     }, 100)
   }
 
+  const visibleSlots = getVisibleSlots()
+
   return (
     <BoardContainer>
-      {/* Road with vertical text */}
+      {/* Road with slots */}
       <RoadSection>
         <RoadBackground>
           {/* Left lane markings */}
-          <LaneMarking style={{ left: '25%' }} />
+          <LaneMarking style={{ left: '20%' }} />
           {/* Right lane markings */}
-          <LaneMarking style={{ left: '75%' }} />
+          <LaneMarking style={{ left: '80%' }} />
           
           {/* Vertical road text */}
           <RoadText>
@@ -67,32 +89,40 @@ const Board = () => {
             <RoadChar>路</RoadChar>
           </RoadText>
 
-          {/* Event cards on road */}
-          <EventCard color="cyan" style={{ top: '5%', right: '-60%' }}>
-            <EventIcon>?</EventIcon>
-            <EventLabel>机会</EventLabel>
-          </EventCard>
-
-          <EventCard color="pink" style={{ top: '25%', right: '-60%' }}>
-            <EventIcon>🎵</EventIcon>
-            <EventLabel>生活小插曲</EventLabel>
-          </EventCard>
-
-          <EventCard color="cyan" style={{ top: '50%', right: '-60%' }}>
-            <EventIcon>?</EventIcon>
-            <EventLabel>机会</EventLabel>
-          </EventCard>
+          {/* Slot cards on road */}
+          {visibleSlots.map((slot, index) => {
+            const config = getSlotDisplay(slot)
+            const isCurrentSlot = slot.offset === 0
+            const yPos = 10 + index * 18 // Distribute vertically
+            const xPos = index % 2 === 0 ? 'right' : 'left' // Alternate sides
+            
+            return (
+              <SlotCard 
+                key={`${slot.id}-${index}`}
+                color={config.color}
+                isActive={isCurrentSlot}
+                style={{ 
+                  top: `${yPos}%`,
+                  [xPos]: xPos === 'right' ? '-75%' : '-75%',
+                }}
+              >
+                <SlotIcon isActive={isCurrentSlot}>{config.icon}</SlotIcon>
+                <SlotLabel>{config.label}</SlotLabel>
+              </SlotCard>
+            )
+          })}
 
           {/* Player character */}
-          <PlayerCharacter style={{ top: '60%' }}>
+          <PlayerCharacter>
             <CharacterBody>
-              <CharacterHead />
+              <CharacterHat />
+              <CharacterFace />
               <CharacterTorso />
             </CharacterBody>
           </PlayerCharacter>
 
           {/* Money sign */}
-          <MoneySign style={{ top: '58%', right: '-40%' }}>
+          <MoneySign>
             钱
           </MoneySign>
         </RoadBackground>
@@ -108,7 +138,7 @@ const Board = () => {
           ))}
         </DiceContainer>
         
-        {/* Roll Button */}
+        {/* Roll Button - Fingerprint */}
         <RollButton onClick={handleRoll} disabled={isRolling}>
           <FingerprintIcon />
         </RollButton>
@@ -116,7 +146,7 @@ const Board = () => {
 
       {/* Music toggle */}
       <MusicToggle>
-        <MusicIcon>🎵</MusicIcon>
+        <MusicNote>♪</MusicNote>
       </MusicToggle>
     </BoardContainer>
   )
@@ -129,10 +159,12 @@ const BoardContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'space-between',
   width: '100%',
   height: '100%',
   position: 'relative',
+  padding: '1rem',
+  boxSizing: 'border-box',
 })
 
 const RoadSection = styled.div({
@@ -142,31 +174,33 @@ const RoadSection = styled.div({
   justifyContent: 'center',
   width: '100%',
   position: 'relative',
+  overflow: 'visible',
 })
 
 const RoadBackground = styled.div({
-  width: '120px',
-  height: '450px',
-  backgroundColor: colors.midnight.base,
-  borderRadius: '60px',
+  width: '100px',
+  height: '85%',
+  maxHeight: '500px',
+  backgroundColor: '#3D4B6A',
+  borderRadius: '50px',
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  boxShadow: 'inset 0 0 20px rgba(0,0,0,0.5)',
+  boxShadow: 'inset 0 0 30px rgba(0,0,0,0.4)',
 })
 
 const LaneMarking = styled.div({
   position: 'absolute',
-  top: '10%',
-  bottom: '10%',
-  width: '4px',
+  top: '8%',
+  bottom: '8%',
+  width: '3px',
   background: `repeating-linear-gradient(
     to bottom,
-    ${colors.yellow.dark} 0px,
-    ${colors.yellow.dark} 30px,
-    transparent 30px,
-    transparent 50px
+    #C4A574 0px,
+    #C4A574 25px,
+    transparent 25px,
+    transparent 45px
   )`,
 })
 
@@ -174,57 +208,77 @@ const RoadText = styled.div({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '1.5rem',
+  gap: '1.25rem',
   zIndex: 1,
 })
 
 const RoadChar = styled.span({
-  color: colors.blilet.light,
-  fontSize: '2rem',
+  color: '#5A6B8A',
+  fontSize: '1.75rem',
   fontWeight: 700,
-  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
 })
 
-const EventCard = styled.div(({ color }) => ({
-  position: 'absolute',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-  padding: '0.625rem 1.25rem',
-  borderRadius: '8px',
-  backgroundColor: color === 'cyan' ? colors.teal.base : colors.pink.base,
-  color: colors.white,
-  fontWeight: 600,
-  fontSize: '0.9rem',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-  cursor: 'pointer',
-  transition: 'transform 0.2s',
-  whiteSpace: 'nowrap',
-  '&:hover': {
-    transform: 'scale(1.05)',
-  },
-}))
+const SlotCard = styled.div(({ color, isActive }) => {
+  const colorMap = {
+    cyan: { bg: '#00BCD4', border: '#00ACC1' },
+    pink: { bg: '#E91E63', border: '#D81B60' },
+    green: { bg: '#4CAF50', border: '#43A047' },
+    blue: { bg: '#2196F3', border: '#1E88E5' },
+    yellow: { bg: '#FFC107', border: '#FFB300' },
+    red: { bg: '#F44336', border: '#E53935' },
+    purple: { bg: '#9C27B0', border: '#8E24AA' },
+    grey: { bg: '#607D8B', border: '#546E7A' },
+  }
+  const colors = colorMap[color] || colorMap.grey
+  
+  return {
+    position: 'absolute',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '0.5rem 1rem',
+    borderRadius: '8px',
+    backgroundColor: colors.bg,
+    border: `2px solid ${isActive ? '#FFD700' : colors.border}`,
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: '0.85rem',
+    boxShadow: isActive 
+      ? '0 0 15px rgba(255, 215, 0, 0.6), 0 4px 12px rgba(0,0,0,0.3)' 
+      : '0 4px 12px rgba(0,0,0,0.3)',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    whiteSpace: 'nowrap',
+    zIndex: isActive ? 10 : 1,
+    transform: isActive ? 'scale(1.1)' : 'scale(1)',
+    '&:hover': {
+      transform: isActive ? 'scale(1.15)' : 'scale(1.05)',
+    },
+  }
+})
 
-const EventIcon = styled.span({
-  width: '20px',
-  height: '20px',
+const SlotIcon = styled.span(({ isActive }) => ({
+  width: '22px',
+  height: '22px',
   borderRadius: '50%',
-  backgroundColor: 'rgba(255,255,255,0.3)',
+  backgroundColor: isActive ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.25)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   fontSize: '0.75rem',
-})
+}))
 
-const EventLabel = styled.span({
-  fontSize: '0.9rem',
+const SlotLabel = styled.span({
+  fontSize: '0.85rem',
 })
 
 const PlayerCharacter = styled.div({
   position: 'absolute',
+  top: '55%',
   left: '50%',
-  transform: 'translateX(-50%)',
-  zIndex: 2,
+  transform: 'translate(-50%, -50%)',
+  zIndex: 5,
 })
 
 const CharacterBody = styled.div({
@@ -233,42 +287,67 @@ const CharacterBody = styled.div({
   alignItems: 'center',
 })
 
-const CharacterHead = styled.div({
-  width: '40px',
-  height: '40px',
-  borderRadius: '50%',
-  backgroundColor: colors.purple.dark,
+const CharacterHat = styled.div({
+  width: '35px',
+  height: '12px',
+  backgroundColor: '#6B21A8',
+  borderRadius: '50% 50% 0 0',
   position: 'relative',
   '&::after': {
     content: '""',
     position: 'absolute',
-    bottom: '-5px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    width: '30px',
-    height: '20px',
-    backgroundColor: colors.white,
-    borderRadius: '50%',
+    bottom: '-3px',
+    left: '-5px',
+    right: '-5px',
+    height: '6px',
+    backgroundColor: '#6B21A8',
+    borderRadius: '2px',
   },
 })
 
+const CharacterFace = styled.div({
+  width: '38px',
+  height: '38px',
+  borderRadius: '50%',
+  backgroundColor: '#F5F5F5',
+  marginTop: '2px',
+  position: 'relative',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+})
+
 const CharacterTorso = styled.div({
-  width: '50px',
-  height: '35px',
-  backgroundColor: colors.purple.base,
-  borderRadius: '25px 25px 0 0',
-  marginTop: '-10px',
+  width: '45px',
+  height: '30px',
+  backgroundColor: '#7C3AED',
+  borderRadius: '22px 22px 0 0',
+  marginTop: '-8px',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
 })
 
 const MoneySign = styled.div({
   position: 'absolute',
-  backgroundColor: colors.yellow.base,
-  color: colors.black.base,
-  padding: '0.375rem 0.75rem',
+  top: '52%',
+  right: '-35%',
+  backgroundColor: '#FBBF24',
+  color: '#1F2937',
+  padding: '0.35rem 0.65rem',
   borderRadius: '4px',
   fontWeight: 700,
-  fontSize: '0.9rem',
+  fontSize: '0.85rem',
   boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+  zIndex: 3,
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    left: '-8px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    width: '0',
+    height: '0',
+    borderTop: '6px solid transparent',
+    borderBottom: '6px solid transparent',
+    borderRight: '8px solid #FBBF24',
+  },
 })
 
 const DiceSection = styled.div({
@@ -276,7 +355,7 @@ const DiceSection = styled.div({
   flexDirection: 'column',
   alignItems: 'center',
   gap: '1rem',
-  paddingBottom: '1rem',
+  paddingBottom: '0.5rem',
 })
 
 const DiceContainer = styled.div({
@@ -285,82 +364,87 @@ const DiceContainer = styled.div({
 })
 
 const Dice = styled.div(({ rolling }) => ({
-  width: '60px',
-  height: '70px',
-  backgroundColor: colors.black.base,
+  width: '55px',
+  height: '65px',
+  backgroundColor: '#0F0F0F',
   borderRadius: '8px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '2rem',
+  fontSize: '1.75rem',
   fontWeight: 700,
-  color: colors.white,
-  border: `2px solid ${colors.black.lighter}`,
+  color: '#fff',
+  border: '2px solid #2A2A2A',
+  fontFamily: 'monospace',
   animation: rolling ? 'shake 0.1s infinite' : 'none',
   '@keyframes shake': {
-    '0%, 100%': { transform: 'rotate(-2deg)' },
-    '50%': { transform: 'rotate(2deg)' },
+    '0%, 100%': { transform: 'rotate(-3deg)' },
+    '50%': { transform: 'rotate(3deg)' },
   },
 }))
 
 const RollButton = styled.button({
-  width: '80px',
-  height: '80px',
+  width: '75px',
+  height: '75px',
   borderRadius: '50%',
-  backgroundColor: colors.black.base,
-  border: `3px solid ${colors.grey.dark}`,
+  backgroundColor: '#1A1A1A',
+  border: '3px solid #3A3A3A',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
-  transition: 'all 0.2s',
+  transition: 'all 0.2s ease',
   '&:hover': {
-    backgroundColor: colors.black.light,
+    backgroundColor: '#2A2A2A',
     transform: 'scale(1.05)',
+    borderColor: '#4A4A4A',
   },
   '&:active': {
     transform: 'scale(0.95)',
   },
   '&:disabled': {
-    opacity: 0.6,
+    opacity: 0.5,
     cursor: 'not-allowed',
   },
 })
 
 const FingerprintIcon = () => (
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={colors.grey.light} strokeWidth="2">
-    <path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4" />
-    <path d="M5 19.5C5.5 18 6 15 6 12c0-.7.12-1.37.34-2" />
-    <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
+  <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
-    <path d="M8.65 22c.21-.66.45-1.32.57-2" />
     <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+    <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
+    <path d="M2 12a10 10 0 0 1 18-6" />
     <path d="M2 16h.01" />
     <path d="M21.8 16c.2-2 .131-5.354 0-6" />
-    <path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2" />
+    <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2" />
+    <path d="M8.65 22c.21-.66.45-1.32.57-2" />
+    <path d="M9 6.8a6 6 0 0 1 9 5.2v2" />
   </svg>
 )
 
 const MusicToggle = styled.button({
   position: 'absolute',
-  bottom: '20px',
-  right: '20px',
-  width: '40px',
-  height: '40px',
+  bottom: '15px',
+  right: '15px',
+  width: '36px',
+  height: '36px',
   borderRadius: '50%',
-  backgroundColor: colors.teal.base,
+  backgroundColor: '#00BCD4',
   border: 'none',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
-  transition: 'transform 0.2s',
+  transition: 'all 0.2s ease',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
   '&:hover': {
     transform: 'scale(1.1)',
+    backgroundColor: '#00ACC1',
   },
 })
 
-const MusicIcon = styled.span({
-  fontSize: '1.25rem',
+const MusicNote = styled.span({
+  fontSize: '1.1rem',
+  color: '#fff',
 })
 //#endregion styled components
