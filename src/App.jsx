@@ -26,12 +26,10 @@ function App() {
       </Header>
 
       {/* Main Content */}
-      <MainContent>
+      <MainContent isGame={activeTab === 'game'}>
         {activeTab === 'game' ? (
           <GameSection>
-            <BoardArea>
-              <Board />
-            </BoardArea>
+            <Board />
           </GameSection>
         ) : (
           <StatementSection>
@@ -145,23 +143,17 @@ const HeaderBadge = styled.div({
   },
 })
 
-const MainContent = styled.main({
+const MainContent = styled.main(({ isGame }) => ({
   flex: 1,
-  overflow: 'auto',
-  paddingBottom: '70px',
-})
+  overflow: isGame ? 'hidden' : 'auto',
+  paddingBottom: isGame ? '60px' : '70px',
+}))
 
 const GameSection = styled.div({
   display: 'flex',
   flexDirection: 'column',
   height: '100%',
-  padding: '16px',
-})
-
-const BoardArea = styled.div({
-  flex: 1,
-  display: 'flex',
-  justifyContent: 'center',
+  width: '100%',
 })
 
 const StatementSection = styled.div({

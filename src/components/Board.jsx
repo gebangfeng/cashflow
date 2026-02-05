@@ -23,7 +23,7 @@ const Board = () => {
   // Get visible slots (current position and nearby)
   const getVisibleSlots = () => {
     const slots = []
-    for (let i = -2; i <= 3; i++) {
+    for (let i = -3; i <= 4; i++) {
       const idx = (currentSlot + i + 24) % 24
       slots.push({ ...BOARD_SLOTS[idx], offset: i })
     }
@@ -75,57 +75,54 @@ const Board = () => {
 
   return (
     <BoardContainer>
-      {/* Road Area */}
-      <RoadSection>
-        {/* Road Title */}
-        <RoadTitle>
-          {'财务自由路'.split('').map((char, i) => (
-            <RoadChar key={i}>{char}</RoadChar>
-          ))}
-        </RoadTitle>
+      {/* Road Title */}
+      <RoadTitle>
+        {'财务自由路'.split('').map((char, i) => (
+          <RoadChar key={i}>{char}</RoadChar>
+        ))}
+      </RoadTitle>
 
-        {/* Lane markings */}
-        <LaneMarkings>
-          <LaneLine side="left" />
-          <LaneLine side="right" />
-        </LaneMarkings>
+      {/* Lane markings */}
+      <LaneMarkings>
+        <LaneLine side="left" />
+        <LaneLine side="right" />
+      </LaneMarkings>
 
-        {/* Player Character */}
-        <PlayerCharacter>
-          <CharacterBody>
-            <CharacterHead />
-            <CharacterTorso />
-          </CharacterBody>
-          {showDice && (
-            <DiceDisplay rolling={isRolling}>
-              {diceValue}
-            </DiceDisplay>
-          )}
-        </PlayerCharacter>
+      {/* Player Character */}
+      <PlayerCharacter>
+        <CharacterBody>
+          <CharacterHead />
+          <CharacterTorso />
+        </CharacterBody>
+        {showDice && (
+          <DiceDisplay rolling={isRolling}>
+            {diceValue}
+          </DiceDisplay>
+        )}
+      </PlayerCharacter>
 
-        {/* Slots along the road */}
-        <SlotsContainer>
-          {visibleSlots.map((slot, index) => {
-            const config = SLOT_CONFIG[slot.type] || SLOT_CONFIG.opportunity
-            const isCurrent = slot.offset === 0
-            return (
-              <SlotCard 
-                key={`${slot.id}-${index}`} 
-                color={config.color}
-                isCurrent={isCurrent}
-                offset={slot.offset}
-              >
-                <SlotIcon>{config.icon}</SlotIcon>
-                <SlotName>{config.name}</SlotName>
-                {isCurrent && <CurrentIndicator />}
-              </SlotCard>
-            )
-          })}
-        </SlotsContainer>
-      </RoadSection>
+      {/* Slots along the road */}
+      <SlotsContainer>
+        {visibleSlots.map((slot, index) => {
+          const config = SLOT_CONFIG[slot.type] || SLOT_CONFIG.opportunity
+          const isCurrent = slot.offset === 0
+          return (
+            <SlotCard 
+              key={`${slot.id}-${index}`} 
+              color={config.color}
+              isCurrent={isCurrent}
+              offset={slot.offset}
+            >
+              <SlotIcon>{config.icon}</SlotIcon>
+              <SlotName>{config.name}</SlotName>
+              {isCurrent && <CurrentIndicator />}
+            </SlotCard>
+          )
+        })}
+      </SlotsContainer>
 
-      {/* Roll Button */}
-      <RollSection>
+      {/* Roll Button - Now on the board */}
+      <RollButtonContainer>
         <RollButton onClick={handleRoll} disabled={isRolling}>
           <RollButtonInner>
             <FingerprintIcon viewBox="0 0 24 24">
@@ -137,7 +134,7 @@ const Board = () => {
           </RollButtonInner>
           <RollLabel>{isRolling ? '掷骰中...' : '点击掷骰'}</RollLabel>
         </RollButton>
-      </RollSection>
+      </RollButtonContainer>
     </BoardContainer>
   )
 }
@@ -157,18 +154,13 @@ const shake = keyframes`
 `
 
 const BoardContainer = styled.div({
+  position: 'relative',
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
-  gap: '16px',
-})
-
-const RoadSection = styled.div({
-  position: 'relative',
+  height: '100%',
+  minHeight: 'calc(100vh - 120px)',
   background: 'linear-gradient(180deg, #3D4B6A 0%, #2A3550 100%)',
-  borderRadius: '16px',
-  padding: '20px 16px',
-  minHeight: '360px',
   overflow: 'hidden',
 })
 
@@ -179,22 +171,23 @@ const RoadTitle = styled.div({
   transform: 'translateY(-50%)',
   display: 'flex',
   flexDirection: 'column',
-  gap: '12px',
+  gap: '16px',
   zIndex: 1,
 })
 
 const RoadChar = styled.span({
-  color: 'rgba(255, 255, 255, 0.15)',
-  fontSize: '28px',
+  color: 'rgba(255, 255, 255, 0.12)',
+  fontSize: '32px',
   fontWeight: 700,
+  letterSpacing: '2px',
 })
 
 const LaneMarkings = styled.div({
   position: 'absolute',
-  left: '70px',
+  left: '80px',
   top: 0,
   bottom: 0,
-  width: '60px',
+  width: '80px',
 })
 
 const LaneLine = styled.div(({ side }) => ({
@@ -206,20 +199,20 @@ const LaneLine = styled.div(({ side }) => ({
   background: `repeating-linear-gradient(
     to bottom,
     #C4A574 0px,
-    #C4A574 20px,
-    transparent 20px,
-    transparent 40px
+    #C4A574 24px,
+    transparent 24px,
+    transparent 48px
   )`,
 }))
 
 const PlayerCharacter = styled.div({
   position: 'absolute',
-  left: '80px',
+  left: '100px',
   top: '50%',
   transform: 'translateY(-50%)',
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
+  gap: '12px',
   zIndex: 10,
 })
 
@@ -230,132 +223,137 @@ const CharacterBody = styled.div({
 })
 
 const CharacterHead = styled.div({
-  width: '28px',
-  height: '28px',
+  width: '36px',
+  height: '36px',
   borderRadius: '50%',
   background: 'linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%)',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
 })
 
 const CharacterTorso = styled.div({
-  width: '36px',
-  height: '24px',
+  width: '44px',
+  height: '30px',
   background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
-  borderRadius: '18px 18px 0 0',
-  marginTop: '-8px',
+  borderRadius: '22px 22px 0 0',
+  marginTop: '-10px',
 })
 
 const DiceDisplay = styled.div(({ rolling }) => ({
   background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
   color: '#fff',
-  width: '36px',
-  height: '36px',
-  borderRadius: '8px',
+  width: '44px',
+  height: '44px',
+  borderRadius: '10px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '20px',
+  fontSize: '24px',
   fontWeight: 700,
-  boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+  boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
   animation: rolling ? `${shake} 0.15s infinite` : 'none',
 }))
 
 const SlotsContainer = styled.div({
   position: 'absolute',
-  right: '16px',
+  right: '20px',
   top: '50%',
   transform: 'translateY(-50%)',
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px',
-  width: '120px',
+  gap: '6px',
+  width: '130px',
 })
 
 const SlotCard = styled.div(({ color, isCurrent, offset }) => ({
   position: 'relative',
   background: isCurrent 
-    ? `linear-gradient(135deg, ${color}40 0%, ${color}20 100%)`
-    : 'rgba(255, 255, 255, 0.05)',
-  border: `2px solid ${isCurrent ? color : 'rgba(255, 255, 255, 0.1)'}`,
-  borderRadius: '12px',
-  padding: '10px 12px',
+    ? `linear-gradient(135deg, ${color}50 0%, ${color}25 100%)`
+    : 'rgba(255, 255, 255, 0.06)',
+  border: `2px solid ${isCurrent ? color : 'rgba(255, 255, 255, 0.12)'}`,
+  borderRadius: '14px',
+  padding: '12px 14px',
   display: 'flex',
   alignItems: 'center',
-  gap: '8px',
-  transform: isCurrent ? 'scale(1.05)' : `scale(${1 - Math.abs(offset) * 0.05})`,
-  opacity: isCurrent ? 1 : 0.6 - Math.abs(offset) * 0.1,
+  gap: '10px',
+  transform: isCurrent ? 'scale(1.08)' : `scale(${1 - Math.abs(offset) * 0.04})`,
+  opacity: isCurrent ? 1 : 0.7 - Math.abs(offset) * 0.08,
   transition: 'all 0.3s ease',
-  boxShadow: isCurrent ? `0 4px 16px ${color}40` : 'none',
+  boxShadow: isCurrent ? `0 6px 20px ${color}50` : 'none',
 }))
 
 const SlotIcon = styled.span({
-  fontSize: '20px',
+  fontSize: '22px',
 })
 
 const SlotName = styled.span({
   color: '#fff',
-  fontSize: '13px',
+  fontSize: '14px',
   fontWeight: 500,
   flex: 1,
 })
 
 const CurrentIndicator = styled.div({
   position: 'absolute',
-  left: '-20px',
+  left: '-24px',
   top: '50%',
   transform: 'translateY(-50%)',
   width: 0,
   height: 0,
-  borderTop: '8px solid transparent',
-  borderBottom: '8px solid transparent',
-  borderLeft: '12px solid #fbbf24',
+  borderTop: '10px solid transparent',
+  borderBottom: '10px solid transparent',
+  borderLeft: '14px solid #fbbf24',
 })
 
-const RollSection = styled.div({
-  display: 'flex',
-  justifyContent: 'center',
-  padding: '8px 0',
+const RollButtonContainer = styled.div({
+  position: 'absolute',
+  bottom: '24px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  zIndex: 20,
 })
 
 const RollButton = styled.button(({ disabled }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '8px',
+  gap: '10px',
   background: 'none',
   border: 'none',
   cursor: disabled ? 'not-allowed' : 'pointer',
   opacity: disabled ? 0.6 : 1,
+  transition: 'transform 0.2s ease',
   '&:active': {
-    transform: disabled ? 'none' : 'scale(0.95)',
+    transform: disabled ? 'none' : 'scale(0.92)',
   },
 }))
 
 const RollButtonInner = styled.div({
-  width: '72px',
-  height: '72px',
+  width: '80px',
+  height: '80px',
   borderRadius: '50%',
-  background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
-  border: '3px solid rgba(255, 255, 255, 0.2)',
+  background: 'linear-gradient(135deg, #1f2937 0%, #0f1419 100%)',
+  border: '4px solid rgba(255, 255, 255, 0.25)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  boxShadow: '0 4px 20px rgba(0,0,0,0.4), inset 0 -2px 10px rgba(255,255,255,0.1)',
+  boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 -3px 12px rgba(255,255,255,0.1)',
   transition: 'all 0.2s ease',
   '&:hover': {
-    borderColor: 'rgba(255, 255, 255, 0.4)',
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    boxShadow: '0 8px 40px rgba(0,0,0,0.6), inset 0 -3px 12px rgba(255,255,255,0.15)',
   },
 })
 
 const FingerprintIcon = styled.svg({
-  width: '40px',
-  height: '40px',
-  color: 'rgba(255, 255, 255, 0.8)',
+  width: '44px',
+  height: '44px',
+  color: 'rgba(255, 255, 255, 0.85)',
 })
 
 const RollLabel = styled.span({
-  color: 'rgba(255, 255, 255, 0.7)',
-  fontSize: '14px',
-  fontWeight: 500,
+  color: 'rgba(255, 255, 255, 0.8)',
+  fontSize: '15px',
+  fontWeight: 600,
+  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
 })
 //#endregion styled components

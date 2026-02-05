@@ -1,10 +1,10 @@
 import { createTheme } from '@mui/material'
 import Swal from 'sweetalert2'
 
-//#region Game Helper Methods
+//#region 游戏辅助方法
 /**
- * > The instance of Itl.NumberFormat to convert a number into a currency string
- * e.g. currencyFormatter.format(1000) -> 1,000
+ * 数字格式化实例，用于将数字转为货币格式的字符串
+ * 示例: currencyFormatter.format(1000) -> 1,000
  */
 export const currencyFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 0,
@@ -12,27 +12,27 @@ export const currencyFormatter = new Intl.NumberFormat('en-US', {
   useGrouping: true,
 })
 /**
- * > Calculate the monthly payment from a liability item
- * > The structure of liability param
- *    ? amount
- *    ? type
- * @param {*} liability The liability object
- * @returns The monthly payment amount
+ * 计算负债项的月还款金额
+ * 负债参数的结构
+ *    ? 金额(amount)
+ *    ? 类型(type)
+ * @param {*} liability 负债对象
+ * @returns 月还款金额
  */
 export const getMonthlyLoanPayment = (liability) => {
   if (liability.amount === 0) {
     return 0
   }
   /**
-   * > Formula for HOME & CAR LOANS
-   * > M = ( P * r * (1+r)^n ) / ( (1 + r)^n - 1 )
-   * > M: monthly payment
-   * > r: monthly interest rates (%)
-   * > P: Loan principal
-   * > n: Loan terms (in months)
+   * 房贷/车贷 计算公式
+   * M = ( P * r * (1+r)^n ) / ( (1 + r)^n - 1 )
+   * M: 月还款额
+   * r: 月利率（%）
+   * P: 贷款本金
+   * n: 贷款期限（月）
    *
-   * > Formula for Credit, Retails, Bank loan
-   * > M = P * r
+   * 信用卡/消费贷/银行贷款 计算公式
+   * M = P * r
    */
   let r, n, M
   let P = liability.amount
@@ -66,10 +66,10 @@ export const getMonthlyLoanPayment = (liability) => {
 }
 
 /**
- * > Given a number of dice, return a total sum of all dice's value
- * > Min value of a die is 1, Max value of a die is 6
- * @param {*} diceNo an optional argument represents the number of dice. If this argument is not passed, default to 1
- * @returns The total sum of all dice
+ * 根据骰子数量，返回所有骰子的点数总和
+ * 单个骰子最小值1，最大值6
+ * @param {*} diceNo 可选参数，骰子数量，不传默认值为1
+ * @returns 所有骰子的点数总和
  */
 export const rollDice = (diceNo = 1) => {
   const min = diceNo
@@ -79,7 +79,7 @@ export const rollDice = (diceNo = 1) => {
 }
 
 /**
- * > Play the SFX for the roll action
+ * 播放掷骰子的音效
  */
 export const playSFX = (url) => {
   const sfx = new Audio(url)
@@ -87,47 +87,47 @@ export const playSFX = (url) => {
 }
 
 /**
- * > Generate the player data at the start of the game
- * @returns
+ * 游戏开始时生成玩家初始数据
+ * @returns 玩家初始数据对象
  */
 export const generatePlayerData = () => {
   const id = Math.floor(Math.random() * (PROFESSIONS.length - 1))
-  const p = PROFESSIONS[id] // > Assign a random profession to player
+  const p = PROFESSIONS[id] // 为玩家随机分配职业
   const playerData = {
     profession: p.name,
     salary: p.salary,
     cash: p.cash,
     childNum: 0,
     incomes: [
-      { id: 1, name: `${p.name} Salary`, amount: p.salary, type: 'salary' },
+      { id: 1, name: `${p.name}薪资`, amount: p.salary, type: 'salary' },
     ],
     assets: [],
     liabilities: [...p.liabilities],
     expenses: [
-      { id: 1, name: 'Taxes', amount: p.salary * 0.18 },
+      { id: 1, name: '税费', amount: p.salary * 0.18 },
       {
         id: 2,
-        name: 'Home Mortgage Payment',
+        name: '房屋按揭还款',
         amount: getMonthlyLoanPayment(p.liabilities[0]),
       },
       {
         id: 3,
-        name: 'Car Loan Payment',
+        name: '汽车贷款还款',
         amount: getMonthlyLoanPayment(p.liabilities[1]),
       },
       {
         id: 4,
-        name: 'Credit Card Payment',
+        name: '信用卡还款',
         amount: getMonthlyLoanPayment(p.liabilities[2]),
       },
       {
         id: 5,
-        name: 'Retail Payment',
+        name: '消费贷还款',
         amount: getMonthlyLoanPayment(p.liabilities[3]),
       },
       {
         id: 6,
-        name: 'Other Expenses',
+        name: '其他开支',
         amount: p.otherExpenses,
       },
     ],
@@ -139,13 +139,13 @@ export const generatePlayerData = () => {
 }
 
 /**
- * > Get the passive income amount for the given list of assets
- * @param {*} assets A list of assets
- * > An asset will have this structure
- *    ? id:
- *    ? name: Name of asset
- *    ? type: Type of assets (stock/realestate/gold/business)
- *    ? amount
+ * 根据资产列表计算被动收入总额
+ * @param {*} assets 资产列表
+ * 资产对象结构
+ *    ? 编号(id):
+ *    ? 名称(name): 资产名称
+ *    ? 类型(type): 资产类型（股票/房产/黄金/生意）
+ *    ? 金额(amount)
  */
 export const getPassiveIncome = (incomes) => {
   if (incomes.length === 0) {
@@ -157,36 +157,36 @@ export const getPassiveIncome = (incomes) => {
 }
 
 /**
- * > Get the montly income amount of the player
- * @param {*} data The object contain financial data of a player
- * @returns The monthly income of a player
+ * 计算玩家的月收入总额
+ * @param {*} data 包含玩家财务数据的对象
+ * @returns 玩家月收入总额
  */
 export const getTotalIncomeAmount = (data) => {
   return data.incomes.reduce((total, income) => total + income.amount, 0)
 }
 
 /**
- * > Get the montly income amount of the player
- * @param {*} data The object contain financial data of a player
- * @returns The monthly expenses of a player
+ * 计算玩家的月支出总额
+ * @param {*} data 包含玩家财务数据的对象
+ * @returns 玩家月支出总额
  */
 export const getTotalExpenseAmount = (data) => {
   return data.expenses.reduce((total, expense) => total + expense.amount, 0)
 }
 
 /**
- * > Get the amount of money when player passes `Payday` slot(s) on the board
- * @param {*} lastPos slot id that player was previous on
- * @param {*} currentPos slot id that player will land onto
- * @param {*} playerData the object contains player's game data
- * @returns The amount of money player will receive
+ * 计算玩家经过棋盘上「发薪日」格子可获得的资金
+ * @param {*} lastPos 玩家上一步所在的格子编号
+ * @param {*} currentPos 玩家即将落地的格子编号
+ * @param {*} playerData 玩家的游戏数据对象
+ * @returns 玩家可获得的发薪资金
  */
 export const getPayday = (lastPos, currentPos, playerData) => {
   let totalIncome = getTotalIncomeAmount(playerData)
   let totalExpense = getTotalExpenseAmount(playerData)
 
   let paydaySlotsCount
-  // ? Edge case: lastPost > currentPost
+  // 边界情况：上一步位置编号 > 当前位置编号（绕棋盘一周）
   if (lastPos > currentPos) {
     paydaySlotsCount =
       BOARD_SLOTS.filter(
@@ -196,7 +196,7 @@ export const getPayday = (lastPos, currentPos, playerData) => {
         (s) => s.id >= 0 && s.id <= currentPos && s.name === 'Payday'
       ).length
   } else {
-    // ? Normal case: lastPost < currentPost
+    // 常规情况：上一步位置编号 < 当前位置编号
     paydaySlotsCount = BOARD_SLOTS.filter(
       (s) => s.id > lastPos && s.id <= currentPos && s.name === 'Payday'
     ).length
@@ -205,9 +205,9 @@ export const getPayday = (lastPos, currentPos, playerData) => {
 }
 
 /**
- * > Return the amount of loan player need to borrow from bank.
- * @param {*} diff The difference between the player's cash and a certain amount of money.
- * @returns The loan amount player needs to take (which is 1000x)
+ * 计算玩家需要向银行借贷的金额
+ * @param {*} diff 玩家现金与某笔支出的差额
+ * @returns 玩家需要借贷的金额（按1000的整数倍计算）
  */
 export const getLoanAmount = (diff) => {
   if (diff < 1000) {
@@ -217,10 +217,10 @@ export const getLoanAmount = (diff) => {
 }
 
 /**
- * Draw a card based on the
- * @param {*} type The type of card (doodads / opportunity / market)
- * @param {*} isBigOpportunity boolean value indicates whether the card is a big opportunity. Only has effect when player lands on `opportunity` slot
- * @returns a random card
+ * 抽取对应类型的游戏卡牌
+ * @param {*} type 卡牌类型（日常消费/机会/市场）
+ * @param {*} isBigOpportunity 是否为大机会牌，仅在玩家落在「机会」格子时生效
+ * @returns 随机抽取的卡牌
  */
 export const drawCard = (type, isBigOpportunity = false) => {
   let card = null
@@ -245,18 +245,18 @@ export const drawCard = (type, isBigOpportunity = false) => {
 }
 
 /**
- * > Take a loan for the player and return the new player data
- * @param {*} playerData the object contains current player's data
- * @param {*} cost the cost of the assets need to be bought
- * @returns the new player data after taking loan
+ * 玩家申请贷款，并返回更新后的玩家数据
+ * @param {*} playerData 玩家当前的游戏数据对象
+ * @param {*} cost 拟购买资产的花费
+ * @returns 贷款后的新玩家数据
  */
 export const takeLoan = (playerData, cost) => {
   let loanAmount = getLoanAmount(cost - playerData.cash)
   playerData.cash += loanAmount - cost
-  let idx = playerData.liabilities.findIndex((l) => l.name === 'Loans')
+  let idx = playerData.liabilities.findIndex((l) => l.name === '银行贷款')
   if (idx > -1) {
     playerData.liabilities[idx].amount += loanAmount
-    playerData.expenses.find((e) => e.name === 'Loans Payment').amount +=
+    playerData.expenses.find((e) => e.name === '银行贷款还款').amount +=
       loanAmount * 0.1
   } else {
     playerData.liabilities.push({
@@ -264,13 +264,13 @@ export const takeLoan = (playerData, cost) => {
         playerData.liabilities.length === 0
           ? 1
           : playerData.liabilities.at(-1).id + 1,
-      name: 'Loans',
+      name: '银行贷款',
       amount: loanAmount,
       type: 'bank',
     })
     playerData.expenses.push({
       id: playerData.expenses.length + 1,
-      name: 'Loans Payment',
+      name: '银行贷款还款',
       amount: loanAmount * 0.1,
     })
   }
@@ -278,35 +278,35 @@ export const takeLoan = (playerData, cost) => {
 }
 
 /**
- * > Based on the given player data, check if player wins the game
- * > Player wins the game if they have passive income > total expenses. When that happens:
- * >    Display the popup dialog to congratulate the player, with a button to `Start a new game`
- * @param {*} data The player data
+ * 根据玩家当前数据，检查是否达成游戏胜利条件
+ * 胜利条件：被动收入 > 总支出，达成后：
+ *    弹出恭喜弹窗，包含「开始新游戏」按钮
+ * @param {*} data 玩家数据对象
  */
 export const checkWinningCondition = (data) => {
   let passiveIncome = getPassiveIncome(data.incomes)
   let totalExpense = getTotalExpenseAmount(data)
   if (passiveIncome > totalExpense) {
     Swal.fire({
-      title: 'CONGRATULATIONS!',
-      text: 'Your passive income now exceeds your total expenses. You are out of the Rat Race and ready to pursue your dreams!',
+      title: '恭喜你！',
+      text: '你的被动收入现已超过总支出，成功走出老鼠赛跑，开启梦想人生！',
       imageUrl: 'https://cdn-icons-png.flaticon.com/128/9281/9281540.png',
       imageWidth: 96,
       imageHeight: 96,
-      imageAlt: 'Rat Race - Win',
-      confirmButtonText: 'Start a new game',
+      imageAlt: '老鼠赛跑 - 胜利',
+      confirmButtonText: '开始新游戏',
       allowOutsideClick: false,
     }).then(() => {
-      window.location.reload() // > Start new game by refresh the browser
+      window.location.reload() // 刷新浏览器开始新游戏
     })
   }
 }
 
 /**
- * > Check if player loses the game.
- * > Player loses the game if they have total expenses > total income when passsing the Payday slot. When that happen.
- * >    Display the popup dialog with appropriate message, with a button to `Start a new game`
- * @param {*} data
+ * 检查玩家是否达成游戏失败条件
+ * 失败条件：经过发薪日格子时，总支出 > 总收入且现金不足以弥补差额，达成后：
+ *    弹出失败提示弹窗，包含「开始新游戏」按钮
+ * @param {*} data 玩家数据对象
  */
 export const checkLosingCondition = (data) => {
   const expenses = getTotalExpenseAmount(data)
@@ -315,13 +315,13 @@ export const checkLosingCondition = (data) => {
     setTimeout(() => {
       playSFX('/assets/sounds/gameover.mp3')
       Swal.fire({
-        title: 'YOU LOSE!',
-        text: 'Your monthly cashflow is negative. You are officially out of the game.',
+        title: '游戏结束！',
+        text: '你的月现金流为负，已正式退出游戏。',
         imageUrl: 'https://cdn-icons-png.flaticon.com/128/9995/9995982.png',
         imageWidth: 96,
         imageHeight: 96,
-        imageAlt: 'Lose',
-        confirmButtonText: 'Start a new game',
+        imageAlt: '失败',
+        confirmButtonText: '开始新游戏',
         allowOutsideClick: false,
       }).then(() => {
         window.location.reload()
@@ -330,16 +330,16 @@ export const checkLosingCondition = (data) => {
   }
 }
 
-//#endregion Game Helper Methods
+//#endregion 游戏辅助方法
 
-//#region GAME DATA
+//#region 游戏数据
 
-//#region LOAN DETAILS
-// > The fixed info for each type for loans in-game
+//#region 贷款详情
+// 游戏中各类型贷款的固定配置信息
 export const LOAN_DETAILS = {
   HOME: {
-    loan_term: 240,
-    monthly_interest: 0.9,
+    loan_term: 240, // 贷款期限（月）
+    monthly_interest: 0.9, // 月利率（%）
   },
   CAR: {
     loan_term: 60,
@@ -355,346 +355,346 @@ export const LOAN_DETAILS = {
     monthly_interest: 10,
   },
 }
-//#endregion LOAN DETAILS
+//#endregion 贷款详情
 
-//#region Board slots
+//#region 棋盘格子
 export const BOARD_SLOTS = [
   { id: 0, name: 'Payday', type: 'payday' },
-  { id: 1, name: 'Opportunity', type: 'opportunity' },
-  { id: 2, name: 'Market', type: 'market' },
-  { id: 3, name: 'Opportunity', type: 'opportunity' },
-  { id: 4, name: 'Doodads', type: 'doodads' },
-  { id: 5, name: 'Opportunity', type: 'opportunity' },
-  { id: 6, name: 'Baby', type: 'baby' },
-  { id: 7, name: 'Opportunity', type: 'opportunity' },
+  { id: 1, name: '机会', type: 'opportunity' },
+  { id: 2, name: '市场', type: 'market' },
+  { id: 3, name: '机会', type: 'opportunity' },
+  { id: 4, name: '日常消费', type: 'doodads' },
+  { id: 5, name: '机会', type: 'opportunity' },
+  { id: 6, name: '添丁', type: 'baby' },
+  { id: 7, name: '机会', type: 'opportunity' },
   { id: 8, name: 'Payday', type: 'payday' },
-  { id: 9, name: 'Opportunity', type: 'opportunity' },
-  { id: 10, name: 'Market', type: 'market' },
-  { id: 11, name: 'Opportunity', type: 'opportunity' },
-  { id: 12, name: 'Doodads', type: 'doodads' },
-  { id: 13, name: 'Opportunity', type: 'opportunity' },
-  { id: 14, name: 'Downsized', type: 'downsized' },
-  { id: 15, name: 'Opportunity', type: 'opportunity' },
+  { id: 9, name: '机会', type: 'opportunity' },
+  { id: 10, name: '市场', type: 'market' },
+  { id: 11, name: '机会', type: 'opportunity' },
+  { id: 12, name: '日常消费', type: 'doodads' },
+  { id: 13, name: '机会', type: 'opportunity' },
+  { id: 14, name: '失业', type: 'downsized' },
+  { id: 15, name: '机会', type: 'opportunity' },
   { id: 16, name: 'Payday', type: 'payday' },
-  { id: 17, name: 'Opportunity', type: 'opportunity' },
-  { id: 18, name: 'Market', type: 'market' },
-  { id: 19, name: 'Opportunity', type: 'opportunity' },
-  { id: 20, name: 'Doodads', type: 'doodads' },
-  { id: 21, name: 'Opportunity', type: 'opportunity' },
-  { id: 22, name: 'Charity', type: 'charity' },
-  { id: 23, name: 'Opportunity', type: 'opportunity' },
+  { id: 17, name: '机会', type: 'opportunity' },
+  { id: 18, name: '市场', type: 'market' },
+  { id: 19, name: '机会', type: 'opportunity' },
+  { id: 20, name: '日常消费', type: 'doodads' },
+  { id: 21, name: '机会', type: 'opportunity' },
+  { id: 22, name: '慈善', type: 'charity' },
+  { id: 23, name: '机会', type: 'opportunity' },
 ]
-//#endregion Board slots
+//#endregion 棋盘格子
 
-//#region DOODADS
+//#region 日常消费卡
 export const DOODADS = [
   {
     id: 1,
-    title: 'Water Heater Leaks',
-    description: 'Pay $450 for new one',
+    title: '热水器漏水',
+    description: '花费450元更换新热水器',
     info: '',
     cost: 450,
   },
   {
     id: 2,
-    title: 'Go Out to Dinner',
-    description: 'Spend $80',
+    title: '外出就餐',
+    description: '花费80元',
     info: '',
     cost: 80,
   },
   {
     id: 3,
-    title: 'Your Anniversary!',
-    description: 'Spend $200',
+    title: '结婚纪念日！',
+    description: '花费200元庆祝',
     cost: 0,
   },
   {
     id: 4,
-    title: 'Park in Handicapped Zone',
-    description: 'Pay $100 fine',
+    title: '占用残疾人车位',
+    description: '缴纳100元罚款',
     info: '',
     cost: 100,
   },
   {
     id: 5,
-    title: 'Buy Big Screen TV',
-    description: 'Pay $2000',
+    title: '购买大屏电视',
+    description: '花费2000元',
     info: '',
     cost: 2000,
   },
   {
     id: 6,
-    title: 'College Tuition for your son',
-    description: 'Spend 1500',
-    info: '(If you have a child)',
+    title: '儿子的大学学费',
+    description: '花费1500元',
+    info: '（如有子女则触发）',
     cost: 1500,
   },
   {
     id: 7,
-    title: 'Buy toys for your kids',
-    description: 'Spend $50',
+    title: '给孩子买玩具',
+    description: '花费50元',
     info: '',
     cost: 50,
   },
   {
     id: 8,
-    title: 'Buy New Fishing Rod',
-    description: 'Pay $100',
+    title: '购买新鱼竿',
+    description: '花费100元',
     info: '',
     cost: 100,
   },
   {
     id: 9,
-    title: 'Play 2 Rounds of Golf',
-    description: 'Pay $100',
+    title: '打两场高尔夫',
+    description: '花费100元',
     info: '',
     cost: 100,
   },
   {
     id: 10,
-    title: 'Car Air Conditioning Dies',
-    description: 'Pay $700',
+    title: '汽车空调损坏',
+    description: '花费700元维修',
     info: '',
     cost: 700,
   },
   {
     id: 11,
-    title: 'Tax Audit',
-    description: 'Pay Tax Authority $350',
-    info: 'Ouch!',
+    title: '税务稽查',
+    description: '向税务局缴纳350元',
+    info: '太倒霉了！',
     cost: 350,
   },
   {
     id: 12,
-    title: 'Shopping!',
-    description: 'Pay $350 for fabulous clothes',
+    title: '购物狂欢！',
+    description: '花费350元买漂亮衣服',
     info: '',
     cost: 350,
   },
   {
     id: 13,
-    title: 'Family Vacation!',
-    description: 'Cost $2,000',
+    title: '家庭旅行！',
+    description: '花费2000元',
     info: '',
     cost: 2000,
   },
   {
     id: 14,
-    title: 'Go To Casino!',
-    description: 'Lose $200 at the tables',
+    title: '去赌场！',
+    description: '赌桌输了200元',
     info: '',
     cost: 200,
   },
   {
     id: 15,
-    title: 'Buy new playstation',
+    title: '购买新游戏机',
     description: '',
-    info: 'Pay $400',
+    info: '花费400元',
     cost: 400,
   },
   {
     id: 16,
-    title: 'Play Your Lucky Lottery Number!',
-    description: 'Lose $100',
+    title: '买幸运数字彩票！',
+    description: '亏了100元',
     info: '',
     cost: 100,
   },
   {
     id: 17,
-    title: 'Shopping Spree!',
-    description: 'Pay $250',
+    title: '疯狂购物！',
+    description: '花费250元',
     info: '',
     cost: 250,
   },
   {
     id: 18,
-    title: 'Go to Ball Game',
-    description: 'Pay $50',
+    title: '去看球赛',
+    description: '花费50元',
     info: '',
     cost: 50,
   },
   {
     id: 19,
-    title: 'Visit Dentist',
-    description: 'Filling costs $100',
+    title: '看牙医',
+    description: '补牙花费100元',
     info: '',
     cost: 0,
   },
   {
     id: 20,
-    title: 'Buy New Tennis Racket',
-    description: 'Pay $50',
+    title: '购买新网球拍',
+    description: '花费50元',
     info: '',
     cost: 50,
   },
   {
     id: 21,
-    title: 'Furniture Sale',
-    description: 'Pay $300',
-    info: 'Replace that old working table',
+    title: '家具促销',
+    description: '花费300元',
+    info: '换掉还能用的旧桌子',
     cost: 300,
   },
   {
     id: 22,
-    title: 'Go to a Concert',
-    description: 'Dinner, Tickets, and Coffee sets you back $180',
+    title: '去看演唱会',
+    description: '晚餐、门票、咖啡总共花费180元',
     info: '',
     cost: 180,
   },
   {
     id: 23,
-    title: 'Buy new smart phone',
-    description: 'Pay $1200 for an Iphone',
+    title: '购买新智能手机',
+    description: '花1200元买苹果手机',
     info: '',
     cost: 1200,
   },
   {
     id: 24,
-    title: 'Go to Cafe',
-    description: 'Pay $10',
-    info: 'Buy a Cafe Lattee & Capuccino for you & your friend',
+    title: '去咖啡馆',
+    description: '花费10元',
+    info: '和朋友各点一杯拿铁和卡布奇诺',
     cost: 10,
   },
   {
     id: 25,
-    title: 'High School Reunion',
-    description: 'Spend $250',
+    title: '高中同学聚会',
+    description: '花费250元',
     info: '',
     cost: 250,
   },
   {
     id: 26,
-    title: 'Repaint House',
-    description: 'Cost you $600',
+    title: '房屋重新刷漆',
+    description: '花费600元',
     info: '',
     cost: 600,
   },
   {
     id: 27,
-    title: 'Buy Painting',
-    description: 'Costs you $200',
-    info: 'Could not resist new painting by local artist',
+    title: '购买画作',
+    description: '花费200元',
+    info: '没忍住买了本地艺术家的新作',
     cost: 200,
   },
   {
     id: 28,
-    title: 'Buy your parent a gift',
-    description: 'A brand new massage machine for your da and ma',
+    title: '给父母买礼物',
+    description: '给爸妈买一台全新的按摩仪',
     info: '',
     cost: 1000,
   },
   {
     id: 29,
-    title: 'Netflix Premium subscription',
-    description: 'Pay $150',
+    title: '网飞高级会员',
+    description: '花费150元订阅',
     info: '',
     cost: 150,
   },
   {
     id: 30,
-    title: 'Buy new bluetooth headset',
-    description: 'Pay $500',
+    title: '购买新蓝牙耳机',
+    description: '花费500元',
     info: '',
     cost: 500,
   },
   {
     id: 31,
-    title: 'Birthday!',
-    description: 'Take your family to the Amusement Park and spend $100',
+    title: '生日！',
+    description: '带家人去游乐园，花费100元',
     info: '',
     cost: 100,
   },
   {
     id: 32,
-    title: 'Buy Coffee Machine',
-    description: 'Pay $150',
+    title: '购买咖啡机',
+    description: '花费150元',
     info: '',
     cost: 150,
   },
   {
     id: 33,
-    title: 'Your Close Friend Wedding',
-    description: 'Costs you $2,000',
+    title: '好友结婚',
+    description: '花费2000元随礼/庆祝',
     info: '',
     cost: 2000,
   },
   {
     id: 34,
-    title: 'Buy new clothes',
-    description: 'Pay $250',
-    info: 'Your wife was influenced by some movies and need new clothes',
+    title: '购买新衣服',
+    description: '花费250元',
+    info: '老婆被电影种草，需要买新衣服',
     cost: 250,
   },
   {
     id: 35,
-    title: 'Rumor of Layoff',
-    description: 'Pay $220 for tuition & books',
-    info: 'Go back to school for added skills.',
+    title: '裁员传闻',
+    description: '花费220元报课买书',
+    info: '重返校园提升技能',
     cost: 220,
   },
   {
     id: 36,
-    title: 'Go to the Air Show',
-    description: 'Pay $120',
+    title: '去看航展',
+    description: '花费120元',
     info: '',
     cost: 120,
   },
   {
     id: 37,
-    title: 'Must have new sunglasses',
-    description: 'Pay $70',
+    title: '必须买新墨镜',
+    description: '花费70元',
     info: '',
     cost: 70,
   },
   {
     id: 38,
-    title: 'Buy new kitchen utensils',
-    description: 'Pay $250',
+    title: '购买新厨具',
+    description: '花费250元',
     info: '',
     cost: 250,
   },
   {
     id: 39,
-    title: 'Lunch with Friends',
-    description: 'Pay $40',
+    title: '和朋友吃午餐',
+    description: '花费40元',
     info: '',
     cost: 40,
   },
   {
     id: 40,
-    title: 'Car need tires',
-    description: 'Pay $300',
+    title: '汽车需要换轮胎',
+    description: '花费300元',
     info: '',
     cost: 30,
   },
 ]
-//#endregion DOODADS
+//#endregion 日常消费卡
 
-//#region SMALL DEALS
+//#region 小机会卡
 /**
- * > Type: Stock / Fund
- *   ? arg1: price
- *   ? arg2: tradingMin
- *   ? arg3: tradingMax
+ * 类型：股票/基金
+ *   ? 参数1: 单价
+ *   ? 参数2: 最低交易数
+ *   ? 参数3: 最高交易数
  *
- * > Type: Preferred stocks
- *   ? arg1: price
- *   ? arg2: tradingMin
- *   ? arg3: tradingMax
- *   ? arg4: dividend
+ * 类型：优先股
+ *   ? 参数1: 单价
+ *   ? 参数2: 最低交易数
+ *   ? 参数3: 最高交易数
+ *   ? 参数4: 股息
  *
- * > Type: Real estate
- *   ? arg1: cost
- *   ? arg2: downpay
- *   ? arg3: mortgage
- *   ? arg4: cash flow
- *   ? arg5: unit
+ * 类型：房产
+ *   ? 参数1: 总价
+ *   ? 参数2: 首付
+ *   ? 参数3: 按揭贷款
+ *   ? 参数4: 现金流
+ *   ? 参数5: 套数/面积单位
  */
 export const SMALL_DEALS = [
   {
     id: 1,
-    title: 'Mutual Fund - GRO4US Fund',
-    description: 'Lower interest rates drive market and fund to strong showing',
+    title: '共同基金 - 美国成长4号基金',
+    description: '低利率推动市场走高，基金表现亮眼',
     info: '',
     type: 'stock',
     subtype: null,
@@ -706,9 +706,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 2,
-    title: 'Mutual Fund - GRO4US Fund',
+    title: '共同基金 - 美国成长4号基金',
     description:
-      'Brilliant young fund manager. Everyone believes he has the Midas touch.',
+      '天才年轻基金经理掌舵，所有人都认为他有点石成金的能力',
     info: '',
     type: 'stock',
     subtype: null,
@@ -720,9 +720,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 3,
-    title: 'Mutual Fund - GRO4US Fund',
-    description:
-      'Weak earnings by most companies lead to weak price of mutual fund.',
+    title: '共同基金 - 美国成长4号基金',
+    description: '多数公司业绩不佳，导致基金价格走低',
     info: '',
     type: 'stock',
     subtype: null,
@@ -734,8 +733,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 4,
-    title: 'Mutual Fund - GRO4US Fund',
-    description: `Powerhouse market drives strong fund's price up to record high.`,
+    title: '共同基金 - 美国成长4号基金',
+    description: '市场行情火爆，基金价格创历史新高',
     info: '',
     type: 'stock',
     subtype: null,
@@ -747,8 +746,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 5,
-    title: 'Mutual Fund - GRO4US Fund',
-    description: `General market strength leads well managed fund's price to a strong level.`,
+    title: '共同基金 - 美国成长4号基金',
+    description: '市场整体向好，管理优秀的基金价格大幅上涨',
     info: '',
     type: 'stock',
     subtype: null,
@@ -760,8 +759,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 6,
-    title: 'Stock - MYT4U Electronics Co.',
-    description: `Booming market leads to record share price of this home electronics seller.`,
+    title: '股票 - 美特优电子有限公司',
+    description: '市场繁荣，这家家电零售商股价创纪录',
     info: '',
     type: 'stock',
     subtype: null,
@@ -773,8 +772,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 7,
-    title: 'Stock - MYT4U Electronics Co.',
-    description: `High inflation leads to poor share price for this home electronics seller.`,
+    title: '股票 - 美特优电子有限公司',
+    description: '高通胀导致这家家电零售商股价低迷',
     info: '',
     type: 'stock',
     subtype: null,
@@ -786,12 +785,12 @@ export const SMALL_DEALS = [
   },
   {
     id: 8,
-    title: 'Stock - MYT4U Electronics Co.',
-    description: `Company reorganizes! Massive losses due to over-expansion and recession. Stockholders lose 1/2 of their ownership rights.`,
-    info: 'Reverse split 1 for 2',
+    title: '股票 - 美特优电子有限公司',
+    description: '公司重组！过度扩张和经济衰退导致巨额亏损，股东持股比例缩水一半',
+    info: '1股并2股（反向拆股）',
     type: 'stock-split',
     subtype: null,
-    arg1: true, // true if reverse-split, false if split
+    arg1: true, // true=反向拆股，false=正向拆股
     arg2: 0,
     arg3: 0,
     arg4: 0,
@@ -799,8 +798,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 9,
-    title: 'Stock - MYT4U Electronics Co.',
-    description: `Record interest rates lead to substandard share price for this home electronics seller.`,
+    title: '股票 - 美特优电子有限公司',
+    description: '利率高企，这家家电零售商股价表现不佳',
     info: '',
     type: 'stock',
     arg1: 5,
@@ -811,8 +810,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 10,
-    title: 'Stock - MYT4U Electronics Co.',
-    description: `Strong market leads to strong share price for this home electronics seller.`,
+    title: '股票 - 美特优电子有限公司',
+    description: '市场走强，这家家电零售商股价上涨',
     info: '',
     type: 'stock',
     subtype: null,
@@ -824,9 +823,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 11,
-    title: 'Stock - MYT4U Electronics Co.',
-    description: `Business is up dramaticallly and the company is doing so well their shares have just split!.`,
-    info: 'Split 2 for 1',
+    title: '股票 - 美特优电子有限公司',
+    description: '业务大幅增长，公司发展向好，股票刚刚完成拆股！',
+    info: '2股拆1股（正向拆股）',
     type: 'stock-split',
     subtype: null,
     arg1: false,
@@ -837,8 +836,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 12,
-    title: 'Stock - MYT4U Electronics Co.',
-    description: `Trade war panic leads to record low share price for this home electronics seller.`,
+    title: '股票 - 美特优电子有限公司',
+    description: '贸易战恐慌，这家家电零售商股价创历史新低',
     info: '',
     type: 'stock',
     subtype: null,
@@ -850,8 +849,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 13,
-    title: 'Stock - MYT4U Electronics Co.',
-    description: `Weak market leads to sagging share price for this home electronics seller.`,
+    title: '股票 - 美特优电子有限公司',
+    description: '市场低迷，这家家电零售商股价下跌',
     info: '',
     type: 'stock',
     subtype: null,
@@ -863,8 +862,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 14,
-    title: 'Stock - MYT4U Electronics Co.',
-    description: `Fast growing seller of home electronics headed by 32 year old Harvard grad.`,
+    title: '股票 - 美特优电子有限公司',
+    description: '由32岁哈佛毕业生掌舵的家电零售新锐，业务高速增长',
     info: '',
     type: 'stock',
     subtype: null,
@@ -876,8 +875,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 15,
-    title: 'Stock - MYT4U Electronics Co.',
-    description: `Low interest rates lead to substantial share price for this home electronics seller.`,
+    title: '股票 - 美特优电子有限公司',
+    description: '低利率推动，这家家电零售商股价大幅上涨',
     info: '',
     type: 'stock',
     subtype: null,
@@ -889,10 +888,10 @@ export const SMALL_DEALS = [
   },
   {
     id: 16,
-    title: 'Tenant Damages your Property',
+    title: '租客损坏房产',
     description:
-      'Tenant fails to pay rent for 2 months and then skips town leaving damage to your rental property. Insurance covers most damage and costs, but you still are out of pocket $500.',
-    info: 'Pay $500 if you own any rental property. (Bank will lend you the money on usual terms.)',
+      '租客拖欠2个月房租后跑路，还损坏了出租屋。保险覆盖大部分损失，但你仍需自付500元',
+    info: '若拥有出租房产，支付500元（银行可按常规条款放贷）',
     type: 'estate-auto',
     subtype: null,
     arg1: 500,
@@ -903,8 +902,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 17,
-    title: 'Stock - OK4U Drug Co.',
-    description: `Market strenth leads to high share price for this long time maker of medicines.`,
+    title: '股票 - 奥凯优制药有限公司',
+    description: '市场走强，这家老牌制药企业股价走高',
     info: '',
     type: 'stock',
     subtype: null,
@@ -916,8 +915,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 18,
-    title: 'Stock - OK4U Drug Co.',
-    description: `Low inflation leads to high share price for this long time maker of medicines.`,
+    title: '股票 - 奥凯优制药有限公司',
+    description: '低通胀，这家老牌制药企业股价走高',
     info: '',
     type: 'stock',
     subtype: null,
@@ -929,9 +928,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 19,
-    title: 'Stock - OK4U Drug Co.',
-    description: `Company flounders! Massive losses due to tainted drug scandal. All stockholders lose 1/2 of their ownership rights.`,
-    info: 'Reverse split 1 for 2',
+    title: '股票 - 奥凯优制药有限公司',
+    description: '公司经营不善！药品污染丑闻导致巨额亏损，所有股东持股比例缩水一半',
+    info: '1股并2股（反向拆股）',
     type: 'stock-split',
     subtype: null,
     arg1: true,
@@ -942,8 +941,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 20,
-    title: 'Stock - OK4U Drug Co.',
-    description: `Booming market raises share price of this long time maker of medicines.`,
+    title: '股票 - 奥凯优制药有限公司',
+    description: '市场繁荣，这家老牌制药企业股价大涨',
     info: '',
     type: 'stock',
     subtype: null,
@@ -955,8 +954,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 21,
-    title: 'Stock - OK4U Drug Co.',
-    description: `Interest rates cripple share price of this long time maker of medicines.`,
+    title: '股票 - 奥凯优制药有限公司',
+    description: '高利率拖累，这家老牌制药企业股价低迷',
     info: '',
     type: 'stock',
     subtype: null,
@@ -968,8 +967,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 22,
-    title: 'Stock - OK4U Drug Co.',
-    description: `High interest rates cause poor share price of this long time maker of medicines.`,
+    title: '股票 - 奥凯优制药有限公司',
+    description: '高利率导致这家老牌制药企业股价表现不佳',
     info: '',
     type: '',
     arg1: 10,
@@ -980,8 +979,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 23,
-    title: 'Stock - OK4U Drug Co.',
-    description: `Inflation worries cause poor share price of this long time maker of medicines.`,
+    title: '股票 - 奥凯优制药有限公司',
+    description: '通胀担忧，这家老牌制药企业股价走低',
     info: '',
     type: 'stock',
     subtype: null,
@@ -993,8 +992,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 24,
-    title: 'Stock - OK4U Drug Co.',
-    description: `Market panic causes crash in the shares of this long time maker of medicines.`,
+    title: '股票 - 奥凯优制药有限公司',
+    description: '市场恐慌，这家老牌制药企业股价暴跌',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1006,8 +1005,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 25,
-    title: 'Stock - OK4U Drug Co.',
-    description: `Long time maker of medicines; especially drugs for people over 70.`,
+    title: '股票 - 奥凯优制药有限公司',
+    description: '老牌制药企业，主打70岁以上人群用药',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1019,9 +1018,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 26,
-    title: 'Stock - OK4U Drug Co.',
-    description: `Things are going so well for the company that their shares have just split!. Everyone who owns OK4U shares double the number of shares they own.`,
-    info: 'Split 2 for 1',
+    title: '股票 - 奥凯优制药有限公司',
+    description: '公司发展势头良好，股票刚刚完成拆股！所有股东持股数量翻倍',
+    info: '2股拆1股（正向拆股）',
     type: 'stock-split',
     arg1: false,
     arg2: 0,
@@ -1031,8 +1030,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 27,
-    title: 'Stock - ON2U Entertainment Co.',
-    description: `Box office hit by children's division causes record share price.`,
+    title: '股票 - 昂途娱乐有限公司',
+    description: '儿童板块票房大卖，股价创纪录',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1044,8 +1043,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 28,
-    title: 'Stock - ON2U Entertainment Co.',
-    description: `Strong demand for company's library of old movies on video leads to good share price`,
+    title: '股票 - 昂途娱乐有限公司',
+    description: '经典电影视频库需求旺盛，股价表现良好',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1057,8 +1056,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 29,
-    title: 'Stock - ON2U Entertainment Co.',
-    description: `Box office hit by children's division causes record share price.`,
+    title: '股票 - 昂途娱乐有限公司',
+    description: '儿童板块票房大卖，股价创纪录',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1070,8 +1069,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 30,
-    title: 'Stock - ON2U Entertainment Co.',
-    description: `Strong demand for company's library of old movies on video leads to good share price.`,
+    title: '股票 - 昂途娱乐有限公司',
+    description: '经典电影视频库需求旺盛，股价表现良好',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1083,8 +1082,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 31,
-    title: 'Stock - ON2U Entertainment Co.',
-    description: `New director of movie acquisitions brings revived prospects for share price.`,
+    title: '股票 - 昂途娱乐有限公司',
+    description: '新任影视采购总监上任，股价前景向好',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1096,8 +1095,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 32,
-    title: 'Stock - ON2U Entertainment Co.',
-    description: `Movie buyer fired after third mega-flot! Shares sink. Chairman's bonus cancelled`,
+    title: '股票 - 昂途娱乐有限公司',
+    description: '连续三部大片票房扑街，采购总监被解雇，股价大跌，董事长奖金取消',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1109,8 +1108,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 33,
-    title: 'Stock - ON2U Entertainment Co.',
-    description: `Box office smash hit in adult division causes share price.`,
+    title: '股票 - 昂途娱乐有限公司',
+    description: '成人板块票房爆款，股价上涨',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1122,8 +1121,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 34,
-    title: 'Stock - ON2U Entertainment Co.',
-    description: `Recent merger strengthened market share of this leading company with good outlook.`,
+    title: '股票 - 昂途娱乐有限公司',
+    description: '近期合并提升了行业份额，龙头企业前景良好',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1135,8 +1134,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 35,
-    title: 'Stock - ON2U Entertainment Co.',
-    description: `Newest theme park loses record amount. Share price hits all-time low.`,
+    title: '股票 - 昂途娱乐有限公司',
+    description: '最新主题公园巨额亏损，股价创历史新低',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1148,8 +1147,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 36,
-    title: 'Stock - ON2U Entertainment Co.',
-    description: `Box office flow by musical extravaganza in core division causes poor share price.`,
+    title: '股票 - 昂途娱乐有限公司',
+    description: '核心板块音乐大片票房惨淡，股价表现不佳',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1161,8 +1160,8 @@ export const SMALL_DEALS = [
   },
   {
     id: 37,
-    title: 'Preferred Stock - 2BIG Power',
-    description: `High yield, preferred shares of major domestic electric power company. Dividend and price fixed at "fair" level by state utility commission.`,
+    title: '优先股 - 双巨电力公司',
+    description: '国内大型电力公司高收益优先股，股息和价格由州公用事业委员会核定为合理水平',
     info: '',
     type: 'stock',
     subtype: null,
@@ -1174,21 +1173,21 @@ export const SMALL_DEALS = [
   },
   {
     id: 38,
-    title: '3BE/2BA House',
-    description: `Older 3/2 house, repossessed by government agency. Ready to go with government financing and a tenant.`,
+    title: '3室2厅住宅',
+    description: '政府机构收回的老旧3室2厅住宅，可享政府融资，已有租客，拎包可投',
     info: '',
     type: 'estate',
     subtype: 'house32',
-    arg1: 35000, // cost
-    arg2: 2000, // downpay
-    arg3: 33000, // mortgage
-    arg4: 220, // cash flow
+    arg1: 35000, // 总价
+    arg2: 2000, // 首付
+    arg3: 33000, // 按揭贷款
+    arg4: 220, // 现金流
     arg5: 1,
   },
   {
     id: 39,
-    title: '3BE/2BA House',
-    description: `Company bought transferred manager's 3/2 house. No current tenant, has been on market 6 months, just reduced.`,
+    title: '3室2厅住宅',
+    description: '企业转让高管的3室2厅住宅，目前无租客，已挂牌6个月，刚降价',
     info: '',
     type: 'estate',
     subtype: 'house32',
@@ -1200,10 +1199,10 @@ export const SMALL_DEALS = [
   },
   {
     id: 40,
-    title: 'Condo For Sale - 2BE/1BA',
+    title: '出售公寓 - 2室1厅',
     description:
-      'Nice 2/1 condo available due to marriage of owner. Bad area. Needs work.',
-    info: 'Use this yourself or sell to another player.',
+      '业主结婚转让2室1厅公寓，地段一般，需要翻新',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house21',
     arg1: 50000,
@@ -1214,9 +1213,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 41,
-    title: 'Condo For Sale - 2BE/1BA',
-    description: `Parents sellings 2/1 condo used by their child in college town. Lots of demand for rentals in this area.`,
-    info: 'Use this yourself or sell to another player.',
+    title: '出售公寓 - 2室1厅',
+    description: '父母出售子女在大学城的2室1厅公寓，该区域租房需求旺盛',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house21',
     arg1: 40000,
@@ -1227,10 +1226,10 @@ export const SMALL_DEALS = [
   },
   {
     id: 42,
-    title: 'Condo For Sale - 2BE/1BA',
+    title: '出售公寓 - 2室1厅',
     description:
-      'Older 2/1 condo offered by young couple who want to move up to a 3/2 house due to growing family. Available soon',
-    info: 'Use this yourself or sell to another player.',
+      '年轻夫妇因家庭人口增加，计划换3室2厅住宅，转让老旧2室1厅公寓，即将可交易',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house21',
     arg1: 55000,
@@ -1241,9 +1240,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 43,
-    title: 'Condo For Sale - 2BE/1BA',
-    description: `Excellent 2/1 condo with many extras. For sale due to business success of owner. She's moving up, so can you.`,
-    info: 'Use this yourself or sell to another player.',
+    title: '出售公寓 - 2室1厅',
+    description: '业主事业成功，转让精装2室1厅公寓，欲置换更高端房产，你也可以',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house21',
     arg1: 60000,
@@ -1254,9 +1253,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 44,
-    title: 'Condo For Sale - 2BE/1BA',
-    description: `Bank foreclosure! 2/1 condo in desirable neighborhood close to jobs and stores. Make offer, favorable financing by bank.`,
-    info: 'Use this yourself or sell to another player.',
+    title: '出售公寓 - 2室1厅',
+    description: '银行法拍房！位于就业和商业核心区的优质2室1厅公寓，可出价，银行提供优惠融资',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house21',
     arg1: 40000,
@@ -1267,9 +1266,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 45,
-    title: 'House For Sale - 3BE/2BA',
-    description: `Not lived in for 6 months, this bank-foreclosed house just reduced. Loan includes estimated repair costs.`,
-    info: 'Use this yourself or sell to another player.',
+    title: '出售住宅 - 3室2厅',
+    description: '银行法拍房，空置6个月刚降价，贷款包含预估维修费用',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 50000,
@@ -1280,9 +1279,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 46,
-    title: 'House For Sale - 3BE/2BA',
-    description: `Low down payment to pick up this 3/2 house, owner unexpectedly moving out of town. Right person will do well.`,
-    info: 'Use this yourself or sell to another player.',
+    title: '出售住宅 - 3室2厅',
+    description: '业主突发异地调动，3室2厅住宅低首付转让，慧眼识珠者可获高回报',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 50000,
@@ -1293,9 +1292,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 47,
-    title: 'House For Sale - 3BE/2BA',
-    description: `3/2 house in older area offered by Highway Department. Market has crashed. No bids at last week's auction.`,
-    info: 'Use this yourself or sell to another player.',
+    title: '出售住宅 - 3室2厅',
+    description: '公路局转让老城区3室2厅住宅，市场暴跌，上周拍卖流拍',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 50000,
@@ -1306,9 +1305,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 48,
-    title: 'House For Sale - 3BE/2BA',
-    description: `Nice 3/2 rental house suddenly available due to estate closing. Well maintained older property with existing tenant.`,
-    info: 'Use this yourself or sell to another player.',
+    title: '出售住宅 - 3室2厅',
+    description: '业主离世，遗产处置转让精装3室2厅出租房，老房子保养良好，已有租客',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 65000,
@@ -1319,9 +1318,9 @@ export const SMALL_DEALS = [
   },
   {
     id: 49,
-    title: 'House For Sale - 3BE/2BA',
-    description: `Nice 3/2 house available in depresed market due to layoffs. Would make good investment property for right buyer.`,
-    info: 'Use this yourself or sell to another player.',
+    title: '出售住宅 - 3室2厅',
+    description: '裁员潮导致市场低迷，3室2厅住宅转让，适合长期投资客',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 50000,
@@ -1332,51 +1331,51 @@ export const SMALL_DEALS = [
   },
   {
     id: 50,
-    title: '10 Acres Raw Land',
-    description: `Wonderful park-like setting with stream on 10 acres in undeveloped area. No roads, no utilities, no noise.`,
-    info: 'Use this yourself or sell to another player.',
+    title: '_raw土地10英亩',
+    description: '未开发区域10英亩原生态地块，临溪流，公园式环境，无道路、无配套、无噪音',
+    info: '可自用或转售给其他玩家',
     type: 'land',
     subtype: null,
-    arg1: 5000, // cost
-    arg2: 5000, // downpay
+    arg1: 5000, // 总价
+    arg2: 5000, // 首付
     arg3: 0,
     arg4: 0,
     arg5: 1,
   },
   {
     id: 51,
-    title: 'Rare Gold Coin',
-    description: `You spot an unusual 1500's Royal Spanish New World (Havana Mint Only) "pieces of eight" gold coin in good condition at a swap meet. One only, seller asks $500`,
-    info: 'Use this yourself or sell to another player.',
+    title: '稀有金币',
+    description: '在跳蚤市场发现一枚品相良好的16世纪西班牙新世界（仅限哈瓦那铸币厂）八里亚尔金币，仅此一枚，卖家喊价500元',
+    info: '可自用或转售给其他玩家',
     type: 'gold',
     subtype: null,
-    arg1: 500, // cost
-    arg2: 500, // downpay
+    arg1: 500, // 总价
+    arg2: 500, // 首付
     arg3: 0,
     arg4: 0,
     arg5: 1,
   },
 ]
-//#endregion SMALL DEALS
+//#endregion 小机会卡
 
-//#region BIG DEALS
+//#region 大机会卡
 /**
- * > Structure of a big deals
+ * 大机会卡结构
  *
- * > Real estate
- *   ? arg1: cost
- *   ? arg2: downpay
- *   ? arg3: mortgage
- *   ? arg4: cashflow
- * arg5: 0,
+ * 房产类
+ *   ? 参数1: 总价
+ *   ? 参数2: 首付
+ *   ? 参数3: 按揭贷款
+ *   ? 参数4: 现金流
+ *   ? 参数5: 0
  */
 export const BIG_DEALS = [
   {
     id: 1,
-    title: '8-plex for sale',
+    title: '8户联排公寓出售',
     description:
-      'Reinvesting owner offers 8-plex for sale at reasonable price. Financing already in place. All it needs is your down payment',
-    info: 'Use this yourself or sell to another player. 51% ROI, may sell for $200,000 to $280,000.',
+      '再投资的业主以合理价格出售8户联排公寓，融资已到位，仅需你支付首付',
+    info: '可自用或转售给其他玩家，投资回报率51%，转售价可达20万-28万元',
     type: 'estate',
     subtype: 'plex',
     arg1: 220000,
@@ -1387,10 +1386,10 @@ export const BIG_DEALS = [
   },
   {
     id: 2,
-    title: '8-plex for sale',
+    title: '8户联排公寓出售',
     description:
-      'Professional person urgently needs cash to save partnership. 8-plex sale to raise capital, good opportunity for right person.',
-    info: 'Use this yourself or sell to another player',
+      '企业主急需现金挽救合伙生意，出售8户联排公寓回笼资金，慧眼者可把握良机',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 160000,
@@ -1401,10 +1400,10 @@ export const BIG_DEALS = [
   },
   {
     id: 3,
-    title: '8-plex for sale',
+    title: '8户联排公寓出售',
     description:
-      'Retiring investor/owner offers his 8-plex at current appraisal value. Professional lawn service and management. Full records.',
-    info: 'Use this yourself or sell to another player.',
+      '退休投资者按当前评估价出售8户联排公寓，含专业草坪维护和管理服务，账目齐全',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 240000,
@@ -1415,10 +1414,10 @@ export const BIG_DEALS = [
   },
   {
     id: 4,
-    title: '8-plex for sale',
+    title: '8户联排公寓出售',
     description:
-      'Owner legal troubles lead to forced sale of this 8-plex. No qualifying on this loan, as mortgage holder is cooperating.',
-    info: 'Use this yourself or sell to another player',
+      '业主涉法被迫出售8户联排公寓，贷款无需资质审核，抵押权人配合交易',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 200000,
@@ -1429,10 +1428,10 @@ export const BIG_DEALS = [
   },
   {
     id: 5,
-    title: '4-plex for sale',
+    title: '4户联排公寓出售',
     description:
-      '4-plex available - forced sale. Out-of-state, financially distressed owned years behind on taxes. Some records available.',
-    info: 'Use this yourself or sell to another player.',
+      '异地业主财务困境，多年欠税，4户联排公寓被迫出售，部分账目可查',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 80000,
@@ -1443,10 +1442,10 @@ export const BIG_DEALS = [
   },
   {
     id: 6,
-    title: '4-plex for sale',
+    title: '4户联排公寓出售',
     description:
-      'Project 4-plex for sale in rehabilitating neighborhood. Owner being forced out by income tax liens',
-    info: 'Use this yourself or sell to another player.',
+      '业主因欠缴个税被强制执行，4户联排公寓项目出售',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 80000,
@@ -1457,10 +1456,10 @@ export const BIG_DEALS = [
   },
   {
     id: 7,
-    title: '4-plex for sale',
+    title: '4户联排公寓出售',
     description:
-      'Older 4-plex next to new highway for sale. Owner/oocupant moving to quieter area. Priced for quick sale.',
-    info: 'Use this yourself or sell to another player.',
+      '紧邻新高速的老旧4户联排公寓出售，业主/自住者欲迁往安静区域，低价急售',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 90000,
@@ -1471,10 +1470,10 @@ export const BIG_DEALS = [
   },
   {
     id: 8,
-    title: '4-plex for sale',
+    title: '4户联排公寓出售',
     description:
-      '4-plex for sale by owner, moving to another state. Full records, fully rented, low occupant turnover in good neightborhood.',
-    info: 'Use this yourself or sell to another player.',
+      '业主迁居外地，自售4户联排公寓，账目齐全、满租、优质地段租客流动率低',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 140000,
@@ -1485,10 +1484,10 @@ export const BIG_DEALS = [
   },
   {
     id: 9,
-    title: '4-plex for sale',
+    title: '4户联排公寓出售',
     description:
-      'Nice, well maintain 4-plex in good neighborhood. Stable tenants, positive cash flow, few problems. Full records.',
-    info: 'Use this yourself or sell to another player.',
+      '优质地段精装4户联排公寓，租客稳定、现金流为正、问题少，账目齐全',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 125000,
@@ -1499,10 +1498,10 @@ export const BIG_DEALS = [
   },
   {
     id: 10,
-    title: '4-plex for sale',
+    title: '4户联排公寓出售',
     description:
-      '4-plex in recovering neighborhood. Fully rented, repairs kept up. Needs your down payment and patience.',
-    info: 'Use this yourself or sell to another player.',
+      '复苏期区域4户联排公寓，满租、维护到位，需你的首付和耐心等待升值',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 100000,
@@ -1513,10 +1512,10 @@ export const BIG_DEALS = [
   },
   {
     id: 11,
-    title: 'House for Sale 3BR/2BA',
+    title: '3室2厅住宅出售',
     description:
-      'Divorce leads to sale of this 3/2 house in an area full of owner occupied homes. Has been on the market 5 months.',
-    info: 'Use this yourself or sell to another player.',
+      '业主离婚出售3室2厅住宅，该区域以自住为主，已挂牌5个月',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 70000,
@@ -1527,10 +1526,10 @@ export const BIG_DEALS = [
   },
   {
     id: 12,
-    title: 'House for Sale 3BR/2BA',
+    title: '3室2厅住宅出售',
     description:
-      'Good investment potential in this 3/2 house if you can be patient. Positive cash flow even though rents are weak.',
-    info: 'Use this yourself or sell to another player.',
+      '3室2厅住宅长期投资潜力大，尽管当前租金低迷，仍可实现正现金流',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 65000,
@@ -1541,10 +1540,10 @@ export const BIG_DEALS = [
   },
   {
     id: 13,
-    title: 'House for Sale 3BR/2BA',
+    title: '3室2厅住宅出售',
     description:
-      '3/2 house on golf course offers potential capital gain pus current cash flow. Good rentals and nice financing.',
-    info: 'Use this yourself or sell to another player.',
+      '高尔夫球场旁3室2厅住宅，兼具增值潜力和稳定现金流，租金可观、融资优惠',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 75000,
@@ -1555,10 +1554,10 @@ export const BIG_DEALS = [
   },
   {
     id: 14,
-    title: 'House for Sale 3BR/2BA',
+    title: '3室2厅住宅出售',
     description:
-      'Businessman liquidating this 3/2 house, needs cash to save his business. Currently occupied by happy tenant.',
-    info: 'Use this yourself or sell to another player.',
+      '商人清算3室2厅住宅，急需现金挽救生意，目前租客稳定',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 65000,
@@ -1569,10 +1568,10 @@ export const BIG_DEALS = [
   },
   {
     id: 15,
-    title: 'House for Sale 3BR/2BA',
+    title: '3室2厅住宅出售',
     description:
-      'Split level 3/2 house on out of way golf course offered by heirs of owner. Golf membership included.',
-    info: 'Use this yourself or sell to another player.',
+      '业主继承人出售高尔夫球场旁错层3室2厅住宅，赠送高尔夫会籍',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 115000,
@@ -1583,10 +1582,10 @@ export const BIG_DEALS = [
   },
   {
     id: 16,
-    title: 'House for Sale 3BR/2BA',
+    title: '3室2厅住宅出售',
     description:
-      'Nice 3/2 house with in ground pool and full applicances available in upper middle class area. Good schools.',
-    info: 'Use this yourself or sell to another player.',
+      '中高端区域精装3室2厅住宅，带泳池和全套家电，学区优质',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 125000,
@@ -1597,10 +1596,10 @@ export const BIG_DEALS = [
   },
   {
     id: 17,
-    title: 'House for Sale 3BR/2BA',
+    title: '3室2厅住宅出售',
     description:
-      'Downsized manager must sell this 3/2 house, cannot afford payments on new salary. Area in transition.',
-    info: 'Use this yourself or sell to another player.',
+      '业主降薪后无力承担月供，必须出售3室2厅住宅，该区域正处于转型期',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 70000,
@@ -1611,10 +1610,10 @@ export const BIG_DEALS = [
   },
   {
     id: 18,
-    title: 'House for Sale 3BR/2BA',
+    title: '3室2厅住宅出售',
     description:
-      'Transferred skilled tradesman kept this 3/2 house in excellent condition, so it commands top dollar rentals in older neightborhood.',
-    info: 'Use this yourself or sell to another player.',
+      '技术工人因工作调动转让3室2厅住宅，房屋保养极佳，在老城区可租出高价',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'house32',
     arg1: 67000,
@@ -1623,81 +1622,26 @@ export const BIG_DEALS = [
     arg4: 400,
     arg5: 1,
   },
-  // {
-  //   id: 19,
-  //   title: 'Automated Business for Sale',
-  //   description:
-  //     'Successful 4 bay coin operated auto wash near busy intersection. Seller is moving to retirement community out of state.',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 125000,
-  //   arg2: 25000,
-  //   arg3: 100000,
-  //   arg4: 1800,
-  //    arg5: 0,
-  // },
-  // {
-  //   id: 20,
-  //   title: 'Automated Business for Sale',
-  //   description:
-  //     '30 video/pinball machines at long term contract locations for sale by overextended owner. Owner is desperate.',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 100000,
-  //   arg2: 20000,
-  //   arg3: 80000,
-  //   arg4: 1600,
-  //    arg5: 0,
-  // },
-  // {
-  //   id: 21,
-  //   title: 'Automated Business for Sale',
-  //   description:
-  //     'Successful coin telephone business available due to death of owner. heirs live out of state. All locations on long term contract.',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 200000,
-  //   arg2: 40000,
-  //   arg3: 160000,
-  //   arg4: 2700,
-  //    arg5: 0,
-  // },
-  // {
-  //   id: 22,
-  //   title: 'Automated Business for Sale',
-  //   description:
-  //     'Personal bankruptcy sale of busy, successful laundromat on busy highway. Absentee owner, contract cleaning.',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   arg1: 150000,
-  //   arg2: 30000,
-  //   arg3: 120000,
-  //   arg4: 2500,
-  //    arg5: 0,
-  // },
   {
     id: 23,
-    title: '20 Acres for Sale',
+    title: '土地20英亩出售',
     description:
-      '20 acres of vacant land, currently zoned residential. Possiblity of good appreciation if rezoned commercial.',
-    info: 'Use this yourself or sell to another player.',
+      '20英亩空置土地，目前为住宅用地，若调整为商业用地可实现大幅增值',
+    info: '可自用或转售给其他玩家',
     type: 'land',
     subtype: null,
-    arg1: 20000, // cost
-    arg2: 20000, // downpay
+    arg1: 20000, // 总价
+    arg2: 20000, // 首付
     arg3: 0,
     arg4: 0,
     arg5: 1,
   },
   {
     id: 24,
-    title: 'Tenant Damages your Property',
+    title: '租客损坏房产',
     description:
-      'Tenant refuses to pay rent after losing job. When you get him evicted you discover significant damages to your property. Insurance covers most damages and costs, but you are out of pocket $1,000.',
-    info: 'Pay $1,000 if you own any rental real estate. (Bank loan available on usual terms.)',
+      '租客失业后拒缴房租，驱逐后发现房产严重损坏，保险覆盖大部分损失，你仍需自付1000元',
+    info: '若拥有出租房产，支付1000元（银行可按常规条款放贷）',
     type: 'estate-auto',
     subtype: null,
     arg1: 1000,
@@ -1706,82 +1650,12 @@ export const BIG_DEALS = [
     arg4: 0,
     arg5: 0,
   },
-  // {
-  //   id: 25,
-  //   title: 'Limited Partner Wanted',
-  //   description:
-  //     'Non-franchise sandwich shop doubling the number of locations Owner needs additional equity capital to get operating loan.',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 30000,
-  //   arg2: 30000,
-  //   arg3: 0,
-  //   arg4: 1500,
-  //    arg5: 1,
-  // },
-  // {
-  //   id: 26,
-  //   title: 'Limited Partner Wanted',
-  //   description: `Auto Dealer wants to expand into leasing 2 and 3 years old cars. Needs capital as car maker's finance company is not interested.`,
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   subtype: 'automated',
-  //   arg1: 30000,
-  //   arg2: 30000,
-  //   arg3: 0,
-  //   arg4: 1000,
-  //    arg5: 1,
-  // },
-  // {
-  //   id: 27,
-  //   title: 'Limited Partner Wanted',
-  //   description:
-  //     'Successful doctor expanding office and clinic. Needs partner to fund equity portion of construction costs.',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 25000,
-  //   arg2: 25000,
-  //   arg3: 0,
-  //   arg4: 1000,
-  //    arg5: 1,
-  // },
-  // {
-  //   id: 28,
-  //   title: 'Limited Partner Wanted',
-  //   description:
-  //     'Successful pizza chain expanding into production of frozen pizzas for grocery stores. Owner needs capital for equipment.',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 20000,
-  //   arg2: 20000,
-  //   arg3: 0,
-  //   arg4: 800,
-  //    arg5: 1,
-  // },
-  // {
-  //   id: 29,
-  //   title: 'Pizza Franchise for Sale',
-  //   description:
-  //     'Healthy-pizza company franchise. Trend in nutritious fast-food booming. Next to college. High traffic.',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 500000,
-  //   arg2: 100000,
-  //   arg3: 400000,
-  //   arg4: 5000,
-  //    arg5: 1,
-  // },
   {
     id: 30,
-    title: 'Duplex for Sale',
+    title: '双拼公寓出售',
     description:
-      'Duplex owner must sell to pay hospital bills. Two tenants in place, all records, good investment opportunity.',
-    info: 'Use this yourself or sell to another player',
+      '业主因支付医药费必须出售双拼公寓，已有两名租客，账目齐全，优质投资机会',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 60000,
@@ -1792,10 +1666,10 @@ export const BIG_DEALS = [
   },
   {
     id: 31,
-    title: 'Duplex for Sale',
+    title: '双拼公寓出售',
     description:
-      'Tenants in place at this investment duplex! Owner has income tax problems, needs to sell quickly.',
-    info: 'Use this yourself or sell to another player',
+      '业主涉个税问题，急售双拼公寓，目前满租',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 45000,
@@ -1806,10 +1680,10 @@ export const BIG_DEALS = [
   },
   {
     id: 32,
-    title: 'Duplex for Sale',
+    title: '双拼公寓出售',
     description:
-      'This duplex is the best in the neighborhood! Proud owner retiring to another state to be near her grandchildren.',
-    info: 'Use this yourself or sell to another player.',
+      '业主退休迁居外地，与孙辈团聚，出售片区优质双拼公寓',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 70000,
@@ -1820,10 +1694,10 @@ export const BIG_DEALS = [
   },
   {
     id: 33,
-    title: 'Duplex for Sale',
+    title: '双拼公寓出售',
     description:
-      'Well maintained duplex in the desirable area available due to transfer of owner. Excellent investment opportunity for right buyer.',
-    info: 'Use this yourself or sell to another player.',
+      '业主工作调动，转让优质地段精装双拼公寓，慧眼投资者可把握',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 60000,
@@ -1834,10 +1708,10 @@ export const BIG_DEALS = [
   },
   {
     id: 34,
-    title: 'Duplex for Sale',
+    title: '双拼公寓出售',
     description:
-      'Owner moving out of this duplex due to growing family. Tenant remains, well maintained, excellent landscaping.',
-    info: 'Use this yourself or sell to another player.',
+      '业主因家庭人口增加迁居，租客保留，房屋保养良好、绿化优秀',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'plex',
     arg1: 50000,
@@ -1846,26 +1720,12 @@ export const BIG_DEALS = [
     arg4: 240,
     arg5: 2,
   },
-  // {
-  //   id: 35,
-  //   title: 'Bed & Breakfast for Sale',
-  //   description:
-  //     'Owner retiring, wants out NOW. Great clientele in resort community. 5BR/3BA',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 150000,
-  //   arg2: 30000,
-  //   arg3: 120000,
-  //   arg4: 1000,
-  //    arg5: 1,
-  // },
   {
     id: 36,
-    title: 'Apartment House for Sale',
+    title: '公寓楼出售',
     description:
-      '2 buildings totaling 24 units for sale. Owner managed with on-site assistant. Retirement prompts sale.',
-    info: 'Use this yourself or sell to another player.',
+      '两栋建筑共24户公寓出售，业主自主管理并配备现场助理，因退休转让',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'apartment',
     arg1: 575000,
@@ -1876,10 +1736,10 @@ export const BIG_DEALS = [
   },
   {
     id: 37,
-    title: 'Apartment House for Sale',
+    title: '公寓楼出售',
     description:
-      '12 units apartment house offered by out-of-state heirs of handyman/owner. Long waiting list for apartments in this building.',
-    info: 'Use this yourself or sell to another player.',
+      '12户公寓楼由异地业主继承人出售，该楼租房排队等候人数众多',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'apartment',
     arg1: 350000,
@@ -1890,10 +1750,10 @@ export const BIG_DEALS = [
   },
   {
     id: 38,
-    title: 'Apartment House for Sale',
+    title: '公寓楼出售',
     description:
-      '24 unit older building near community college available from retiring owner/builder. Fully rented, nice cash flow.',
-    info: 'Use this yourself or sell to another player.',
+      '紧邻社区大学的24户老旧公寓楼，由退休业主/开发商出售，满租、现金流可观',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'apartment',
     arg1: 550000,
@@ -1902,26 +1762,12 @@ export const BIG_DEALS = [
     arg4: 2800,
     arg5: 24,
   },
-  // {
-  //   id: 39,
-  //   title: 'Car Wash for Sale',
-  //   description:
-  //     'Family car wash for sale. Family feuding. Wants out ASAP. Prime location in highgrowth area.',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 350000,
-  //   arg2: 50000,
-  //   arg3: 300000,
-  //   arg4: 1500,
-  //    arg5: 1,
-  // },
   {
     id: 40,
-    title: 'Apartment Complex for Sale',
+    title: '公寓小区出售',
     description:
-      '60 units complex available from pension fund that foreclosed on builder/owner. On-site management in place.',
-    info: 'Use this yourself or sell to another player.',
+      '养老基金法拍开发商60户公寓小区，现场管理团队已到位',
+    info: '可自用或转售给其他玩家',
     type: 'estate',
     subtype: 'apartment',
     arg1: 1200000,
@@ -1932,10 +1778,10 @@ export const BIG_DEALS = [
   },
   {
     id: 41,
-    title: 'Sewer Line Breaks',
+    title: '下水道管线破裂',
     description:
-      'Water everywhere at your plex! Broken sewer line needs repair immediately!',
-    info: 'If you own any plex (Dual, 4-Plex, 8-plex), pay $2,000 for new line. (Bank loan available on usual terms)',
+      '你的联排公寓水管爆裂！积水严重，需立即维修下水道管线',
+    info: '若拥有联排公寓（双拼/4户/8户），支付2000元更换管线（银行可按常规条款放贷）',
     type: 'estate-auto',
     subtype: null,
     arg1: 2000,
@@ -1944,31 +1790,17 @@ export const BIG_DEALS = [
     arg4: 0,
     arg5: 1,
   },
-  // {
-  //   id: 42,
-  //   title: 'Small shopping mall for sale',
-  //   description:
-  //     'Bank has taken back mall from bankrupt owner. Mall is currently 50% occupied. Just listed today.',
-  //   info: 'Use this yourself or sell to another player.',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 50000,
-  //   arg2: 50000,
-  //   arg3: 0,
-  //   arg4: 800,
-  //    arg5: 1,
-  // },
 ]
-//#endregion BIG DEALS
+//#endregion 大机会卡
 
-//#region MARKETS
+//#region 市场卡
 export const MARKETS = [
   {
     id: 1,
-    title: 'Plex Buyer',
+    title: '联排公寓买家',
     description:
-      'Buyer offers $25,000 per unit for all units in any combination of duplexes, 4-pexes, or 8-plexes. Has own financing.',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以每户25000元收购任意数量的双拼/4户/8户联排公寓，自有资金无需融资',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'plex',
     arg1: 30000,
@@ -1979,10 +1811,10 @@ export const MARKETS = [
   },
   {
     id: 2,
-    title: 'Plex Buyer',
+    title: '联排公寓买家',
     description:
-      'Buyer offers $30,000 per unit for all units in any combination of duplexes, 4-pexes, or 8-plexes. Has own financing.',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以每户30000元收购任意数量的双拼/4户/8户联排公寓，自有资金无需融资',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'plex',
     arg1: 40000,
@@ -1993,10 +1825,10 @@ export const MARKETS = [
   },
   {
     id: 3,
-    title: 'Plex Buyer',
+    title: '联排公寓买家',
     description:
-      'Buyer offers $35,000 per unit for all units in any combination of duplexes, 4-pexes, or 8-plexes. Has own financing.',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以每户35000元收购任意数量的双拼/4户/8户联排公寓，自有资金无需融资',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'plex',
     arg1: 35000,
@@ -2007,10 +1839,10 @@ export const MARKETS = [
   },
   {
     id: 4,
-    title: 'Plex Buyer',
+    title: '联排公寓买家',
     description:
-      'Buyer offers $40,000 per unit for all units in any combination of duplexes, 4-pexes, or 8-plexes. Has own financing.',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以每户40000元收购任意数量的双拼/4户/8户联排公寓，自有资金无需融资',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'plex',
     arg1: 40000,
@@ -2021,10 +1853,10 @@ export const MARKETS = [
   },
   {
     id: 5,
-    title: 'Plex Buyer',
+    title: '联排公寓买家',
     description:
-      'Buyer offers $45,000 per unit for all units in any combination of duplexes, 4-pexes, or 8-plexes. Has own financing.',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以每户45000元收购任意数量的双拼/4户/8户联排公寓，自有资金无需融资',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'plex',
     arg1: 45000,
@@ -2035,10 +1867,10 @@ export const MARKETS = [
   },
   {
     id: 6,
-    title: 'Plex Buyer',
+    title: '联排公寓买家',
     description:
-      'Buyer offers $20,000 per unit for all units in any combination of duplexes, 4-pexes, or 8-plexes. Has own financing.',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以每户20000元收购任意数量的双拼/4户/8户联排公寓，自有资金无需融资',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'plex',
     arg1: 20000,
@@ -2049,10 +1881,10 @@ export const MARKETS = [
   },
   {
     id: 7,
-    title: 'Apartment House Buyer',
+    title: '公寓楼买家',
     description:
-      'Buyer offers $25,000 per unit for all units in apartment houses of any size. Has own financing. [His 1031 tax deferred exchange time is running out].',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以每户25000元收购任意规模公寓楼，自有资金（1031延税置换窗口期将满）',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'apartment',
     arg1: 25000,
@@ -2063,10 +1895,10 @@ export const MARKETS = [
   },
   {
     id: 8,
-    title: 'Apartment House Buyer',
+    title: '公寓楼买家',
     description:
-      'Buyer offers $45,000 per unit for all units in apartment houses of any size. Has own financing. [His 1031 tax deferred exchange time is running out].',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以每户45000元收购任意规模公寓楼，自有资金（1031延税置换窗口期将满）',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'apartment',
     arg1: 45000,
@@ -2077,10 +1909,10 @@ export const MARKETS = [
   },
   {
     id: 9,
-    title: 'Apartment House Buyer',
+    title: '公寓楼买家',
     description:
-      'Buyer offers $30,000 per unit for all units in apartment houses of any size. Has own financing. Buyer has funds from sale of complex in another city.',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以每户30000元收购任意规模公寓楼，自有资金（出售异地小区回笼资金）',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'apartment',
     arg1: 30000,
@@ -2091,10 +1923,10 @@ export const MARKETS = [
   },
   {
     id: 10,
-    title: 'Apartment House Buyer',
+    title: '公寓楼买家',
     description:
-      'Buyer offers $40,000 per unit for all units in apartment houses of any size. Has own financing, needs to invest now.',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以每户40000元收购任意规模公寓楼，自有资金，急需即时投资',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'apartment',
     arg1: 40000,
@@ -2105,10 +1937,10 @@ export const MARKETS = [
   },
   {
     id: 11,
-    title: 'House Buyer 3BR/2BA',
+    title: '3室2厅住宅买家',
     description:
-      'You are offered $135,000 for a 3/2 rental house. Buyer has own financing',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以135000元收购一套3室2厅出租房，自有资金',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'house32',
     arg1: 135000,
@@ -2119,10 +1951,10 @@ export const MARKETS = [
   },
   {
     id: 12,
-    title: 'House Buyer 3BR/2BA',
+    title: '3室2厅住宅买家',
     description:
-      'You are offered $110,000 for a 3/2 rental house. Buyer has own financing',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以110000元收购一套3室2厅出租房，自有资金',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'house32',
     arg1: 110000,
@@ -2133,10 +1965,10 @@ export const MARKETS = [
   },
   {
     id: 13,
-    title: 'House Buyer 3BR/2BA',
+    title: '3室2厅住宅买家',
     description:
-      'You are offered $140,000 for a 3/2 rental house. Buyer has own financing',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以140000元收购一套3室2厅出租房，自有资金',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'house32',
     arg1: 140000,
@@ -2147,10 +1979,10 @@ export const MARKETS = [
   },
   {
     id: 14,
-    title: 'House Buyer 3BR/2BA',
+    title: '3室2厅住宅买家',
     description:
-      'You are offered $100,000 for a 3/2 rental house. Buyer has own financing',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以100000元收购一套3室2厅出租房，自有资金',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'house32',
     arg1: 100000,
@@ -2161,10 +1993,10 @@ export const MARKETS = [
   },
   {
     id: 15,
-    title: 'House Buyer 3BR/2BA',
+    title: '3室2厅住宅买家',
     description:
-      'You are offered $65,000 for a 3/2 rental house. Buyer has own financing',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以65000元收购一套3室2厅出租房，自有资金',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'house32',
     arg1: 65000,
@@ -2175,10 +2007,10 @@ export const MARKETS = [
   },
   {
     id: 16,
-    title: 'Condo Buyer 2BR/1BA',
+    title: '2室1厅公寓买家',
     description:
-      'You are offered $50,000 for a 2/1 rental condo. Buyer has own financing',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以50000元收购一套2室1厅出租公寓，自有资金',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'house21',
     arg1: 50000,
@@ -2189,10 +2021,10 @@ export const MARKETS = [
   },
   {
     id: 17,
-    title: 'Condo Buyer 2BR/1BA',
+    title: '2室1厅公寓买家',
     description:
-      'You are offered $65,000 for a 2/1 rental condo. Buyer has own financing',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以65000元收购一套2室1厅出租公寓，自有资金',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'house21',
     arg1: 65000,
@@ -2203,10 +2035,10 @@ export const MARKETS = [
   },
   {
     id: 18,
-    title: 'Condo Buyer 2BR/1BA',
+    title: '2室1厅公寓买家',
     description:
-      'You are offered $55,000 for a 2/1 rental condo. Buyer has own financing',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以55000元收购一套2室1厅出租公寓，自有资金',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'house21',
     arg1: 55000,
@@ -2217,10 +2049,10 @@ export const MARKETS = [
   },
   {
     id: 19,
-    title: 'Condo Buyer 2BR/1BA',
+    title: '2室1厅公寓买家',
     description:
-      'You are offered $60,000 for a 2/1 rental condo. Buyer has own financing',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以60000元收购一套2室1厅出租公寓，自有资金',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'house21',
     arg1: 60000,
@@ -2231,10 +2063,10 @@ export const MARKETS = [
   },
   {
     id: 20,
-    title: 'Condo Buyer 2BR/1BA',
+    title: '2室1厅公寓买家',
     description:
-      'You are offered $70,000 for a 2/1 rental condo. Buyer has own financing',
-    info: 'If you sell, pay off the related mortgage and give up the cashf flow you currently receive on this property',
+      '买家愿以70000元收购一套2室1厅出租公寓，自有资金',
+    info: '若出售，结清相关按揭贷款，并放弃该房产当前的现金流',
     type: 'estate',
     subtype: 'house21',
     arg1: 70000,
@@ -2243,65 +2075,12 @@ export const MARKETS = [
     arg4: 0,
     arg5: 0,
   },
-  // {
-  //   id: 21,
-  //   title: 'Limited Partnership Sold',
-  //   description:
-  //     'The business has been sold and you receive twice your original cost for your share of it.',
-  //   info: 'Every limited partnership is affected. If you own a limited partnership, receive cash and reduce your cash flow immediately.',
-  //   type: 'estate',
-  //   subtype: 'limited',
-  //   arg1: 0,
-  //   arg2: 0,
-  //   arg3: 0,
-  //   arg4: 0,
-  //   arg5: 1,
-  // },
-  // {
-  //   id: 22,
-  //   title: 'Small Business Improves',
-  //   description:
-  //     'The small business you founded has found a major company to distribute its product. Your sales increase 150%.',
-  //   info: 'If you owns a business, you will have your cashflow increased by $400 per month on all such businesses',
-  //   type: 'estate',
-  //   subtype: 'business',
-  //   arg1: 400,
-  //   arg2: 0,
-  //   arg3: 0,
-  //   arg4: 0,
-  //   arg5: 1,
-  // },
-  // {
-  //   id: 23,
-  //   title: 'Small Business Improves',
-  //   description:
-  //     'The small business you founded won an industry awared for its product innovation. Great publicity causes your sales to double.',
-  //   info: 'If you owns a business, you will have your cashflow increased by $250 per month on all such businesses',
-  //   type: 'business-improved',
-  //   arg1: 250,
-  //   arg2: 0,
-  //   arg3: 0,
-  //   arg4: 0,
-  //   arg5: 1,
-  // },
-  // {
-  //   id: 24,
-  //   title: 'Car Wash Buyer',
-  //   description:
-  //     'Red hot buyer looking for a car wash bargain. Has $250,000 cash ready to spend. That is his limit.',
-  //   info: 'If you own a car wash, you may sell at this price. If you sell, pay off the related mortgage and give up the cash flow you currently receive on this property.',
-  //   arg1: 250000,
-  //   arg2: 0,
-  //   arg3: 0,
-  //   arg4: 0,
-  //   arg5: 1,
-  // },
   {
     id: 25,
-    title: 'Builder Wants Land',
+    title: '开发商收地',
     description:
-      'City planners require builder to put in 10 acre park or they will not approve new subdivision. Builder needs 10 acres with stream.',
-    info: 'Cash offer of $150,000 to you if you own such a property.',
+      '城市规划要求开发商配建10英亩公园，否则不予批准新小区规划，开发商急需临溪流的10英亩土地',
+    info: '若拥有该类地块，可获现金150000元',
     type: 'land',
     subtype: null,
     arg1: 150000,
@@ -2310,71 +2089,12 @@ export const MARKETS = [
     arg4: 0,
     arg5: 0,
   },
-  // {
-  //   id: 26,
-  //   title: 'Demand for Bed & Breakfast',
-  //   description:
-  //     'Couple burned out from the corporate jobs are ready for a change. Have lots of cash. Looking for a profitable Bed & Breakfast. They will pay $250,000 today.',
-  //   info: 'If you own a Bed & Breakfast, you can can sell at this price.',
-  //   arg1: 250000,
-  //   arg2: 0,
-  //   arg3: 0,
-  //   arg4: 0,
-  //   arg5: 1,
-  // },
-  // {
-  //   id: 27,
-  //   title: 'Inflation Hits!',
-  //   description:
-  //     'Inflation goes to 10%. Interest rates climb to 20% on home loans.',
-  //   info: 'All 3/2 rental houses that you own are now in foreclosure. You financed with variable rate mortages. You must give your 3/2 house(s) back to the bank. You lose your cash flow from these properties.',
-  //   arg1: 0,
-  //   arg2: 0,
-  //   arg3: 0,
-  //   arg4: 0,
-  //   arg5: 1,
-  // },
-  // {
-  //   id: 28,
-  //   title: 'Software Company Buyer',
-  //   description:
-  //     'Large integrated software company offers $100,000 cash for inventive software program and related company.',
-  //   info: 'If you owns a company, you may sell at this price. If you sell, give up the cash flow you currently receive from this company.',
-  //   arg1: 0,
-  //   arg2: 0,
-  //   arg3: 0,
-  //   arg4: 0,
-  //   arg5: 1,
-  // },
-  // {
-  //   id: 29,
-  //   title: 'Iterest Rates Drop!',
-  //   description: 'Interest rates on home loans drop to 5%',
-  //   info: 'If you own any 3/2 rental houses you may sell them for $50,000 more than the original cost.',
-  //   arg1: 0,
-  //   arg2: 0,
-  //   arg3: 0,
-  //   arg4: 0,
-  //   arg5: 1,
-  // },
-  // {
-  //   id: 30,
-  //   title: 'Shopping Mall Wanted',
-  //   description:
-  //     'Major retailer is moving to your town. Looking for small shopping mall to purchases.',
-  //   info: 'There are ready to pay $100,000 to you if you own a small shopping mall.',
-  //   arg1: 0,
-  //   arg2: 0,
-  //   arg3: 0,
-  //   arg4: 0,
-  //   arg5: 1,
-  // },
   {
     id: 31,
-    title: 'Buyer for 20 Acres',
+    title: '20英亩土地买家',
     description:
-      'Builder wants a 20-acre parcel of land. He will re-zone it from residential to commercial.',
-    info: 'Cash offer of $200,000 to everyone who owns 20 acres of residential land.',
+      '开发商急需20英亩地块，计划将其从住宅用地调整为商业用地',
+    info: '所有拥有20英亩住宅用地的玩家，可获现金200000元',
     type: 'land',
     subtype: null,
     arg1: 0,
@@ -2383,24 +2103,12 @@ export const MARKETS = [
     arg4: 0,
     arg5: 0,
   },
-  // {
-  //   id: 32,
-  //   title: 'Widget Company Buyer',
-  //   description:
-  //     'Engineer/Inventor who owns machinery company offers $50,000 cash for inventive method of making widgets.',
-  //   info: 'If you own a startup company, you may sell at this price',
-  //   arg1: 50000,
-  //   arg2: 0,
-  //   arg3: 0,
-  //   arg4: 0,
-  //   arg5: 1,
-  // },
   {
     id: 33,
-    title: 'Price of Gold Soars',
+    title: '黄金价格暴涨',
     description:
-      'Rioting in Middle East. Oil prices threatened. Price of gold skyrockets to $600 per ounce.',
-    info: 'If you own 1 once Krugerrands may sell at this price',
+      '中东动乱，油价告急，黄金价格飙升至每盎司600元',
+    info: '若拥有1盎司克鲁格金币，可按此价格出售',
     type: 'gold',
     subtype: null,
     arg1: 600,
@@ -2411,10 +2119,10 @@ export const MARKETS = [
   },
   {
     id: 34,
-    title: 'Collector Wants Gold Coins',
+    title: '收藏家收金币',
     description:
-      'Collector looking for authentic 1500 Royal Spanish New World (Havana mint only) pieces-of-eight gold coins',
-    info: 'Cash offer of $5,000 for each coin to everyone',
+      '收藏家高价收购16世纪西班牙新世界（仅限哈瓦那铸币厂）八里亚尔真品金币',
+    info: '每枚金币可获现金5000元',
     type: 'gold',
     subtype: null,
     arg1: 5000,
@@ -2424,86 +2132,86 @@ export const MARKETS = [
     arg5: 0,
   },
 ]
-//#endregion MARKETS
+//#endregion 市场卡
 
-//#region PROFESSIONS
+//#region 职业卡
 export const PROFESSIONS = [
   {
     id: 1,
-    name: 'Doctor',
+    name: '医生',
     salary: 13200,
     cash: 400,
     expensePerChild: 640,
     otherExpenses: 2880,
     liabilities: [
-      { id: 1, name: 'Home Mortgage', amount: 202000, type: 'home' }, // Home Mortgage
-      { id: 2, name: 'Car Loans', amount: 19000, type: 'car' }, // Car Loans
-      { id: 3, name: 'Credit Cards', amount: 9000, type: 'credit' }, // Credit Cards
-      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
+      { id: 1, name: '房屋按揭', amount: 202000, type: 'home' }, // 房屋按揭
+      { id: 2, name: '汽车贷款', amount: 19000, type: 'car' }, // 汽车贷款
+      { id: 3, name: '信用卡欠款', amount: 9000, type: 'credit' }, // 信用卡欠款
+      { id: 4, name: '消费贷欠款', amount: 1000, type: 'retail' }, // 消费贷欠款
     ],
   },
   {
     id: 2,
-    name: 'Mechanic',
+    name: '机械师',
     salary: 2000,
     cash: 400,
     expensePerChild: 110,
     otherExpenses: 450,
     liabilities: [
-      { id: 1, name: 'Home Mortgage', amount: 31000, type: 'home' }, // Home Mortgage
-      { id: 2, name: 'Car Loans', amount: 3000, type: 'car' }, // Car Loans
-      { id: 3, name: 'Credit Cards', amount: 2000, type: 'credit' }, // Credit Cards
-      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
+      { id: 1, name: '房屋按揭', amount: 31000, type: 'home' }, // 房屋按揭
+      { id: 2, name: '汽车贷款', amount: 3000, type: 'car' }, // 汽车贷款
+      { id: 3, name: '信用卡欠款', amount: 2000, type: 'credit' }, // 信用卡欠款
+      { id: 4, name: '消费贷欠款', amount: 1000, type: 'retail' }, // 消费贷欠款
     ],
   },
   {
     id: 3,
-    name: 'Nurse',
+    name: '护士',
     salary: 3100,
     cash: 480,
     expensePerChild: 170,
     otherExpenses: 710,
     liabilities: [
-      { id: 1, name: 'Home Mortgage', amount: 47000, type: 'home' }, // Home Mortgage
-      { id: 2, name: 'Car Loans', amount: 5000, type: 'car' }, // Car Loans
-      { id: 3, name: 'Credit Cards', amount: 3000, type: 'credit' }, // Credit Cards
-      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
+      { id: 1, name: '房屋按揭', amount: 47000, type: 'home' }, // 房屋按揭
+      { id: 2, name: '汽车贷款', amount: 5000, type: 'car' }, // 汽车贷款
+      { id: 3, name: '信用卡欠款', amount: 3000, type: 'credit' }, // 信用卡欠款
+      { id: 4, name: '消费贷欠款', amount: 1000, type: 'retail' }, // 消费贷欠款
     ],
   },
   {
     id: 4,
-    name: 'Engineer',
+    name: '工程师',
     salary: 4900,
     cash: 500,
     expensePerChild: 250,
     otherExpenses: 1090,
     liabilities: [
-      { id: 1, name: 'Home Mortgage', amount: 75000, type: 'home' }, // Home Mortgage
-      { id: 2, name: 'Car Loans', amount: 7000, type: 'car' }, // Car Loans
-      { id: 3, name: 'Credit Cards', amount: 4000, type: 'credit' }, // Credit Cards
-      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
+      { id: 1, name: '房屋按揭', amount: 75000, type: 'home' }, // 房屋按揭
+      { id: 2, name: '汽车贷款', amount: 7000, type: 'car' }, // 汽车贷款
+      { id: 3, name: '信用卡欠款', amount: 4000, type: 'credit' }, // 信用卡欠款
+      { id: 4, name: '消费贷欠款', amount: 1000, type: 'retail' }, // 消费贷欠款
     ],
   },
   {
     id: 5,
-    name: 'Business Manager',
+    name: '运营经理',
     salary: 4600,
     cash: 400,
     expensePerChild: 480,
     otherExpenses: 1000,
     liabilities: [
-      { id: 1, name: 'Home Mortgage', amount: 75000, type: 'home' }, // Home Mortgage
-      { id: 2, name: 'Car Loans', amount: 6000, type: 'car' }, // Car Loans
-      { id: 3, name: 'Credit Cards', amount: 3000, type: 'credit' }, // Credit Cards
-      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
+      { id: 1, name: '房屋按揭', amount: 75000, type: 'home' }, // 房屋按揭
+      { id: 2, name: '汽车贷款', amount: 6000, type: 'car' }, // 汽车贷款
+      { id: 3, name: '信用卡欠款', amount: 3000, type: 'credit' }, // 信用卡欠款
+      { id: 4, name: '消费贷欠款', amount: 1000, type: 'retail' }, // 消费贷欠款
     ],
   },
 ]
-//#endregion PROFESSIONS
+//#endregion 职业卡
 
-//#endregion GAME DATA
+//#endregion 游戏数据
 
-//#region Custom MUI theme
+//#region 自定义MUI主题
 export const theme = createTheme({
   typography: {
     fontFamily: [
@@ -2521,4 +2229,4 @@ export const theme = createTheme({
     ].join(','),
   },
 })
-//#endregion Custom MUI theme
+//#endregion 自定义MUI主题
