@@ -1,14 +1,55 @@
 import styled from '@emotion/styled'
+import { useState } from 'react'
 import { colors, breakpoints } from '@/styles'
-import { PROFESSIONS, PROFESSION_TIERS, currencyFormatter } from '@/utils'
+import { PROFESSIONS, PROFESSION_TIERS, currencyFormatter, getMonthlyLoanPayment } from '@/utils'
 import PropTypes from 'prop-types'
 
 const CharacterSelect = ({ onSelect, onBack }) => {
+  const [selectedProfession, setSelectedProfession] = useState(null)
+
   // Group professions by tier
   const professionsByTier = PROFESSION_TIERS.map(tier => ({
     ...tier,
     professions: PROFESSIONS.filter(p => p.tier === tier.level)
   }))
+
+  // Calculate financial stats for the selected profession
+  const getFinancialStats = (profession) => {
+    if (!profession) return null
+    
+    const totalLiabilities = profession.liabilities.reduce((sum, l) => sum + l.amount, 0)
+    const monthlyExpenses = profession.liabilities.reduce((sum, l) => sum + getMonthlyLoanPayment(l), 0) 
+      + Math.floor(profession.salary * 0.18) // taxes
+      + profession.otherExpenses
+    const monthlyCashFlow = profession.salary - monthlyExpenses
+    const initialNetWorth = profession.cash
+    
+    return {
+      initialNetWorth,
+      monthlySalary: profession.salary,
+      monthlyExpenses,
+      monthlyCashFlow,
+      cash: profession.cash,
+    }
+  }
+
+  const handleCardClick = (profession, unlocked) => {
+    if (unlocked) {
+      setSelectedProfession(profession)
+    }
+  }
+
+  const handleConfirm = () => {
+    if (selectedProfession) {
+      onSelect(selectedProfession)
+    }
+  }
+
+  const handleClose = () => {
+    setSelectedProfession(null)
+  }
+
+  const stats = getFinancialStats(selectedProfession)
 
   return (
     <Container>
@@ -38,7 +79,7 @@ const CharacterSelect = ({ onSelect, onBack }) => {
               {tier.professions.map(profession => (
                 <ProfessionCard
                   key={profession.id}
-                  onClick={() => tier.unlocked && onSelect(profession)}
+                  onClick={() => handleCardClick(profession, tier.unlocked)}
                   disabled={!tier.unlocked}
                 >
                   <AvatarWrapper>
@@ -71,6 +112,72 @@ const CharacterSelect = ({ onSelect, onBack }) => {
           <circle cx="18" cy="16" r="3" />
         </svg>
       </MusicButton>
+
+      {/* Confirmation Modal */}
+      {selectedProfession && stats && (
+        <ModalOverlay onClick={handleClose}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ModalHeader>
+              <ModalAvatar style={{ backgroundColor: selectedProfession.avatarColor }}>
+                <ModalAvatarIcon>{getAvatarIcon(selectedProfession.name)}</ModalAvatarIcon>
+              </ModalAvatar>
+              <CoinDecoration>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#fbbf24">
+                  <circle cx="12" cy="12" r="10" />
+                  <text x="12" y="16" textAnchor="middle" fill="#92400e" fontSize="10" fontWeight="bold">$</text>
+                </svg>
+              </CoinDecoration>
+            </ModalHeader>
+
+            <ModalBody>
+              <ModalTitle>{selectedProfession.nameCn}</ModalTitle>
+              <ModalSubtitle>{selectedProfession.name}</ModalSubtitle>
+
+              <StatsCard>
+                <StatsHeader>
+                  初始净资产: {currencyFormatter.format(stats.initialNetWorth)}
+                </StatsHeader>
+                <StatsList>
+                  <StatItem>
+                    <StatLabel>月工资:</StatLabel>
+                    <StatValue>{currencyFormatter.format(stats.monthlySalary)}</StatValue>
+                  </StatItem>
+                  <StatItem>
+                    <StatLabel>月总支出:</StatLabel>
+                    <StatValue>{currencyFormatter.format(stats.monthlyExpenses)}</StatValue>
+                  </StatItem>
+                  <StatItem>
+                    <StatLabel>月现金流:</StatLabel>
+                    <StatValue positive={stats.monthlyCashFlow > 0}>
+                      {currencyFormatter.format(stats.monthlyCashFlow)}
+                    </StatValue>
+                  </StatItem>
+                  <StatItem>
+                    <StatLabel>现金:</StatLabel>
+                    <StatValue>{currencyFormatter.format(stats.cash)}</StatValue>
+                  </StatItem>
+                </StatsList>
+              </StatsCard>
+
+              <CareerPaths>
+                <CareerPath>
+                  <CareerTitle>物流主管</CareerTitle>
+                  <CareerSalary>8400</CareerSalary>
+                </CareerPath>
+                <CareerPath>
+                  <CareerTitle>片区经理</CareerTitle>
+                  <CareerSalary>12600</CareerSalary>
+                </CareerPath>
+              </CareerPaths>
+            </ModalBody>
+
+            <ModalActions>
+              <CloseButton onClick={handleClose}>关闭</CloseButton>
+              <ConfirmButton onClick={handleConfirm}>确认</ConfirmButton>
+            </ModalActions>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </Container>
   )
 }
@@ -316,12 +423,218 @@ const MusicButton = styled.button({
   justifyContent: 'center',
   boxShadow: '0 4px 12px -2px rgb(0 0 0 / 0.2)',
   transition: 'all 0.15s ease',
+  zIndex: 5,
   '&:hover': {
     backgroundColor: colors.primary[600],
     transform: 'scale(1.05)',
   },
   '&:active': {
     transform: 'scale(0.95)',
+  },
+})
+
+// Modal styles
+const ModalOverlay = styled.div({
+  position: 'fixed',
+  inset: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 100,
+  padding: '1rem',
+})
+
+const ModalContent = styled.div({
+  width: '100%',
+  maxWidth: '22rem',
+  borderRadius: '1rem',
+  overflow: 'hidden',
+  background: 'linear-gradient(135deg, #f472b6 0%, #ec4899 50%, #db2777 100%)',
+  boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.25)',
+  animation: 'modalSlideIn 0.3s ease',
+  '@keyframes modalSlideIn': {
+    from: {
+      opacity: 0,
+      transform: 'scale(0.95) translateY(10px)',
+    },
+    to: {
+      opacity: 1,
+      transform: 'scale(1) translateY(0)',
+    },
+  },
+})
+
+const ModalHeader = styled.div({
+  position: 'relative',
+  display: 'flex',
+  justifyContent: 'center',
+  padding: '1.5rem 1rem 0.5rem',
+})
+
+const ModalAvatar = styled.div({
+  width: '6rem',
+  height: '6rem',
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  boxShadow: '0 8px 24px -4px rgb(0 0 0 / 0.2)',
+  border: '3px solid rgba(255, 255, 255, 0.3)',
+  [`@media (min-width: ${breakpoints.md})`]: {
+    width: '7rem',
+    height: '7rem',
+  },
+})
+
+const ModalAvatarIcon = styled.span({
+  fontSize: '3rem',
+  [`@media (min-width: ${breakpoints.md})`]: {
+    fontSize: '3.5rem',
+  },
+})
+
+const CoinDecoration = styled.div({
+  position: 'absolute',
+  top: '1rem',
+  right: '1.5rem',
+  animation: 'coinBounce 2s ease-in-out infinite',
+  '@keyframes coinBounce': {
+    '0%, 100%': { transform: 'translateY(0)' },
+    '50%': { transform: 'translateY(-5px)' },
+  },
+})
+
+const ModalBody = styled.div({
+  padding: '0.5rem 1.25rem 1rem',
+  textAlign: 'center',
+})
+
+const ModalTitle = styled.h2({
+  margin: 0,
+  fontSize: '1.75rem',
+  fontWeight: 800,
+  color: colors.white,
+  textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+})
+
+const ModalSubtitle = styled.p({
+  margin: '0.25rem 0 1rem',
+  fontSize: '0.875rem',
+  color: 'rgba(255, 255, 255, 0.85)',
+  fontWeight: 500,
+})
+
+const StatsCard = styled.div({
+  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+  borderRadius: '0.75rem',
+  padding: '0.75rem 1rem',
+  textAlign: 'left',
+})
+
+const StatsHeader = styled.div({
+  fontSize: '0.875rem',
+  fontWeight: 700,
+  color: colors.neutral[800],
+  paddingBottom: '0.5rem',
+  marginBottom: '0.5rem',
+  borderBottom: `1px solid ${colors.neutral[200]}`,
+})
+
+const StatsList = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.375rem',
+})
+
+const StatItem = styled.div({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+})
+
+const StatLabel = styled.span({
+  fontSize: '0.8125rem',
+  color: colors.neutral[600],
+})
+
+const StatValue = styled.span(({ positive }) => ({
+  fontSize: '0.8125rem',
+  fontWeight: 600,
+  color: positive ? colors.primary[600] : colors.neutral[800],
+}))
+
+const CareerPaths = styled.div({
+  display: 'flex',
+  gap: '0.75rem',
+  marginTop: '1rem',
+  padding: '0.75rem',
+  backgroundColor: 'rgba(0, 0, 0, 0.15)',
+  borderRadius: '0.5rem',
+})
+
+const CareerPath = styled.div({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '0.125rem',
+})
+
+const CareerTitle = styled.span({
+  fontSize: '0.75rem',
+  color: 'rgba(255, 255, 255, 0.9)',
+  fontWeight: 500,
+})
+
+const CareerSalary = styled.span({
+  fontSize: '0.875rem',
+  fontWeight: 700,
+  color: colors.white,
+})
+
+const ModalActions = styled.div({
+  display: 'flex',
+  gap: '0.75rem',
+  padding: '0 1.25rem 1.25rem',
+  justifyContent: 'center',
+})
+
+const CloseButton = styled.button({
+  flex: 1,
+  padding: '0.75rem 1.5rem',
+  border: `2px solid ${colors.neutral[300]}`,
+  borderRadius: '2rem',
+  backgroundColor: colors.white,
+  color: colors.neutral[700],
+  fontSize: '0.9375rem',
+  fontWeight: 700,
+  cursor: 'pointer',
+  transition: 'all 0.15s ease',
+  '&:hover': {
+    backgroundColor: colors.neutral[100],
+  },
+  '&:active': {
+    transform: 'scale(0.98)',
+  },
+})
+
+const ConfirmButton = styled.button({
+  flex: 1,
+  padding: '0.75rem 1.5rem',
+  border: '2px solid #fbbf24',
+  borderRadius: '2rem',
+  backgroundColor: '#fef3c7',
+  color: colors.neutral[800],
+  fontSize: '0.9375rem',
+  fontWeight: 700,
+  cursor: 'pointer',
+  transition: 'all 0.15s ease',
+  '&:hover': {
+    backgroundColor: '#fde68a',
+  },
+  '&:active': {
+    transform: 'scale(0.98)',
   },
 })
 //#endregion styled components
