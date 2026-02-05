@@ -9,7 +9,6 @@ const Board = () => {
   const [isAnimating, setIsAnimating] = useState(false)
   const prevSlotRef = useRef(currentSlot)
 
-  // When current slot changes, animate the road scrolling
   useEffect(() => {
     if (prevSlotRef.current !== currentSlot) {
       setIsAnimating(true)
@@ -20,13 +19,13 @@ const Board = () => {
 
   const getSlotDisplay = (slot) => {
     const slotConfig = {
-      'Payday': { label: '发薪日', color: 'green', icon: '💰' },
+      'Payday': { label: '发薪日', color: 'green', icon: '?' },
       'Opportunity': { label: '机会', color: 'cyan', icon: '?' },
-      'Market': { label: '市场风云', color: 'blue', icon: '📈' },
-      'Doodads': { label: '生活小插曲', color: 'pink', icon: '🎵' },
-      'Baby': { label: '添丁', color: 'yellow', icon: '👶' },
-      'Downsized': { label: '失业', color: 'red', icon: '📉' },
-      'Charity': { label: '慈善', color: 'purple', icon: '❤️' },
+      'Market': { label: '市场风云', color: 'blue', icon: '?' },
+      'Doodads': { label: '生活小插曲', color: 'pink', icon: '?' },
+      'Baby': { label: '添丁', color: 'yellow', icon: '?' },
+      'Downsized': { label: '失业', color: 'red', icon: '?' },
+      'Charity': { label: '慈善', color: 'purple', icon: '?' },
     }
     return slotConfig[slot.name] || { label: slot.name, color: 'grey', icon: '?' }
   }
@@ -37,7 +36,6 @@ const Board = () => {
     setIsRolling(true)
     playSFX('/assets/sounds/roll.mp3')
     
-    // Handle charity effect (multiple dice)
     if (playerData.charityTurnLeft === 1) {
       setPlayerData((prev) => ({
         ...prev,
@@ -51,7 +49,6 @@ const Board = () => {
       }))
     }
     
-    // Animate dice
     let count = 0
     const interval = setInterval(() => {
       setDiceValues([
@@ -73,7 +70,6 @@ const Board = () => {
         setCurrentSlot(newSlot)
         setIsRolling(false)
         
-        // Draw card and set action based on slot type
         const card = drawCard(BOARD_SLOTS[newSlot].type)
         setCard(card)
         
@@ -84,11 +80,10 @@ const Board = () => {
     }, 100)
   }
 
-  // Generate slots to display - show 7 slots around current position (all on right side like trees)
+  // Get slots to display - show more slots for fuller layout
   const getSlotsToRender = () => {
     const slots = []
-    // Show 7 slots: 3 behind, current, 3 ahead
-    for (let i = -3; i <= 3; i++) {
+    for (let i = -2; i <= 4; i++) {
       const slotIndex = (currentSlot + i + 24) % 24
       slots.push({
         ...BOARD_SLOTS[slotIndex],
@@ -103,62 +98,62 @@ const Board = () => {
 
   return (
     <BoardContainer>
-      {/* Main game area */}
-      <RoadSection>
-        {/* Left side - Road with character */}
-        <RoadArea>
+      <GameArea>
+        {/* Road Section - centered vertical road */}
+        <RoadContainer>
           {/* Lane markings */}
           <LaneMarking side="left" />
           <LaneMarking side="right" />
           
-          {/* Road text - vertical "财务自由路" */}
+          {/* Road text */}
           <RoadText>
-            <RoadChar style={{ opacity: 0.5 }}>财</RoadChar>
-            <RoadChar style={{ opacity: 0.6 }}>务</RoadChar>
-            <RoadChar style={{ opacity: 0.75 }}>自</RoadChar>
-            <RoadChar style={{ opacity: 0.85 }}>由</RoadChar>
-            <RoadChar>路</RoadChar>
+            {'财务自由路'.split('').map((char, i) => (
+              <RoadChar key={i} style={{ opacity: 0.4 + i * 0.12 }}>{char}</RoadChar>
+            ))}
           </RoadText>
 
-          {/* Player character - fixed in center */}
+          {/* Player character */}
           <PlayerCharacter>
             <CharacterBody>
               <CharacterHat />
               <CharacterFace />
               <CharacterTorso />
             </CharacterBody>
+            <MoneySign>钱</MoneySign>
           </PlayerCharacter>
+        </RoadContainer>
 
-          {/* Money sign next to character */}
-          <MoneySign>钱</MoneySign>
-        </RoadArea>
+        {/* Right side - Slots area taking more space */}
+        <SlotsContainer>
+          <SlotsWrapper isAnimating={isAnimating}>
+            {slotsToRender.map((slot, index) => {
+              const config = getSlotDisplay(slot)
+              const isPassed = slot.relativePosition < 0
+              const isCurrent = slot.relativePosition === 0
+              
+              return (
+                <SlotRow key={`slot-${slot.slotIndex}`}>
+                  {/* Connector line from road to slot */}
+                  <Connector isCurrent={isCurrent} isPassed={isPassed} />
+                  
+                  <SlotCard 
+                    color={config.color}
+                    isPassed={isPassed}
+                    isCurrent={isCurrent}
+                  >
+                    <SlotIconWrapper color={config.color} isCurrent={isCurrent}>
+                      {config.icon}
+                    </SlotIconWrapper>
+                    <SlotLabel isCurrent={isCurrent}>{config.label}</SlotLabel>
+                  </SlotCard>
+                </SlotRow>
+              )
+            })}
+          </SlotsWrapper>
+        </SlotsContainer>
+      </GameArea>
 
-        {/* Right side - All slots like trees along the road */}
-        <SlotsArea isAnimating={isAnimating}>
-          {slotsToRender.map((slot, index) => {
-            const config = getSlotDisplay(slot)
-            const isPassed = slot.relativePosition < 0
-            const isCurrent = slot.relativePosition === 0
-            
-            return (
-              <SlotCard 
-                key={`slot-${slot.slotIndex}`}
-                color={config.color}
-                isPassed={isPassed}
-                isCurrent={isCurrent}
-                position={slot.relativePosition}
-                index={index}
-              >
-                <SlotIcon isCurrent={isCurrent}>{config.icon}</SlotIcon>
-                <SlotLabel>{config.label}</SlotLabel>
-                {isCurrent && <CurrentIndicator />}
-              </SlotCard>
-            )
-          })}
-        </SlotsArea>
-      </RoadSection>
-
-      {/* Dice and Roll Section */}
+      {/* Bottom Control Section */}
       <ControlSection>
         <DiceContainer>
           {diceValues.map((value, index) => (
@@ -168,12 +163,10 @@ const Board = () => {
           ))}
         </DiceContainer>
         
-        {/* Roll Button - Fingerprint */}
         <RollButton onClick={handleRoll} disabled={isRolling}>
           <FingerprintIcon />
         </RollButton>
 
-        {/* Music toggle */}
         <MusicToggle>
           <MusicNote>&#9835;</MusicNote>
         </MusicToggle>
@@ -192,9 +185,10 @@ const BoardContainer = styled.div({
   height: '100%',
   position: 'relative',
   overflow: 'hidden',
+  backgroundColor: '#1B2240',
 })
 
-const RoadSection = styled.div({
+const GameArea = styled.div({
   flex: 1,
   display: 'flex',
   alignItems: 'stretch',
@@ -203,30 +197,30 @@ const RoadSection = styled.div({
   overflow: 'hidden',
 })
 
-const RoadArea = styled.div({
-  width: '180px',
-  minWidth: '180px',
+const RoadContainer = styled.div({
+  width: '140px',
+  minWidth: '140px',
   backgroundColor: '#3D4B6A',
   position: 'relative',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  boxShadow: 'inset 0 0 30px rgba(0,0,0,0.5), 4px 0 20px rgba(0,0,0,0.3)',
+  boxShadow: 'inset 0 0 30px rgba(0,0,0,0.5), 4px 0 15px rgba(0,0,0,0.4)',
 })
 
 const LaneMarking = styled.div(({ side }) => ({
   position: 'absolute',
   top: '0',
   bottom: '0',
-  [side]: '25px',
-  width: '5px',
+  [side]: '18px',
+  width: '4px',
   background: `repeating-linear-gradient(
     to bottom,
     #C4A574 0px,
-    #C4A574 30px,
-    transparent 30px,
-    transparent 55px
+    #C4A574 28px,
+    transparent 28px,
+    transparent 50px
   )`,
 }))
 
@@ -234,13 +228,13 @@ const RoadText = styled.div({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '2rem',
+  gap: '1.8rem',
   zIndex: 1,
 })
 
 const RoadChar = styled.span({
   color: '#5A6B8A',
-  fontSize: '2.2rem',
+  fontSize: '1.8rem',
   fontWeight: 700,
   textShadow: '0 2px 4px rgba(0,0,0,0.3)',
 })
@@ -251,6 +245,8 @@ const PlayerCharacter = styled.div({
   left: '50%',
   transform: 'translate(-50%, -50%)',
   zIndex: 10,
+  display: 'flex',
+  alignItems: 'center',
 })
 
 const CharacterBody = styled.div({
@@ -260,8 +256,8 @@ const CharacterBody = styled.div({
 })
 
 const CharacterHat = styled.div({
-  width: '42px',
-  height: '16px',
+  width: '36px',
+  height: '14px',
   backgroundColor: '#6B21A8',
   borderRadius: '50% 50% 0 0',
   position: 'relative',
@@ -269,139 +265,140 @@ const CharacterHat = styled.div({
     content: '""',
     position: 'absolute',
     bottom: '-4px',
-    left: '-6px',
-    right: '-6px',
-    height: '8px',
+    left: '-5px',
+    right: '-5px',
+    height: '7px',
     backgroundColor: '#6B21A8',
     borderRadius: '2px',
   },
 })
 
 const CharacterFace = styled.div({
-  width: '48px',
-  height: '48px',
+  width: '42px',
+  height: '42px',
   borderRadius: '50%',
   backgroundColor: '#F5F5F5',
   marginTop: '4px',
-  position: 'relative',
   boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
 })
 
 const CharacterTorso = styled.div({
-  width: '56px',
-  height: '36px',
+  width: '50px',
+  height: '32px',
   backgroundColor: '#7C3AED',
-  borderRadius: '28px 28px 0 0',
-  marginTop: '-10px',
+  borderRadius: '25px 25px 0 0',
+  marginTop: '-8px',
   boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
 })
 
 const MoneySign = styled.div({
-  position: 'absolute',
-  top: '50%',
-  right: '-45px',
-  transform: 'translateY(-50%)',
   backgroundColor: '#FBBF24',
   color: '#1F2937',
-  padding: '0.5rem 0.75rem',
+  padding: '0.4rem 0.6rem',
   borderRadius: '4px',
   fontWeight: 700,
-  fontSize: '1rem',
+  fontSize: '0.9rem',
   boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-  zIndex: 15,
+  marginLeft: '8px',
+  position: 'relative',
   '&::before': {
     content: '""',
     position: 'absolute',
-    left: '-10px',
+    left: '-8px',
     top: '50%',
     transform: 'translateY(-50%)',
     width: '0',
     height: '0',
-    borderTop: '8px solid transparent',
-    borderBottom: '8px solid transparent',
-    borderRight: '10px solid #FBBF24',
+    borderTop: '6px solid transparent',
+    borderBottom: '6px solid transparent',
+    borderRight: '8px solid #FBBF24',
   },
 })
 
-const SlotsArea = styled.div(({ isAnimating }) => ({
+const SlotsContainer = styled.div({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  alignItems: 'flex-start',
-  padding: '1rem 1rem 1rem 2.5rem',
-  gap: '0.6rem',
+  padding: '1rem 1.5rem',
+  overflow: 'hidden',
+})
+
+const SlotsWrapper = styled.div(({ isAnimating }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.5rem',
   transition: isAnimating ? 'transform 0.5s ease-out' : 'none',
 }))
 
-const SlotCard = styled.div(({ color, isPassed, isCurrent, position }) => {
+const SlotRow = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0',
+})
+
+const Connector = styled.div(({ isCurrent, isPassed }) => ({
+  width: '30px',
+  height: '3px',
+  backgroundColor: isCurrent ? '#FFD700' : isPassed ? '#4A5568' : '#6B7280',
+  opacity: isPassed ? 0.4 : 1,
+  flexShrink: 0,
+  borderRadius: '2px',
+  boxShadow: isCurrent ? '0 0 8px rgba(255, 215, 0, 0.5)' : 'none',
+}))
+
+const SlotCard = styled.div(({ color, isPassed, isCurrent }) => {
   const colorMap = {
-    cyan: { bg: '#00BCD4', border: '#00ACC1' },
-    pink: { bg: '#E91E63', border: '#D81B60' },
-    green: { bg: '#4CAF50', border: '#43A047' },
-    blue: { bg: '#2196F3', border: '#1E88E5' },
-    yellow: { bg: '#FFC107', border: '#FFB300' },
-    red: { bg: '#F44336', border: '#E53935' },
-    purple: { bg: '#9C27B0', border: '#8E24AA' },
-    grey: { bg: '#607D8B', border: '#546E7A' },
+    cyan: { bg: '#00BCD4', border: '#00ACC1', shadow: 'rgba(0, 188, 212, 0.4)' },
+    pink: { bg: '#E91E63', border: '#D81B60', shadow: 'rgba(233, 30, 99, 0.4)' },
+    green: { bg: '#4CAF50', border: '#43A047', shadow: 'rgba(76, 175, 80, 0.4)' },
+    blue: { bg: '#2196F3', border: '#1E88E5', shadow: 'rgba(33, 150, 243, 0.4)' },
+    yellow: { bg: '#FFC107', border: '#FFB300', shadow: 'rgba(255, 193, 7, 0.4)' },
+    red: { bg: '#F44336', border: '#E53935', shadow: 'rgba(244, 67, 54, 0.4)' },
+    purple: { bg: '#9C27B0', border: '#8E24AA', shadow: 'rgba(156, 39, 176, 0.4)' },
+    grey: { bg: '#607D8B', border: '#546E7A', shadow: 'rgba(96, 125, 139, 0.4)' },
   }
   const colors = colorMap[color] || colorMap.grey
   
-  // Scale and opacity based on position
-  const scale = isCurrent ? 1.08 : Math.max(0.8, 1 - Math.abs(position) * 0.06)
-  const opacity = isPassed ? 0.45 : 1
-  
   return {
+    flex: 1,
     display: 'flex',
     alignItems: 'center',
-    gap: '0.6rem',
-    padding: isCurrent ? '0.65rem 1rem' : '0.5rem 0.85rem',
-    borderRadius: '10px',
+    gap: '0.75rem',
+    padding: isCurrent ? '0.85rem 1.25rem' : '0.65rem 1rem',
+    borderRadius: '12px',
     backgroundColor: colors.bg,
     border: isCurrent ? '3px solid #FFD700' : `2px solid ${colors.border}`,
     color: '#fff',
     fontWeight: 600,
-    fontSize: isCurrent ? '0.95rem' : '0.85rem',
     boxShadow: isCurrent 
-      ? '0 0 25px rgba(255, 215, 0, 0.6), 0 6px 20px rgba(0,0,0,0.4)' 
-      : '0 3px 12px rgba(0,0,0,0.25)',
+      ? `0 0 20px rgba(255, 215, 0, 0.5), 0 6px 20px ${colors.shadow}` 
+      : `0 4px 15px ${colors.shadow}`,
     transition: 'all 0.4s ease',
-    whiteSpace: 'nowrap',
-    transform: `scale(${scale})`,
-    transformOrigin: 'left center',
-    opacity,
-    zIndex: isCurrent ? 10 : 5 - Math.abs(position),
-    position: 'relative',
+    opacity: isPassed ? 0.5 : 1,
+    transform: isCurrent ? 'scale(1.02)' : 'scale(1)',
   }
 })
 
-const SlotIcon = styled.span(({ isCurrent }) => ({
-  width: isCurrent ? '28px' : '24px',
-  height: isCurrent ? '28px' : '24px',
+const SlotIconWrapper = styled.div(({ isCurrent }) => ({
+  width: isCurrent ? '36px' : '30px',
+  height: isCurrent ? '36px' : '30px',
   borderRadius: '50%',
-  backgroundColor: isCurrent ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.25)',
+  backgroundColor: 'rgba(255,255,255,0.25)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: isCurrent ? '0.9rem' : '0.8rem',
+  fontSize: isCurrent ? '1.1rem' : '0.95rem',
+  fontWeight: 700,
   flexShrink: 0,
+  border: '2px solid rgba(255,255,255,0.3)',
 }))
 
-const SlotLabel = styled.span({
-  fontSize: 'inherit',
-})
-
-const CurrentIndicator = styled.div({
-  position: 'absolute',
-  left: '-18px',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  width: '0',
-  height: '0',
-  borderTop: '8px solid transparent',
-  borderBottom: '8px solid transparent',
-  borderLeft: '10px solid #FFD700',
-})
+const SlotLabel = styled.span(({ isCurrent }) => ({
+  fontSize: isCurrent ? '1.1rem' : '0.95rem',
+  fontWeight: 600,
+  letterSpacing: '0.5px',
+}))
 
 const ControlSection = styled.div({
   display: 'flex',
@@ -409,7 +406,8 @@ const ControlSection = styled.div({
   justifyContent: 'center',
   gap: '1rem',
   padding: '1rem',
-  backgroundColor: 'rgba(0,0,0,0.2)',
+  backgroundColor: 'rgba(0,0,0,0.25)',
+  borderTop: '1px solid rgba(255,255,255,0.1)',
 })
 
 const DiceContainer = styled.div({
