@@ -1,6 +1,4 @@
 import styled from '@emotion/styled'
-import { Button } from '@mui/material'
-import { colors } from '@/styles'
 import { useContext } from 'react'
 import { GameContext, rollDice, playSFX, BOARD_SLOTS, drawCard } from '@/utils'
 
@@ -15,16 +13,6 @@ const StartDialog = () => {
     setCard,
   } = useContext(GameContext)
 
-  /**
-   * > Handle the logic of rolling dice
-   * * 1. If player is under the effect of charity (can roll multiple dice):
-   * *  - Reduce the number of charityTurn to 1
-   * *  - If remaining number of charityTurnLeft is 1, reset the number of dice to 1
-   * * 2. Set the prevSlot to the current slotId
-   * * 3. Set the currentSlot to the next slotId the player will land on
-   * * 4. Set the action type to the type of target slot
-   * * 5. Draw a random card and store it in game data context
-   */
   const handleRoll = () => {
     let move = rollDice(playerData.diceNum)
     let slotId = (currentSlot + move) % 23
@@ -49,122 +37,167 @@ const StartDialog = () => {
     setCard(card)
     playSFX('/assets/sounds/roll.mp3')
   }
+
   return (
-    <>
+    <Container>
       <Header>
-        <Title>{`Player's turn.`}</Title>
+        <Title>轮到你了</Title>
+        <TurnBadge>回合开始</TurnBadge>
       </Header>
+      
       <Description>
-        When you are ready, roll the dice and take your turn
+        准备好后，点击下方掷骰按钮开始你的回合
       </Description>
-      <Note>
-        Before you start your turn, review your financial statement. You may
-        also use this time to repay liabilities or borrow money.
-      </Note>
-      <SubActions>
-        <ActionButton
-          variant="contained"
-          color="warning"
-          startIcon={<img src="/assets/images/bank.png" />}
-          disableRipple
-          onClick={() => {
-            setActionType('borrow')
-          }}
+      
+      <TipCard>
+        <TipIcon>💡</TipIcon>
+        <TipText>
+          开始前请查看你的财务报表，你也可以在此时还款或贷款
+        </TipText>
+      </TipCard>
+
+      <ButtonGroup>
+        <ActionButton 
+          variant="secondary"
+          onClick={() => setActionType('borrow')}
         >
-          BORROW
+          <ButtonIcon>🏦</ButtonIcon>
+          <span>贷款</span>
         </ActionButton>
-        <ActionButton
-          variant="contained"
-          color="warning"
-          startIcon={<img src="/assets/images/repay.png" />}
-          disableRipple
-          onClick={() => {
-            setActionType('repay')
-          }}
+        <ActionButton 
+          variant="secondary"
+          onClick={() => setActionType('repay')}
         >
-          REPAY
+          <ButtonIcon>💳</ButtonIcon>
+          <span>还款</span>
         </ActionButton>
-      </SubActions>
-      <Note style={{ flex: 1 }} />
-      <MainActions>
-        <ActionButton
-          variant="contained"
-          startIcon={<img src="/assets/images/dice.png" />}
-          disableRipple
-          onClick={handleRoll}
-        >
-          ROLL
-        </ActionButton>
-      </MainActions>
-    </>
+      </ButtonGroup>
+
+      <Spacer />
+
+      <RollButton onClick={handleRoll}>
+        <RollIcon>🎲</RollIcon>
+        <span>掷骰子</span>
+      </RollButton>
+    </Container>
   )
 }
 
 export default StartDialog
 
 //#region styled components
+const Container = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+  height: '100%',
+})
+
 const Header = styled.div({
   display: 'flex',
-  flexDirection: 'row',
+  alignItems: 'center',
   justifyContent: 'space-between',
-  width: '100%',
 })
 
 const Title = styled.h2({
-  color: colors.red.base,
+  color: '#fff',
+  fontSize: '20px',
+  fontWeight: 600,
   margin: 0,
 })
 
-const Description = styled.span({
+const TurnBadge = styled.span({
+  background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+  color: '#fff',
+  padding: '4px 12px',
+  borderRadius: '12px',
+  fontSize: '12px',
   fontWeight: 500,
-  alignSelf: 'flex-start',
 })
 
-const Note = styled.span({
-  fontWeight: 700,
-  alignSelf: 'flex-start',
+const Description = styled.p({
+  color: 'rgba(255, 255, 255, 0.7)',
+  fontSize: '14px',
+  margin: 0,
+  lineHeight: 1.5,
+})
+
+const TipCard = styled.div({
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '10px',
+  background: 'rgba(251, 191, 36, 0.1)',
+  border: '1px solid rgba(251, 191, 36, 0.3)',
+  borderRadius: '12px',
+  padding: '12px',
+})
+
+const TipIcon = styled.span({
+  fontSize: '18px',
+})
+
+const TipText = styled.span({
+  color: 'rgba(255, 255, 255, 0.8)',
+  fontSize: '13px',
+  lineHeight: 1.5,
+})
+
+const ButtonGroup = styled.div({
+  display: 'flex',
+  gap: '12px',
+})
+
+const ActionButton = styled.button(({ variant }) => ({
+  flex: 1,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '8px',
+  padding: '12px',
+  borderRadius: '12px',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '14px',
+  fontWeight: 500,
+  transition: 'all 0.2s ease',
+  background: variant === 'secondary' 
+    ? 'rgba(255, 255, 255, 0.1)' 
+    : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+  color: '#fff',
+  '&:active': {
+    transform: 'scale(0.98)',
+  },
+}))
+
+const ButtonIcon = styled.span({
+  fontSize: '18px',
+})
+
+const Spacer = styled.div({
   flex: 1,
 })
 
-const MainActions = styled.div({
+const RollButton = styled.button({
   display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'flex-start',
-  columnGap: '1rem',
-  width: '100%',
-  '& button': {
-    fontSize: '20px',
-  },
-  '& img': {
-    width: '36px',
-  },
-})
-
-const SubActions = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
+  alignItems: 'center',
   justifyContent: 'center',
-  columnGap: '2rem',
-  margin: '1rem',
-  width: '100%',
-  '& button': {
-    fontSize: '16px',
-    width: '128px',
-  },
-  '& img': {
-    width: '24px',
-  },
-})
-
-const ActionButton = styled(Button)({
-  fontWeight: 800,
-  width: '120px',
+  gap: '10px',
+  padding: '14px 24px',
+  borderRadius: '12px',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '16px',
+  fontWeight: 600,
+  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+  color: '#fff',
+  boxShadow: '0 4px 16px rgba(99, 102, 241, 0.4)',
+  transition: 'all 0.2s ease',
   '&:active': {
-    opacity: 0.8,
-    transform: 'scale(0.9)',
+    transform: 'scale(0.98)',
   },
 })
 
+const RollIcon = styled.span({
+  fontSize: '24px',
+})
 //#endregion styled components
-
-//#endregion

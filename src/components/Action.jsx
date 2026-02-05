@@ -1,5 +1,4 @@
 import styled from '@emotion/styled'
-import { colors } from '@/styles'
 import { useContext, useEffect, useState } from 'react'
 import { GameContext } from '@/utils'
 import {
@@ -22,6 +21,7 @@ import { mockRepayDialog } from '@/__mocks__'
 const Action = () => {
   const { actionType } = useContext(GameContext)
   const [dialog, setDialog] = useState(null)
+
   useEffect(() => {
     switch (actionType) {
       case 'start':
@@ -69,6 +69,7 @@ const Action = () => {
         break
     }
   }, [actionType])
+
   return <Container>{dialog}</Container>
 }
 
@@ -76,14 +77,13 @@ export default Action
 
 //#region styled components
 const Container = styled.div({
-  alignItems: 'space-between',
-  border: `2px solid ${colors.grey.base}`,
-  borderRadius: '10px',
-  boxShadow: 'rgba(12,12,12, 0.8) 4px 4px 4px',
+  background: 'rgba(255, 255, 255, 0.05)',
+  backdropFilter: 'blur(10px)',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  borderRadius: '16px',
+  padding: '16px',
+  minHeight: '200px',
   display: 'flex',
   flexDirection: 'column',
-  height: '90%',
-  padding: '1.25rem 2rem',
-  width: '100%',
 })
 //#endregion styled components

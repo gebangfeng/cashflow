@@ -1,134 +1,97 @@
 import styled from '@emotion/styled'
-import { colors } from '@/styles'
 import PropTypes from 'prop-types'
 import { currencyFormatter, GameContext } from '@/utils'
-import PaymentIcon from '@mui/icons-material/Payment'
 import { useContext } from 'react'
 
 const Liabilities = ({ liabilities }) => {
   const { actionType } = useContext(GameContext)
-  const handleRepay = () => {
-    alert('Repay logic not implemented!')
+
+  if (!liabilities || liabilities.length === 0) {
+    return <EmptyState>暂无负债</EmptyState>
   }
+
   return (
-    <CardContainer>
-      <CardHeader>LIABILITIES</CardHeader>
-      <CardBody>
-        <ListItemHeader>
-          <ListItemLeft>Name</ListItemLeft>
-          <ListItemRight>Amount</ListItemRight>
-          {actionType === 'repay' && <ListItemIcon />}
-        </ListItemHeader>
-        <StyledList>
-          {liabilities &&
-            liabilities.map((i) => (
-              <ListItem key={i.id}>
-                <ListItemLeft>{i.name}</ListItemLeft>
-                <ListItemRight>
-                  ${currencyFormatter.format(i.amount)}
-                </ListItemRight>
-                {actionType === 'repay' && (
-                  <ListItemIcon>
-                    <PaymentIcon color="warning" onClick={handleRepay} />
-                  </ListItemIcon>
-                )}
-              </ListItem>
-            ))}
-        </StyledList>
-      </CardBody>
-    </CardContainer>
+    <List>
+      {liabilities.map((liability) => (
+        <ListItem key={liability.id}>
+          <ItemInfo>
+            <ItemName>{liability.name}</ItemName>
+            <ItemValue>¥{currencyFormatter.format(liability.amount)}</ItemValue>
+          </ItemInfo>
+          {actionType === 'repay' && (
+            <RepayButton>
+              还款
+            </RepayButton>
+          )}
+        </ListItem>
+      ))}
+    </List>
   )
 }
 
-//#region prop types
 Liabilities.propTypes = {
   liabilities: PropTypes.array,
 }
-//#endregion prop types
 
 export default Liabilities
 
 //#region styled components
-const CardContainer = styled.div({
-  backgroundColor: colors.white,
-  border: `1px solid ${colors.purple.base}`,
-  borderRadius: '12px',
-  maxWidth: '400px',
-  margin: 0,
-  padding: 0,
-  height: '100%',
+const List = styled.div({
   display: 'flex',
   flexDirection: 'column',
+  gap: '4px',
 })
 
-const CardHeader = styled.h3({
-  backgroundColor: colors.orange.dark,
-  borderRadius: '10px 10px 0 0',
-  color: colors.white,
-  fontWeight: 700,
-  height: '1.5rem',
-  margin: 0,
-  padding: '.25rem',
-  textAlign: 'center',
-})
-
-const CardBody = styled.div({
-  margin: '.25rem 1rem 0',
-  paddingRight: '1rem',
-  height: '70%',
-})
-
-const StyledList = styled.ul({
-  overflowY: 'scroll',
-  height: '100%',
-  scrollbarWidth: 'none',
-  paddingInlineStart: 0,
-  margin: 0,
-})
-
-const ListItemHeader = styled.div({
+const ListItem = styled.div({
   display: 'flex',
-  flexDirection: 'row',
   justifyContent: 'space-between',
-  margin: 0,
-  '& span': {
-    fontWeight: 800,
-  },
-})
-
-const ListItem = styled.li({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  padding: '.375rem 0',
-  columnGap: '10px',
   alignItems: 'center',
+  padding: '6px 8px',
+  borderRadius: '6px',
+  background: 'rgba(255, 255, 255, 0.03)',
 })
 
-const ListItemLeft = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
-  flex: '1 1 150px',
-  fontSize: '.875rem',
-  textAlign: 'left',
+const ItemInfo = styled.div({
+  display: 'flex',
+  justifyContent: 'space-between',
+  flex: 1,
+  gap: '8px',
 })
-const ListItemRight = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
-  flex: '1 1 auto',
-  fontSize: '.875rem',
-  textAlign: 'right',
+
+const ItemName = styled.span({
+  color: 'rgba(255, 255, 255, 0.8)',
+  fontSize: '12px',
+  flex: 1,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 })
-const ListItemIcon = styled.span({
-  flex: '1 1 24px',
-  fontSize: '.875rem',
-  textAlign: 'right',
-  alignSelf: 'center',
-  '& svg': {
-    '&:hover': {
-      opacity: 0.8,
-    },
-    '&:active': {
-      transform: 'scale(.8)',
-    },
+
+const ItemValue = styled.span({
+  color: '#f59e0b',
+  fontSize: '12px',
+  fontWeight: 600,
+})
+
+const RepayButton = styled.button({
+  background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '4px',
+  padding: '4px 8px',
+  fontSize: '11px',
+  fontWeight: 600,
+  cursor: 'pointer',
+  marginLeft: '8px',
+  '&:active': {
+    transform: 'scale(0.95)',
   },
+})
+
+const EmptyState = styled.div({
+  color: 'rgba(255, 255, 255, 0.4)',
+  fontSize: '12px',
+  textAlign: 'center',
+  padding: '16px',
 })
 //#endregion styled components

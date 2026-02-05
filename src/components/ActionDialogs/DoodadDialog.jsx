@@ -1,16 +1,11 @@
 import styled from '@emotion/styled'
-import { Button } from '@mui/material'
-import { colors } from '@/styles'
 import { useContext } from 'react'
-import { GameContext, getLoanAmount, takeLoan } from '@/utils'
+import { GameContext, getLoanAmount, takeLoan, currencyFormatter } from '@/utils'
 
 const DoodadDialog = () => {
-  const { card, playerData, setPlayerData, setActionType } =
-    useContext(GameContext)
+  const { card, playerData, setPlayerData, setActionType } = useContext(GameContext)
   const doodads = card
-  /**
-   * > Handle Doodads logic
-   */
+
   const handleDoodads = () => {
     if (playerData.cash < doodads.cost) {
       let newPlayerData = takeLoan(playerData, doodads.cost)
@@ -21,80 +16,156 @@ const DoodadDialog = () => {
     setActionType('start')
   }
 
+  const needsLoan = playerData.cash < doodads.cost
+  const loanAmount = needsLoan ? getLoanAmount(doodads.cost - playerData.cash) : 0
+
   return (
-    <>
+    <Container>
       <Header>
-        <Title>{doodads.title}</Title>
-        <ThumbnailImg src="./assets/images/doodads-thumb.png" />
+        <HeaderIcon>🛒</HeaderIcon>
+        <Title>额外支出</Title>
       </Header>
-      <Description>{doodads.description}</Description>
-      {doodads.info && <Note>{doodads.info}</Note>}
-      {playerData.cash < doodads.cost && (
-        <Note
-          style={{ color: colors.red.base }}
-        >{`(You don't have enough cash.You must take a loan of $${getLoanAmount(
-          doodads.cost - playerData.cash
-        )} to afford this.)`}</Note>
+
+      <EventCard>
+        <EventTitle>{doodads.title}</EventTitle>
+        <EventDesc>{doodads.description}</EventDesc>
+        {doodads.info && <EventInfo>{doodads.info}</EventInfo>}
+      </EventCard>
+
+      <CostSection>
+        <CostLabel>需支付</CostLabel>
+        <CostValue>¥{currencyFormatter.format(doodads.cost)}</CostValue>
+      </CostSection>
+
+      {needsLoan && (
+        <WarningCard>
+          <WarningIcon>⚠️</WarningIcon>
+          <WarningText>
+            现金不足，需贷款 ¥{currencyFormatter.format(loanAmount)} 来支付此费用
+          </WarningText>
+        </WarningCard>
       )}
-      <Note style={{ flex: 1 }} />
-      <MainActions>
-        <ActionButton variant="contained" disableRipple onClick={handleDoodads}>
-          PAY
-        </ActionButton>
-      </MainActions>
-    </>
+
+      <Spacer />
+
+      <ActionButton onClick={handleDoodads}>
+        {needsLoan ? '贷款并支付' : '确认支付'}
+      </ActionButton>
+    </Container>
   )
 }
 
 export default DoodadDialog
 
 //#region styled components
-const Header = styled.div({
+const Container = styled.div({
   display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  width: '100%',
+  flexDirection: 'column',
+  gap: '16px',
+  height: '100%',
 })
 
-const ThumbnailImg = styled.img({
-  width: '80px',
+const Header = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+})
+
+const HeaderIcon = styled.span({
+  fontSize: '28px',
 })
 
 const Title = styled.h2({
-  color: colors.red.base,
+  color: '#fff',
+  fontSize: '20px',
+  fontWeight: 600,
   margin: 0,
 })
 
-const Description = styled.span({
-  fontWeight: 700,
-  alignSelf: 'flex-start',
+const EventCard = styled.div({
+  background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(219, 39, 119, 0.15) 100%)',
+  border: '1px solid rgba(236, 72, 153, 0.3)',
+  borderRadius: '12px',
+  padding: '16px',
 })
 
-const Note = styled.span({
-  fontWeight: 700,
-  alignSelf: 'flex-start',
+const EventTitle = styled.div({
+  color: '#f472b6',
+  fontSize: '16px',
+  fontWeight: 600,
+  marginBottom: '8px',
 })
 
-const MainActions = styled.div({
+const EventDesc = styled.div({
+  color: 'rgba(255, 255, 255, 0.8)',
+  fontSize: '14px',
+  lineHeight: 1.5,
+})
+
+const EventInfo = styled.div({
+  color: 'rgba(255, 255, 255, 0.6)',
+  fontSize: '13px',
+  marginTop: '8px',
+  fontStyle: 'italic',
+})
+
+const CostSection = styled.div({
   display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'flex-start',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  background: 'rgba(255, 255, 255, 0.05)',
+  borderRadius: '12px',
+  padding: '16px',
+})
+
+const CostLabel = styled.span({
+  color: 'rgba(255, 255, 255, 0.6)',
+  fontSize: '14px',
+})
+
+const CostValue = styled.span({
+  color: '#ef4444',
+  fontSize: '24px',
+  fontWeight: 700,
+})
+
+const WarningCard = styled.div({
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: '10px',
+  background: 'rgba(239, 68, 68, 0.1)',
+  border: '1px solid rgba(239, 68, 68, 0.3)',
+  borderRadius: '12px',
+  padding: '12px',
+})
+
+const WarningIcon = styled.span({
+  fontSize: '18px',
+})
+
+const WarningText = styled.span({
+  color: '#fca5a5',
+  fontSize: '13px',
+  lineHeight: 1.5,
+})
+
+const Spacer = styled.div({
+  flex: 1,
+})
+
+const ActionButton = styled.button({
   width: '100%',
-  '& button': {
-    fontSize: '20px',
-  },
-  '& img': {
-    width: '36px',
-  },
-})
-
-const ActionButton = styled(Button)({
-  fontWeight: 800,
-  width: '120px',
+  padding: '14px',
+  borderRadius: '12px',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '16px',
+  fontWeight: 600,
+  background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+  color: '#fff',
+  transition: 'all 0.2s ease',
   '&:active': {
-    opacity: 0.8,
-    transform: 'scale(0.9)',
+    transform: 'scale(0.98)',
   },
 })
-
 //#endregion styled components

@@ -1,74 +1,66 @@
 import styled from '@emotion/styled'
-import { Button } from '@mui/material'
-import { colors } from '@/styles'
 import { useContext, useEffect } from 'react'
 import { GameContext } from '@/utils'
-import PaymentIcon from '@mui/icons-material/Payment'
 
 const MarketDialog = () => {
-  const { playerData, card, setActionType, setIsSellingAssets } =
-    useContext(GameContext)
+  const { playerData, card, setActionType, setIsSellingAssets } = useContext(GameContext)
+
+  const matchingAssets = playerData.assets.filter(
+    (asset) => asset.type === card.type && asset.subtype === card.subtype
+  )
+  const hasAssets = matchingAssets.length > 0
 
   useEffect(() => {
-    const hasAssets =
-      playerData.assets.filter(
-        (asset) => asset.type === card.type && asset.subtype === card.subtype
-      ).length > 0
-        ? true
-        : false
     if (hasAssets) {
       setIsSellingAssets(true)
     }
-  }, [playerData])
+  }, [playerData, hasAssets, setIsSellingAssets])
 
-  //#region event handlers
   const handlePass = () => {
     setIsSellingAssets(false)
     setActionType('start')
   }
-  //#endregion event handlers
 
   return (
     <Container>
-      <Top>
-        <Left>
-          <Header>
-            <Title>{card.title}</Title>
-          </Header>
-          <Description>{card.description}</Description>
-          <Note>{card.info}</Note>
-          {playerData.assets.filter(
-            (asset) =>
-              asset.type === card.type && asset.subtype === card.subtype
-          ).length === 0 ? (
-            <ImportantNote>
-              You have no assets that match this market card.
-            </ImportantNote>
-          ) : (
-            <ImportantNote>
-              Click on the Sell icon button{' '}
-              {<PaymentIcon color="warning" style={{ alignSelf: 'center' }} />}
-              for an asset on your Assets list to take this deal.
-            </ImportantNote>
-          )}
-          <Details></Details>
-        </Left>
-        <Right>
-          <ThumbnailImg src="/assets/images/stocks.png" />
-        </Right>
-      </Top>
-      <Bottom>
-        <MainActions>
-          <ActionButton
-            variant="contained"
-            disableRipple
-            onClick={handlePass}
-            style={{ alignSelf: 'flex-end' }}
-          >
-            PASS
-          </ActionButton>
-        </MainActions>
-      </Bottom>
+      <Header>
+        <HeaderIcon>📈</HeaderIcon>
+        <Title>市场风云</Title>
+      </Header>
+
+      <EventCard>
+        <EventTitle>{card.title}</EventTitle>
+        <EventDesc>{card.description}</EventDesc>
+        {card.info && <EventInfo>{card.info}</EventInfo>}
+      </EventCard>
+
+      {hasAssets ? (
+        <InfoCard variant="success">
+          <InfoIcon>✅</InfoIcon>
+          <InfoContent>
+            <InfoTitle>你有可出售的资产</InfoTitle>
+            <InfoText>
+              在报表页面的资产列表中点击「出售」按钮来完成交易
+            </InfoText>
+          </InfoContent>
+        </InfoCard>
+      ) : (
+        <InfoCard variant="warning">
+          <InfoIcon>ℹ️</InfoIcon>
+          <InfoContent>
+            <InfoTitle>没有匹配的资产</InfoTitle>
+            <InfoText>
+              你没有可以参与此市场机会的资产
+            </InfoText>
+          </InfoContent>
+        </InfoCard>
+      )}
+
+      <Spacer />
+
+      <ActionButton onClick={handlePass}>
+        {hasAssets ? '跳过机会' : '继续游戏'}
+      </ActionButton>
     </Container>
   )
 }
@@ -79,99 +71,104 @@ export default MarketDialog
 const Container = styled.div({
   display: 'flex',
   flexDirection: 'column',
+  gap: '16px',
   height: '100%',
-  fontSize: '.9rem',
-})
-
-const Top = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  flex: 1,
-  columnGap: '1rem',
-})
-
-const Bottom = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-})
-
-const Left = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  flex: 1,
-  rowGap: '.125rem',
-})
-
-const Right = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'flex-start',
 })
 
 const Header = styled.div({
   display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  width: '100%',
+  alignItems: 'center',
+  gap: '12px',
 })
 
-const ThumbnailImg = styled.img({
-  width: '80px',
+const HeaderIcon = styled.span({
+  fontSize: '28px',
 })
 
 const Title = styled.h2({
-  color: colors.red.base,
+  color: '#fff',
+  fontSize: '20px',
+  fontWeight: 600,
   margin: 0,
 })
 
-const Description = styled.span({
-  fontWeight: 500,
-  width: '100%',
-  alignSelf: 'flex-start',
+const EventCard = styled.div({
+  background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.15) 100%)',
+  border: '1px solid rgba(245, 158, 11, 0.3)',
+  borderRadius: '12px',
+  padding: '16px',
 })
 
-const Note = styled.span({
-  fontWeight: 700,
-  alignSelf: 'flex-start',
-  padding: 0,
+const EventTitle = styled.div({
+  color: '#fbbf24',
+  fontSize: '16px',
+  fontWeight: 600,
+  marginBottom: '8px',
 })
 
-const ImportantNote = styled(Note)({
-  fontWeight: 500,
-  color: colors.red.base,
+const EventDesc = styled.div({
+  color: 'rgba(255, 255, 255, 0.8)',
+  fontSize: '14px',
+  lineHeight: 1.5,
 })
 
-const MainActions = styled.div({
+const EventInfo = styled.div({
+  color: 'rgba(255, 255, 255, 0.6)',
+  fontSize: '13px',
+  marginTop: '8px',
+  fontStyle: 'italic',
+})
+
+const InfoCard = styled.div(({ variant }) => ({
   display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'flex-start',
-  columnGap: '1rem',
-  width: '100%',
-  '& button': {
-    fontSize: '20px',
-  },
-  '& img': {
-    width: '36px',
-  },
+  alignItems: 'flex-start',
+  gap: '12px',
+  background: variant === 'success' 
+    ? 'rgba(34, 197, 94, 0.1)' 
+    : 'rgba(251, 191, 36, 0.1)',
+  border: `1px solid ${variant === 'success' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(251, 191, 36, 0.3)'}`,
+  borderRadius: '12px',
+  padding: '14px',
+}))
+
+const InfoIcon = styled.span({
+  fontSize: '20px',
 })
 
-const ActionButton = styled(Button)({
-  fontWeight: 800,
-  width: '120px',
+const InfoContent = styled.div({
+  flex: 1,
+})
+
+const InfoTitle = styled.div({
+  color: '#fff',
+  fontSize: '14px',
+  fontWeight: 600,
+  marginBottom: '4px',
+})
+
+const InfoText = styled.div({
+  color: 'rgba(255, 255, 255, 0.7)',
+  fontSize: '13px',
+  lineHeight: 1.4,
+})
+
+const Spacer = styled.div({
+  flex: 1,
+})
+
+const ActionButton = styled.button({
+  width: '100%',
+  padding: '14px',
+  borderRadius: '12px',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '16px',
+  fontWeight: 600,
+  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+  color: '#fff',
+  transition: 'all 0.2s ease',
   '&:active': {
-    opacity: 0.8,
-    transform: 'scale(0.9)',
+    transform: 'scale(0.98)',
   },
 })
-
-const Details = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'flex-start',
-  color: colors.blue.dark,
-  width: '100%',
-})
-
 //#endregion styled components
-
-//#endregion

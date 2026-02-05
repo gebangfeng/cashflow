@@ -1,104 +1,66 @@
 import styled from '@emotion/styled'
-import { colors } from '@/styles'
 import PropTypes from 'prop-types'
 import { currencyFormatter } from '@/utils/helpers'
 
 const Income = ({ incomes }) => {
+  if (!incomes || incomes.length === 0) {
+    return <EmptyState>暂无收入</EmptyState>
+  }
+
   return (
-    <CardContainer>
-      <CardHeader>INCOME</CardHeader>
-      <CardBody>
-        <ListHeader>Cash Flow</ListHeader>
-        <StyledList>
-          {incomes &&
-            incomes.map((i) => (
-              <ListItem key={i.id}>
-                <ListItemLeft>{i.name}</ListItemLeft>
-                <ListItemRight>
-                  ${currencyFormatter.format(i.amount)}
-                </ListItemRight>
-              </ListItem>
-            ))}
-        </StyledList>
-      </CardBody>
-    </CardContainer>
+    <List>
+      {incomes.map((income) => (
+        <ListItem key={income.id}>
+          <ItemName>{income.name}</ItemName>
+          <ItemValue>+¥{currencyFormatter.format(income.amount)}</ItemValue>
+        </ListItem>
+      ))}
+    </List>
   )
 }
 
-//#region prop types
 Income.propTypes = {
   incomes: PropTypes.array,
 }
-//#endregion prop types
 
 export default Income
 
 //#region styled components
-const CardContainer = styled.div({
-  backgroundColor: colors.white,
-  border: `1px solid ${colors.purple.base}`,
-  borderRadius: '12px',
-  maxWidth: '400px',
-  margin: 0,
-  padding: 0,
-  height: '100%',
+const List = styled.div({
   display: 'flex',
   flexDirection: 'column',
+  gap: '4px',
 })
 
-const CardHeader = styled.h3({
-  backgroundColor: colors.green.base,
-  borderRadius: '10px 10px 0 0',
-  color: colors.white,
-  fontWeight: 700,
-  height: '1.5rem',
-  margin: 0,
-  padding: '.25rem',
-  textAlign: 'center',
-})
-
-const CardBody = styled.div({
-  margin: '.25rem 1rem 0',
-  paddingRight: '1rem',
-  height: '70%',
-})
-
-const StyledList = styled.ul({
-  overflowY: 'scroll',
-  height: '100%',
-  scrollbarWidth: 'none',
-  paddingInlineStart: 0,
-  margin: 0,
-})
-
-const ListHeader = styled.div({
-  textAlign: 'right',
-  fontSize: '.875rem',
-  margin: 0,
-  fontWeight: 800,
-  padding: 0,
-  borderBottom: `1px solid ${colors.purple.light}`,
-})
-
-const ListItem = styled.li({
+const ListItem = styled.div({
   display: 'flex',
-  fontSize: '.875rem',
-  flexDirection: 'row',
   justifyContent: 'space-between',
-  padding: '.375rem 0',
-  columnGap: '10px',
+  alignItems: 'center',
+  padding: '6px 8px',
+  borderRadius: '6px',
+  background: 'rgba(255, 255, 255, 0.03)',
 })
 
-const ListItemLeft = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
-  flex: '1 1 150px',
-  fontSize: '.875rem',
-  textAlign: 'left',
+const ItemName = styled.span({
+  color: 'rgba(255, 255, 255, 0.8)',
+  fontSize: '12px',
+  flex: 1,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 })
-const ListItemRight = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
-  flex: '1 1 auto',
-  fontSize: '.875rem',
-  textAlign: 'right',
+
+const ItemValue = styled.span({
+  color: '#22c55e',
+  fontSize: '12px',
+  fontWeight: 600,
+  marginLeft: '8px',
+})
+
+const EmptyState = styled.div({
+  color: 'rgba(255, 255, 255, 0.4)',
+  fontSize: '12px',
+  textAlign: 'center',
+  padding: '16px',
 })
 //#endregion styled components

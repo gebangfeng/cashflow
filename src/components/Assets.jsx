@@ -1,9 +1,7 @@
 import styled from '@emotion/styled'
-import { colors } from '@/styles'
 import PropTypes from 'prop-types'
 import { currencyFormatter, GameContext } from '@/utils'
 import { useContext } from 'react'
-import PaymentIcon from '@mui/icons-material/Payment'
 
 const Assets = ({ assets }) => {
   const {
@@ -17,12 +15,10 @@ const Assets = ({ assets }) => {
 
   const handleSell = (asset) => {
     let newPlayerData = playerData
-    // > Calculate the amount of cash received
     const cash =
       asset.unit * card.arg1 - asset.mortgage > 0
         ? asset.unit * card.arg1 - asset.mortgage
         : 0
-    // > Remove item from the Assets section
     newPlayerData.assets = [
       ...newPlayerData.assets.filter((a) => a.id !== asset.id),
     ]
@@ -32,137 +28,94 @@ const Assets = ({ assets }) => {
     setActionType('start')
   }
 
+  if (!assets || assets.length === 0) {
+    return <EmptyState>暂无资产</EmptyState>
+  }
+
   return (
-    <CardContainer>
-      <CardHeader>ASSETS</CardHeader>
-      <CardBody>
-        <ListItemHeader>
-          <ListItemLeft>Name</ListItemLeft>
-          <ListItemRight>Cost</ListItemRight>
-          <ListItemIcon />
-        </ListItemHeader>
-        <StyledList>
-          {assets &&
-            assets.map((i) => (
-              <ListItem key={i.id}>
-                <ListItemLeft>
-                  {i.quantity >= 1 ? i.quantity : ''} {i.name}
-                </ListItemLeft>
-                <ListItemRight>
-                  ${currencyFormatter.format(i.cost)}
-                </ListItemRight>
-                <ListItemIcon>
-                  {isSellingAssets &&
-                    i.type === card.type &&
-                    i.subtype === card.subtype && (
-                      <PaymentIcon
-                        color="warning"
-                        onClick={() => {
-                          handleSell(i)
-                        }}
-                      />
-                    )}
-                </ListItemIcon>
-              </ListItem>
-            ))}
-        </StyledList>
-      </CardBody>
-    </CardContainer>
+    <List>
+      {assets.map((asset) => (
+        <ListItem key={asset.id}>
+          <ItemInfo>
+            <ItemName>
+              {asset.quantity >= 1 ? `${asset.quantity}x ` : ''}{asset.name}
+            </ItemName>
+            <ItemValue>¥{currencyFormatter.format(asset.cost)}</ItemValue>
+          </ItemInfo>
+          {isSellingAssets && asset.type === card?.type && asset.subtype === card?.subtype && (
+            <SellButton onClick={() => handleSell(asset)}>
+              出售
+            </SellButton>
+          )}
+        </ListItem>
+      ))}
+    </List>
   )
 }
 
-//#region prop types
 Assets.propTypes = {
   assets: PropTypes.array,
 }
-//#endregion prop types
 
 export default Assets
 
 //#region styled components
-const CardContainer = styled.div({
-  backgroundColor: colors.white,
-  border: `1px solid ${colors.purple.base}`,
-  borderRadius: '12px',
-  height: '100%',
-  maxWidth: '400px',
-  margin: 0,
-  padding: 0,
+const List = styled.div({
   display: 'flex',
   flexDirection: 'column',
+  gap: '4px',
 })
 
-const CardHeader = styled.h3({
-  backgroundColor: colors.blue.dark,
-  borderRadius: '10px 10px 0 0',
-  color: colors.white,
-  fontWeight: 700,
-  height: '1.5rem',
-  margin: 0,
-  padding: '.25rem',
+const ListItem = styled.div({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '6px 8px',
+  borderRadius: '6px',
+  background: 'rgba(255, 255, 255, 0.03)',
+})
+
+const ItemInfo = styled.div({
+  display: 'flex',
+  justifyContent: 'space-between',
+  flex: 1,
+  gap: '8px',
+})
+
+const ItemName = styled.span({
+  color: 'rgba(255, 255, 255, 0.8)',
+  fontSize: '12px',
+  flex: 1,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+})
+
+const ItemValue = styled.span({
+  color: '#06b6d4',
+  fontSize: '12px',
+  fontWeight: 600,
+})
+
+const SellButton = styled.button({
+  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '4px',
+  padding: '4px 8px',
+  fontSize: '11px',
+  fontWeight: 600,
+  cursor: 'pointer',
+  marginLeft: '8px',
+  '&:active': {
+    transform: 'scale(0.95)',
+  },
+})
+
+const EmptyState = styled.div({
+  color: 'rgba(255, 255, 255, 0.4)',
+  fontSize: '12px',
   textAlign: 'center',
-})
-
-const CardBody = styled.div({
-  margin: '.25rem 1rem 0',
-  paddingRight: '1rem',
-  height: '70%',
-})
-
-const StyledList = styled.ul({
-  overflowY: 'scroll',
-  height: '100%',
-  scrollbarWidth: 'none',
-  paddingInlineStart: 0,
-  margin: 0,
-})
-
-const ListItemHeader = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  margin: 0,
-  '& span': {
-    fontWeight: 800,
-  },
-})
-
-const ListItem = styled.li({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  padding: '.375rem 0',
-  columnGap: '10px',
-})
-
-const ListItemLeft = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
-  flex: '1 1 150px',
-  fontSize: '.875rem',
-  textAlign: 'left',
-})
-const ListItemRight = styled.span({
-  borderBottom: `1px solid ${colors.purple.light}`,
-  flex: '1 1 20px',
-  fontSize: '.875rem',
-  textAlign: 'right',
-})
-
-const ListItemIcon = styled.span({
-  flex: '1 1 24px',
-  fontSize: '.875rem',
-  textAlign: 'left',
-  alignSelf: 'flex-start',
-  '&:hover': {
-    cursor: 'pointer',
-  },
-  '& svg': {
-    '&:hover': {
-      opacity: 0.8,
-    },
-    '&:active': {
-      transform: 'scale(.8)',
-    },
-  },
+  padding: '16px',
 })
 //#endregion styled components
