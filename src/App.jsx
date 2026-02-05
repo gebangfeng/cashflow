@@ -1,94 +1,78 @@
 import styled from '@emotion/styled'
+import { keyframes } from '@emotion/react'
 import './App.css'
-import { Board, FinancialStatement, Action, PlayerSidebar } from '@/components'
+import { Board, FinancialStatement, Action } from '@/components'
 import { useState } from 'react'
 
 function App() {
   const [activeTab, setActiveTab] = useState('game') // 'game' | 'statement'
 
-  const handleOpenStatement = () => setActiveTab('statement')
-  const handleOpenBank = () => {
-    // TODO: Open bank dialog
-    console.log('Open bank')
-  }
-
   return (
     <Container>
-      {/* Left Sidebar - Desktop */}
-      <SidebarWrapper>
-        <PlayerSidebar 
-          onOpenStatement={handleOpenStatement}
-          onOpenBank={handleOpenBank}
-        />
-      </SidebarWrapper>
+      {/* Header */}
+      <Header>
+        <Logo>
+          <LogoIcon>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+          </LogoIcon>
+          <LogoText>财务自由之路</LogoText>
+        </Logo>
+        <HeaderBadge>
+          <span>22</span>岁
+        </HeaderBadge>
+      </Header>
 
-      {/* Main Area */}
-      <MainArea>
-        {/* Mobile Header */}
-        <MobileHeader>
-          <Logo>
-            <LogoIcon>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 6v6l4 2" />
-              </svg>
-            </LogoIcon>
-            <LogoText>财务自由之路</LogoText>
-          </Logo>
-          <HeaderBadge>
-            <span>22</span>岁
-          </HeaderBadge>
-        </MobileHeader>
+      {/* Main Content */}
+      <MainContent isGame={activeTab === 'game'}>
+        {activeTab === 'game' ? (
+          <GameSection>
+            <Board />
+          </GameSection>
+        ) : (
+          <StatementSection>
+            <FinancialStatement />
+          </StatementSection>
+        )}
+      </MainContent>
 
-        {/* Main Content */}
-        <MainContent isGame={activeTab === 'game'}>
-          {activeTab === 'game' ? (
-            <GameSection>
-              <Board />
-            </GameSection>
-          ) : (
-            <StatementSection>
-              <FinancialStatement />
-            </StatementSection>
-          )}
-        </MainContent>
+      {/* Action Modal */}
+      <Action />
 
-        {/* Action Modal */}
-        <Action />
-
-        {/* Bottom Navigation - Mobile Only */}
-        <BottomNav>
-          <NavItem 
-            active={activeTab === 'game'} 
-            onClick={() => setActiveTab('game')}
-          >
-            <NavIcon>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="2" y="2" width="20" height="20" rx="5" />
-                <circle cx="8" cy="8" r="1.5" fill="currentColor" />
-                <circle cx="16" cy="16" r="1.5" fill="currentColor" />
-                <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-              </svg>
-            </NavIcon>
-            <NavLabel>游戏</NavLabel>
-          </NavItem>
-          <NavItem 
-            active={activeTab === 'statement'} 
-            onClick={() => setActiveTab('statement')}
-          >
-            <NavIcon>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14,2 14,8 20,8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-                <line x1="10" y1="9" x2="8" y2="9" />
-              </svg>
-            </NavIcon>
-            <NavLabel>报表</NavLabel>
-          </NavItem>
-        </BottomNav>
-      </MainArea>
+      {/* Bottom Navigation */}
+      <BottomNav>
+        <NavItem 
+          active={activeTab === 'game'} 
+          onClick={() => setActiveTab('game')}
+        >
+          <NavIcon>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="2" y="2" width="20" height="20" rx="5" />
+              <circle cx="8" cy="8" r="1.5" fill="currentColor" />
+              <circle cx="16" cy="16" r="1.5" fill="currentColor" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+            </svg>
+          </NavIcon>
+          <NavLabel>游戏</NavLabel>
+        </NavItem>
+        <NavItem 
+          active={activeTab === 'statement'} 
+          onClick={() => setActiveTab('statement')}
+        >
+          <NavIcon>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14,2 14,8 20,8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <line x1="10" y1="9" x2="8" y2="9" />
+            </svg>
+          </NavIcon>
+          <NavLabel>报表</NavLabel>
+        </NavItem>
+      </BottomNav>
     </Container>
   )
 }
@@ -98,39 +82,16 @@ export default App
 //#region styled components
 const Container = styled.div({
   display: 'flex',
-  flexDirection: 'row',
+  flexDirection: 'column',
   width: '100%',
   minHeight: '100vh',
+  maxWidth: '480px',
+  margin: '0 auto',
   background: 'linear-gradient(180deg, #1B2240 0%, #252E50 100%)',
   position: 'relative',
 })
 
-const SidebarWrapper = styled.aside({
-  display: 'none',
-  '@media (min-width: 768px)': {
-    display: 'block',
-    width: '220px',
-    height: '100vh',
-    position: 'sticky',
-    top: 0,
-    flexShrink: 0,
-    borderRight: '1px solid rgba(255, 255, 255, 0.1)',
-  },
-})
-
-const MainArea = styled.div({
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  maxWidth: '100%',
-  minHeight: '100vh',
-  position: 'relative',
-  '@media (min-width: 768px)': {
-    maxWidth: 'calc(100% - 220px)',
-  },
-})
-
-const MobileHeader = styled.header({
+const Header = styled.header({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -141,9 +102,6 @@ const MobileHeader = styled.header({
   position: 'sticky',
   top: 0,
   zIndex: 100,
-  '@media (min-width: 768px)': {
-    display: 'none',
-  },
 })
 
 const Logo = styled.div({
@@ -205,18 +163,16 @@ const StatementSection = styled.div({
 const BottomNav = styled.nav({
   position: 'fixed',
   bottom: 0,
-  left: 0,
-  right: 0,
+  left: '50%',
+  transform: 'translateX(-50%)',
+  width: '100%',
+  maxWidth: '480px',
   display: 'flex',
   background: 'rgba(27, 34, 64, 0.98)',
   backdropFilter: 'blur(10px)',
   borderTop: '1px solid rgba(255, 255, 255, 0.1)',
   padding: '8px 0',
   paddingBottom: 'env(safe-area-inset-bottom, 8px)',
-  zIndex: 50,
-  '@media (min-width: 768px)': {
-    display: 'none',
-  },
 })
 
 const NavItem = styled.button(({ active }) => ({
