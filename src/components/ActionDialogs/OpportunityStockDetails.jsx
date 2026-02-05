@@ -201,50 +201,57 @@ const OpportunityStockDetails = () => {
       <Bottom>
         <BuyForm onSubmit={handleBuy}>
           <InputContainer>
-            <StyledInput
-              label="股票数量"
-              size="small"
-              type="text"
-              value={quantity}
-              onChange={handleInputChange}
-              disabled={!isBuyingMore}
-            />
-            <InputActions>
-              <InputButton
-                aria-label="增加股票数量"
+            <InputLabel>购买数量</InputLabel>
+            <InputWrapper>
+              <StyledInput
                 size="small"
-                onClick={increaseStockCount}
-              >
-                <ArrowDropUpIcon />
-              </InputButton>
-              <InputButton
-                aria-label="减少股票数量"
-                size="small"
-                onClick={decreaseStockCount}
-              >
-                <ArrowDropDownIcon />
-              </InputButton>
-            </InputActions>
+                type="text"
+                value={quantity}
+                onChange={handleInputChange}
+                disabled={!isBuyingMore}
+                placeholder="0"
+              />
+              <InputActions>
+                <InputButton
+                  aria-label="增加股票数量"
+                  size="small"
+                  onClick={increaseStockCount}
+                  disabled={!isBuyingMore}
+                >
+                  <ArrowDropUpIcon />
+                </InputButton>
+                <InputButton
+                  aria-label="减少股票数量"
+                  size="small"
+                  onClick={decreaseStockCount}
+                  disabled={!isBuyingMore}
+                >
+                  <ArrowDropDownIcon />
+                </InputButton>
+              </InputActions>
+            </InputWrapper>
             {/* Checkbox */}
             {hasStock && (
-              <FormControlLabel
-                control={<Checkbox onChange={toggleBuyMode} />}
-                label="继续购买?"
+              <StyledFormControlLabel
+                control={<Checkbox onChange={toggleBuyMode} size="small" />}
+                label="继续购买"
               />
             )}
-            {/* Side note */}
-            {quantity > 0 && (
-              <SideNote>
-                {`购买 ${quantity} 股，共 ¥${currencyFormatter.format(
-                  quantity * card.arg1
-                )}`}
-                {quantity * card.arg1 > playerData.cash &&
-                  ` (需贷款: ¥${getLoanAmount(
-                    quantity * card.arg1 - playerData.cash
-                  )})`}
-              </SideNote>
-            )}
           </InputContainer>
+          {/* Side note */}
+          {quantity > 0 && (
+            <PurchaseSummary>
+              <SummaryText>
+                购买 <SummaryHighlight>{quantity}</SummaryHighlight> 股，
+                共计 <SummaryHighlight>¥{currencyFormatter.format(quantity * card.arg1)}</SummaryHighlight>
+              </SummaryText>
+              {quantity * card.arg1 > playerData.cash && (
+                <LoanWarning>
+                  需贷款: ¥{getLoanAmount(quantity * card.arg1 - playerData.cash)}
+                </LoanWarning>
+              )}
+            </PurchaseSummary>
+          )}
 
           <MainActions>
             <ActionButton
@@ -344,12 +351,51 @@ const ImportantNote = styled(Note)({
   color: colors.red.base,
 })
 
-const SideNote = styled(Note)({
-  // paddingLeft: '.25rem',
-  margin: 0,
-  padding: 0,
-  alignSelf: 'center',
-  color: colors.red.base,
+const InputLabel = styled.span({
+  fontSize: '14px',
+  fontWeight: 600,
+  color: '#475569',
+})
+
+const StyledFormControlLabel = styled(FormControlLabel)({
+  marginLeft: '8px',
+  '& .MuiFormControlLabel-label': {
+    fontSize: '13px',
+    fontWeight: 500,
+    color: '#64748b',
+  },
+  '& .MuiCheckbox-root': {
+    color: '#94a3b8',
+    '&.Mui-checked': {
+      color: '#3b82f6',
+    },
+  },
+})
+
+const PurchaseSummary = styled.div({
+  background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+  borderRadius: '10px',
+  padding: '10px 14px',
+  border: '1px solid #fbbf24',
+})
+
+const SummaryText = styled.span({
+  fontSize: '14px',
+  fontWeight: 500,
+  color: '#92400e',
+})
+
+const SummaryHighlight = styled.span({
+  fontWeight: 700,
+  color: '#b45309',
+  fontSize: '15px',
+})
+
+const LoanWarning = styled.div({
+  marginTop: '6px',
+  fontSize: '13px',
+  fontWeight: 600,
+  color: '#dc2626',
 })
 
 const MainActions = styled.div({
@@ -400,23 +446,73 @@ const BuyForm = styled.form({
 const InputContainer = styled.div({
   display: 'flex',
   flexDirection: 'row',
-  columnGap: '.5rem',
+  columnGap: '12px',
   alignItems: 'center',
+  flexWrap: 'wrap',
+  rowGap: '8px',
+})
+
+const InputWrapper = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+  borderRadius: '12px',
+  border: '2px solid #e2e8f0',
+  padding: '4px',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+  transition: 'all 0.2s ease',
+  '&:focus-within': {
+    borderColor: '#3b82f6',
+    boxShadow: '0 2px 12px rgba(59, 130, 246, 0.2)',
+  },
 })
 
 const InputActions = styled.div({
   display: 'flex',
   flexDirection: 'column',
+  gap: '2px',
 })
 
 const InputButton = styled(IconButton)({
-  height: '18px',
-  width: '18px',
+  height: '24px',
+  width: '24px',
+  background: '#fff',
+  borderRadius: '6px',
+  border: '1px solid #e2e8f0',
+  color: '#64748b',
+  transition: 'all 0.15s ease',
+  '&:hover': {
+    background: '#3b82f6',
+    borderColor: '#3b82f6',
+    color: '#fff',
+  },
+  '&:active': {
+    transform: 'scale(0.95)',
+  },
+  '& svg': {
+    fontSize: '20px',
+  },
 })
 
 const StyledInput = styled(TextField)({
-  fontSize: '1rem',
-  width: '30%',
+  '& .MuiOutlinedInput-root': {
+    background: '#fff',
+    borderRadius: '8px',
+    fontSize: '18px',
+    fontWeight: 600,
+    width: '100px',
+    '& fieldset': {
+      border: 'none',
+    },
+    '& input': {
+      textAlign: 'center',
+      padding: '8px 12px',
+      color: '#1e293b',
+    },
+  },
+  '& .MuiInputLabel-root': {
+    display: 'none',
+  },
 })
 
 //#endregion styled components
