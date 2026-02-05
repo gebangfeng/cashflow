@@ -115,39 +115,43 @@ const slideUp = keyframes`
 const ModalOverlay = styled.div({
   position: 'fixed',
   inset: 0,
-  background: 'rgba(0, 0, 0, 0.75)',
+  background: 'rgba(0, 0, 0, 0.6)',
   backdropFilter: 'blur(4px)',
   display: 'flex',
-  alignItems: 'flex-end',
+  alignItems: 'center',
   justifyContent: 'center',
   zIndex: 1000,
+  padding: '20px',
   animation: `${fadeIn} 0.2s ease`,
 })
 
+const scaleIn = keyframes`
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+`
+
 const ModalContent = styled.div({
   width: '100%',
-  maxWidth: '480px',
-  maxHeight: '80vh',
+  maxWidth: '340px',
   background: 'linear-gradient(180deg, #1e2744 0%, #151c32 100%)',
-  borderRadius: '24px 24px 0 0',
+  borderRadius: '16px',
   display: 'flex',
   flexDirection: 'column',
-  animation: `${slideUp} 0.3s ease`,
+  animation: `${scaleIn} 0.25s ease`,
   overflow: 'hidden',
+  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
 })
 
 const ModalHandle = styled.div({
-  width: '40px',
-  height: '4px',
-  background: 'rgba(255, 255, 255, 0.3)',
+  width: '32px',
+  height: '3px',
+  background: 'rgba(255, 255, 255, 0.2)',
   borderRadius: '2px',
-  margin: '12px auto',
+  margin: '10px auto 0',
 })
 
 const DialogContent = styled.div({
-  flex: 1,
   overflow: 'auto',
-  padding: '8px 20px 24px',
-  paddingBottom: 'calc(24px + env(safe-area-inset-bottom))',
+  padding: '12px 16px 20px',
 })
 //#endregion styled components
