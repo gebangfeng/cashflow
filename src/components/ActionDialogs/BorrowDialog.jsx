@@ -41,8 +41,6 @@ const BorrowDialog = () => {
         <AmountHint>月还款: ¥{(amount * 0.1).toLocaleString()}</AmountHint>
       </AmountSection>
 
-      <Spacer />
-
       <ButtonGroup>
         <ActionButton variant="primary" onClick={handleBorrow}>
           确认贷款
@@ -61,8 +59,7 @@ export default BorrowDialog
 const Container = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px',
-  height: '100%',
+  gap: '12px',
 })
 
 const Header = styled.div({
@@ -146,10 +143,6 @@ const AmountHint = styled.div({
   fontSize: '13px',
   marginTop: '12px',
   textAlign: 'center',
-})
-
-const Spacer = styled.div({
-  flex: 1,
 })
 
 const ButtonGroup = styled.div({

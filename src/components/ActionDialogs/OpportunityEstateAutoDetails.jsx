@@ -83,14 +83,13 @@ export default OpportunityEstateAutoDetails
 const Container = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  height: '100%',
+  gap: '12px',
   fontSize: '.9rem',
 })
 
 const Top = styled.div({
   display: 'flex',
   flexDirection: 'row',
-  flex: 1,
   columnGap: '1rem',
 })
 

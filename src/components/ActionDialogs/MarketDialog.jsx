@@ -56,8 +56,6 @@ const MarketDialog = () => {
         </InfoCard>
       )}
 
-      <Spacer />
-
       <ActionButton onClick={handlePass}>
         {hasAssets ? '跳过机会' : '继续游戏'}
       </ActionButton>
@@ -71,8 +69,7 @@ export default MarketDialog
 const Container = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px',
-  height: '100%',
+  gap: '12px',
 })
 
 const Header = styled.div({
@@ -150,10 +147,6 @@ const InfoText = styled.div({
   color: 'rgba(255, 255, 255, 0.7)',
   fontSize: '13px',
   lineHeight: 1.4,
-})
-
-const Spacer = styled.div({
-  flex: 1,
 })
 
 const ActionButton = styled.button({

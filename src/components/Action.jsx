@@ -133,15 +133,14 @@ const ModalOverlay = styled.div({
 })
 
 const ModalContent = styled.div({
-  width: '100%',
+  width: 'auto',
+  minWidth: '280px',
   maxWidth: '340px',
-  maxHeight: '80vh',
   background: 'linear-gradient(180deg, #1e2744 0%, #151c32 100%)',
   borderRadius: '16px',
   display: 'flex',
   flexDirection: 'column',
   animation: `${scaleIn} 0.25s ease`,
-  overflow: 'hidden',
   boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
 })
 

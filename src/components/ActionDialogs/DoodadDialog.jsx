@@ -46,8 +46,6 @@ const DoodadDialog = () => {
         </WarningCard>
       )}
 
-      <Spacer />
-
       <ActionButton onClick={handleDoodads}>
         {needsLoan ? '贷款并支付' : '确认支付'}
       </ActionButton>
@@ -61,8 +59,7 @@ export default DoodadDialog
 const Container = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px',
-  height: '100%',
+  gap: '12px',
 })
 
 const Header = styled.div({
@@ -147,10 +144,6 @@ const WarningText = styled.span({
   color: '#fca5a5',
   fontSize: '13px',
   lineHeight: 1.5,
-})
-
-const Spacer = styled.div({
-  flex: 1,
 })
 
 const ActionButton = styled.button({
