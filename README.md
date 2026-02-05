@@ -1,73 +1,37 @@
-# CASHFLOW Game
+# Cashflow - Frontend (React + Vite)
 
-## **Project Overview**
+## Platform
 
-This project aims to develop a web-based version of the popular Cashflow board game, originally created by Robert Kiyosaki. The web app will enable users to play the game in a single-player mode, providing a digital platform to experience the core financial education concepts presented in the game.
+- **Front-End Framework**: ReactJS
+- **Programming Language**: Javascript
+- **UI Component Library**: Material UI
+- **Build Tool**: Vite
+- **State Management**: Context API
+- **Testing Framework**: Framework and libraries for testing include:
+  - **Jest**: the Javascript testing framework that provides a complete environment for running tests.
+  - `@testing-library/react`: the React Testing Library
+  - `@testing-library/user-event`: provide utilities for advanced user interactions (e.g., typing text, select options from drop downs, etc.)
+  - `@testing-library/jest-dom`: custom Jest matchers specifically for DOM testing (e.g., `toBeInTheDocument`, `toHaveTextContext`, etc.)
 
-## **Purpose**
+## Database: Database technologies and schema.
 
-The primary purpose of this project is twofold:
+- **Phase 1: No dedicated database**
+  - In the phase 1 with single-player mode, with no user accounts or persistences, a database is not strictly necessary
+  - **JSON Data Storage:** Game data (professions, cards, etc.) will be stored in local JSON files and loaded into the app at runtime.
+  - Game state, such as financial statement, will be stored in the `Context` and and `localStorage` to preserve progress across page refreshers
+- **Future phases:** A dedicated database (Postgres) will be considered when implementing features like user accounts, game saving, and leaderboards.
 
-1. **Personal Portfolio:** The development of this web app will serve as a showcase of my skills and experience as a web developer, demonstrating my ability to create interactive and engaging user experiences.
-2. **Personal Use:** The app will be used for personal enjoyment and learning, allowing me to revisit the financial principles presented in the Cashflow game.
+## Integration
 
-## **Scope**
+- **Phase 1: No external APIs**
+  - In this phase, there is no requirement for external API integration.
 
-- The project will focus on creating a functional and user-friendly single-player version of the Cashflow game.
-- The initial release will not include multiplayer features, user authentication (sign in/sign up)
-- The game can only be play on one-go, there will be no save/load feature in the initial version.
+## Additional Considerations
 
-## Business requirements
+- **Hosting:** Vercel or Netlify
+- **CI/CD Pipeline:** Implementation of automated build and testing processes
+- **Version Control:** Git
 
-**Monthly loan payment (home & car loan)**
+### Tips
 
-$M = \frac{P*r*(1+r)^n}{(1+r)^{n}-1}$
-
-- `M`: Monthly loan payment
-- `P`: Loan principal
-- `r`: Monthly interest
-- `n`: Loan terms (in months)
-
-**Monthly loan payment (credit card & retail debt, bank loan)**
-$M = P * r$
-
-- `M`: Monthly loan payment
-- `P`: Loan principal
-- `r`: Monthly interest
-
-**Fixed values in game**
-
-- Home Loan
-
-  - Loan terms (in months): 240
-  - Monthly Interest Rate: 10.5%
-
-- Car Loan
-
-  - Loan terms (in months): 240
-  - Monthly Interest Rate: 0.8%
-
-- Credit Loans
-
-  - Monthly Interest Rate: 3%
-
-- Retail Debt
-
-  - Monthly Interest Rate: 5%
-
-- Bank Loan
-  - Monthly Interest Rate: 10%
-
-### Attributions
-
-- [Fired icons created by Eucalyp - Flaticon](https://www.flaticon.com/free-icons/fired)
-- [Child icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/child)
-- [Proposal icons created by itim2101 - Flaticon](https://www.flaticon.com/free-icons/proposal)
-- [Negotiation icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/negotiation)
-- [Lost icons created by afif fudin - Flaticon](https://www.flaticon.com/free-icons/lost)
-- [Help icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/help)
-- [Loan icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/loan)
-- [Residential icons created by Dewi Sari - Flaticon](https://www.flaticon.com/free-icons/residential)
-- [Earthquake icons created by GOWI - Flaticon](https://www.flaticon.com/free-icons/earthquake)
-- [Miscellaneous icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/miscellaneous)
-- [Coin icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/coin)
+- VS Code Intellisense does not work: Add an empty jsconfig.json file `{}` at the root of the react app
