@@ -24,7 +24,6 @@ const OpportunityStockDetails = () => {
   const [quantity, setQuantity] = useState(0)
   const [isBuyingMore, setIsBuyingMore] = useState(true)
   const [hasStock] = useState(() => {
-    // Check if player has stock
     if (
       playerData.assets.filter(
         (a) => a.type === 'stock' && a.name === card.title
@@ -35,15 +34,12 @@ const OpportunityStockDetails = () => {
     return false
   })
 
-  //#region Side-Effects
   useEffect(() => {
     if (hasStock) {
       setIsBuyingMore(false)
     }
   }, [hasStock])
-  //#endregion
 
-  //#region Event handlers
   const handleBuy = (e) => {
     let unitPrice = card.arg1
     let newPlayerData = playerData
@@ -51,13 +47,11 @@ const OpportunityStockDetails = () => {
     if (quantity > 0) {
       setActionType('start')
 
-      // > Take the loan
       if (playerData.cash < quantity * unitPrice) {
         newPlayerData = takeLoan(playerData, quantity * unitPrice)
       } else {
         newPlayerData.cash -= quantity * unitPrice
       }
-      // > Add new item to the assets
       let newAsset = {
         id:
           playerData.assets.length === 0 ? 1 : playerData.assets.at(-1).id + 1,
@@ -69,7 +63,6 @@ const OpportunityStockDetails = () => {
         quantity: quantity,
       }
       newPlayerData.assets.push(newAsset)
-      // > Add to player's income, if stock has positive cashflow
       if (card.arg4 > 0) {
         let newIncome = {
           id:
@@ -82,7 +75,6 @@ const OpportunityStockDetails = () => {
         newPlayerData.incomes.push(newIncome)
         checkWinningCondition(newPlayerData)
       }
-      // > Update the context player context data
       setPlayerData(newPlayerData)
     }
     setActionType('start')
@@ -94,13 +86,10 @@ const OpportunityStockDetails = () => {
 
   const handleInputChange = (e) => {
     let num = parseInt(e.target.value)
-    console.log('num: ', num)
     setQuantity((q) => {
       if (isNaN(num) || num < 0) {
-        console.log('Case 1: ', q)
         return q
       }
-      console.log('Case 2: ', num)
       return num
     })
   }
@@ -111,13 +100,10 @@ const OpportunityStockDetails = () => {
       .filter((a) => a.type === 'stock' && a.name === card.title)
       .reduce((total, a) => total + a.quantity, 0)
     let cash = card.arg1 * shares
-    // > Add shares to the player cash
     newPlayerData.cash += cash
-    // > Remove stocks from player's assets
     newPlayerData.assets = [
       ...newPlayerData.assets.filter((a) => a.name !== card.title),
     ]
-    // > Update the player data context
     setPlayerData(newPlayerData)
     setActionType('start')
   }
@@ -139,8 +125,6 @@ const OpportunityStockDetails = () => {
     setIsBuyingMore(e.target.checked)
   }
 
-  //#endregion Event handlers
-
   return (
     <>
       <Top>
@@ -153,20 +137,19 @@ const OpportunityStockDetails = () => {
           {card.type === 'stock' && (
             <Details>
               <DetailsColumn>
-                <Note>Cost: ${currencyFormatter.format(card.arg1)}</Note>
-                <Note>Cashflow: ${currencyFormatter.format(card.arg4)}</Note>
+                <Note>价格: ${currencyFormatter.format(card.arg1)}</Note>
+                <Note>现金流: ${currencyFormatter.format(card.arg4)}</Note>
               </DetailsColumn>
               <DetailsColumn>
                 {card.type === 'stock' && (
                   <Note>
-                    Trading Range: ${currencyFormatter.format(card.arg2)} to $
+                    交易区间: ${currencyFormatter.format(card.arg2)} 至 $
                     {currencyFormatter.format(card.arg3)}
                   </Note>
                 )}
                 {card.type === 'stock' && (
                   <Note>
-                    {`Shares owned:
-                    ${playerData.assets
+                    {`持有股数: ${playerData.assets
                       .filter(
                         (a) => a.type === 'stock' && a.name === card.title
                       )
@@ -174,26 +157,26 @@ const OpportunityStockDetails = () => {
                   </Note>
                 )}
                 {card.type === 'estate' && (
-                  <Note>Downpay: ${currencyFormatter.format(card.arg2)}</Note>
+                  <Note>首付: ${currencyFormatter.format(card.arg2)}</Note>
                 )}
                 {hasStock && (
                   <ImportantNote>
-                    {`(Click SELL to sell ALL stocks for $${currencyFormatter.format(
+                    {`（点击卖出可以以 $${currencyFormatter.format(
                       playerData.assets
                         .filter(
                           (a) => a.type === 'stock' && a.name === card.title
                         )
                         .reduce((total, a) => total + a.quantity, 0) * card.arg1
-                    )})`}
+                    )} 卖出全部股票）`}
                   </ImportantNote>
                 )}
               </DetailsColumn>
             </Details>
           )}
           {card.arg2 > playerData.cash && (
-            <ImportantNote>{`(You don't have enough cash. Must take a loan of $${currencyFormatter.format(
+            <ImportantNote>{`（你没有足够的现金。需要贷款 $${currencyFormatter.format(
               getLoanAmount(card.arg2 - playerData.cash)
-            )})`}</ImportantNote>
+            )}）`}</ImportantNote>
           )}
         </Left>
         <Right>
@@ -204,7 +187,7 @@ const OpportunityStockDetails = () => {
         <BuyForm onSubmit={handleBuy}>
           <InputContainer>
             <StyledInput
-              label="Number of stock"
+              label="购买数量"
               size="small"
               type="text"
               value={quantity}
@@ -213,37 +196,35 @@ const OpportunityStockDetails = () => {
             />
             <InputActions>
               <InputButton
-                aria-label="increase stock amount"
+                aria-label="增加数量"
                 size="small"
                 onClick={increaseStockCount}
               >
                 <ArrowDropUpIcon />
               </InputButton>
               <InputButton
-                aria-label="decrease stock amount"
+                aria-label="减少数量"
                 size="small"
                 onClick={decreaseStockCount}
               >
                 <ArrowDropDownIcon />
               </InputButton>
             </InputActions>
-            {/* Checkbox */}
             {hasStock && (
               <FormControlLabel
                 control={<Checkbox onChange={toggleBuyMode} />}
-                label="Buy more?"
+                label="继续购买？"
               />
             )}
-            {/* Side note */}
             {quantity > 0 && (
               <SideNote>
-                {`Buy ${quantity} shares for $${currencyFormatter.format(
+                {`购买 ${quantity} 股，共 $${currencyFormatter.format(
                   quantity * card.arg1
                 )}`}
                 {quantity * card.arg1 > playerData.cash &&
-                  `. (Loan: $${getLoanAmount(
+                  `（需贷款: $${getLoanAmount(
                     quantity * card.arg1 - playerData.cash
-                  )})`}
+                  )}）`}
               </SideNote>
             )}
           </InputContainer>
@@ -255,7 +236,7 @@ const OpportunityStockDetails = () => {
               disableRipple
               disabled={quantity === 0}
             >
-              BUY
+              购买
             </ActionButton>
             {card.type === 'stock' &&
               playerData.assets.filter(
@@ -267,7 +248,7 @@ const OpportunityStockDetails = () => {
                   onClick={handleSell}
                   disabled={isBuyingMore}
                 >
-                  SELL
+                  卖出
                 </ActionButton>
               )}
             <ActionButton
@@ -276,7 +257,7 @@ const OpportunityStockDetails = () => {
               onClick={handlePass}
               style={{ alignSelf: 'flex-end' }}
             >
-              PASS
+              跳过
             </ActionButton>
           </MainActions>
         </BuyForm>
@@ -347,7 +328,6 @@ const ImportantNote = styled(Note)({
 })
 
 const SideNote = styled(Note)({
-  // paddingLeft: '.25rem',
   margin: 0,
   padding: 0,
   alignSelf: 'center',

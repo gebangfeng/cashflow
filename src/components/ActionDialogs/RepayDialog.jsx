@@ -21,7 +21,7 @@ const RepayDialog = ({ title, description, liabilities }) => {
           }}
           style={{ alignSelf: 'flex-end', visibility: 'hidden' }}
         >
-          OK
+          确定
         </ActionButton>
         <ActionButton
           variant="contained"
@@ -31,7 +31,7 @@ const RepayDialog = ({ title, description, liabilities }) => {
           }}
           style={{ alignSelf: 'flex-end' }}
         >
-          CANCEL
+          取消
         </ActionButton>
       </MainActions>
     </>

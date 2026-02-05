@@ -11,27 +11,12 @@ import {
   takeLoan,
 } from '@/utils'
 
-/**
- *
- * @param {*} param0
- * @returns
- */
 const DownsizedDialog = () => {
   const { playerData, setPlayerData, setActionType } = useContext(GameContext)
 
-  /**
-   * > Handle logic when player lands on `Downsized!` slot
-   * * 1. Check the player’s cash amount after deduction
-   * *    - If negative: force user to take a loan, add the loan to the liabilities & expenses of the user
-   * *    - If positive: player’s cash is positive, do nothing
-   * * 2. Deduce the player’s cash amount to a full amount of total expenses.
-   * * 3. Remove the charity privilege (if you donated when landing on Charity before this turn)
-   * * 4. Move to the Start Dialog
-   */
   const handleDownsized = () => {
     let newPlayerData = playerData
     let totalExpenses = getTotalExpenseAmount(newPlayerData)
-    // > Take loan if does not have enough cash
     if (newPlayerData.cash < totalExpenses) {
       newPlayerData = takeLoan(newPlayerData, totalExpenses)
     } else {
@@ -52,19 +37,19 @@ const DownsizedDialog = () => {
   return (
     <>
       <Header>
-        <Title>DOWNSIZED!</Title>
+        <Title>被裁员了！</Title>
         <ThumbnailImg src="./assets/images/downsized-thumb.png" />
       </Header>
-      <Description>Pay a full set of your expenses and charity</Description>
+      <Description>支付你全部的月支出和慈善捐款（如有）</Description>
       <Note>
-        Pay ${currencyFormatter.format(getTotalExpenseAmount(playerData))}
+        支付 ${currencyFormatter.format(getTotalExpenseAmount(playerData))}
       </Note>
       {playerData.cash - getTotalExpenseAmount(playerData) < 0 && (
         <Note
           style={{ color: colors.red.base }}
-        >{`(You don't have enough cash.You must take a loan of $${getLoanAmount(
+        >{`（你没有足够的现金。需要贷款 $${getLoanAmount(
           getTotalExpenseAmount(playerData) - playerData.cash
-        )} to afford this.)`}</Note>
+        )} 来支付）`}</Note>
       )}
       <Note style={{ flex: 1 }} />
       <MainActions>
@@ -73,7 +58,7 @@ const DownsizedDialog = () => {
           disableRipple
           onClick={handleDownsized}
         >
-          PAY
+          支付
         </ActionButton>
       </MainActions>
     </>
