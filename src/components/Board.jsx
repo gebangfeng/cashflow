@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { keyframes } from '@emotion/react'
-import { useContext, useState, useEffect } from 'react'
-import { GameContext, BOARD_SLOTS, rollDice, playSFX, drawCard } from '@/utils'
+import { useContext, useState } from 'react'
+import { GameContext, BOARD_SLOTS, rollDice, playSFX, drawCard, getTotalIncomeAmount, getTotalExpenseAmount, currencyFormatter } from '@/utils'
 
 // Slot type configurations with Chinese names
 const SLOT_CONFIG = {
@@ -73,8 +73,60 @@ const Board = () => {
 
   const visibleSlots = getVisibleSlots()
 
+  // Calculate financial data
+  const totalIncome = getTotalIncomeAmount(playerData)
+  const totalExpense = getTotalExpenseAmount(playerData)
+  const passiveIncome = playerData.incomes
+    .filter((i) => i.type === 'passive')
+    .reduce((total, i) => total + i.amount, 0)
+  const activeIncome = totalIncome - passiveIncome
+  const cashflow = totalIncome - totalExpense
+  const bankLoan = playerData.liabilities
+    .filter((l) => l.type === 'bank')
+    .reduce((total, l) => total + l.amount, 0)
+
   return (
     <BoardContainer>
+      {/* Financial Status Bar - Top */}
+      <FinancialStatusBar>
+        <FinancialRow>
+          <FinancialItem>
+            <FinancialLabel>月被动收入</FinancialLabel>
+            <FinancialValue>{currencyFormatter.format(passiveIncome)}</FinancialValue>
+          </FinancialItem>
+          <FinancialItem>
+            <FinancialLabel>月主动收入</FinancialLabel>
+            <FinancialValue>{currencyFormatter.format(activeIncome)}</FinancialValue>
+          </FinancialItem>
+        </FinancialRow>
+        <FinancialRow>
+          <FinancialItem>
+            <FinancialLabel>月总支出</FinancialLabel>
+            <FinancialValue>{currencyFormatter.format(totalExpense)}</FinancialValue>
+          </FinancialItem>
+          <FinancialItem>
+            <FinancialLabel>银行贷款</FinancialLabel>
+            <FinancialValue>{currencyFormatter.format(bankLoan)}</FinancialValue>
+          </FinancialItem>
+        </FinancialRow>
+        <FinancialHighlightRow>
+          <FinancialHighlightItem>
+            <FinancialHighlightIcon>~</FinancialHighlightIcon>
+            <FinancialHighlightLabel>月现金流</FinancialHighlightLabel>
+            <FinancialHighlightValue positive={cashflow >= 0}>
+              {currencyFormatter.format(cashflow)}
+            </FinancialHighlightValue>
+          </FinancialHighlightItem>
+          <FinancialHighlightItem>
+            <FinancialHighlightIcon>$</FinancialHighlightIcon>
+            <FinancialHighlightLabel>现金</FinancialHighlightLabel>
+            <FinancialHighlightValue positive={true}>
+              {currencyFormatter.format(playerData.cash)}
+            </FinancialHighlightValue>
+          </FinancialHighlightItem>
+        </FinancialHighlightRow>
+      </FinancialStatusBar>
+
       {/* Road Title */}
       <RoadTitle>
         {'财务自由路'.split('').map((char, i) => (
@@ -306,7 +358,7 @@ const CurrentIndicator = styled.div({
 
 const RollButtonContainer = styled.div({
   position: 'absolute',
-  bottom: '24px',
+  bottom: '160px',
   left: '50%',
   transform: 'translateX(-50%)',
   zIndex: 20,
@@ -356,4 +408,75 @@ const RollLabel = styled.span({
   fontWeight: 600,
   textShadow: '0 2px 4px rgba(0,0,0,0.3)',
 })
+
+// Financial Status Bar Styles
+const FinancialStatusBar = styled.div({
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  background: 'rgba(255, 255, 255, 0.95)',
+  borderTopLeftRadius: '16px',
+  borderTopRightRadius: '16px',
+  padding: '12px 16px',
+  zIndex: 30,
+  boxShadow: '0 -4px 20px rgba(0,0,0,0.15)',
+})
+
+const FinancialRow = styled.div({
+  display: 'flex',
+  justifyContent: 'space-between',
+  marginBottom: '8px',
+})
+
+const FinancialItem = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  flex: 1,
+})
+
+const FinancialLabel = styled.span({
+  color: '#6b7280',
+  fontSize: '12px',
+  fontWeight: 500,
+})
+
+const FinancialValue = styled.span({
+  color: '#1f2937',
+  fontSize: '13px',
+  fontWeight: 600,
+})
+
+const FinancialHighlightRow = styled.div({
+  display: 'flex',
+  justifyContent: 'space-between',
+  paddingTop: '8px',
+  borderTop: '1px solid #e5e7eb',
+  marginTop: '4px',
+})
+
+const FinancialHighlightItem = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+})
+
+const FinancialHighlightIcon = styled.span({
+  color: '#f59e0b',
+  fontSize: '14px',
+  fontWeight: 700,
+})
+
+const FinancialHighlightLabel = styled.span({
+  color: '#f59e0b',
+  fontSize: '12px',
+  fontWeight: 600,
+})
+
+const FinancialHighlightValue = styled.span(({ positive }) => ({
+  color: positive ? '#10b981' : '#ef4444',
+  fontSize: '15px',
+  fontWeight: 700,
+}))
 //#endregion styled components
