@@ -1,5 +1,6 @@
 export { default as FinancialStatus } from './FinancialStatus'
 export { default as FinancialStatement } from './FinancialStatement'
+export { default as PlayerSidebar } from './PlayerSidebar'
 export { default as Income } from './Income'
 export { default as Assets } from './Assets'
 export { default as Expenses } from './Expenses'
