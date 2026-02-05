@@ -1,14 +1,44 @@
 import styled from '@emotion/styled'
 import './App.css'
-import { Board, FinancialStatement, Action } from '@/components'
+import { Board, FinancialStatement, Action, CharacterSelect } from '@/components'
 import { breakpoints } from '@/styles/styles'
+import { GameContext } from '@/utils'
+import { useContext, useState } from 'react'
 
 function App() {
+  const { selectedProfession, initializePlayerFromProfession } = useContext(GameContext)
+  const [showCharacterSelect, setShowCharacterSelect] = useState(!selectedProfession)
+
+  const handleProfessionSelect = (profession) => {
+    initializePlayerFromProfession(profession)
+    setShowCharacterSelect(false)
+  }
+
+  if (showCharacterSelect) {
+    return (
+      <CharacterSelect
+        onSelect={handleProfessionSelect}
+        onBack={() => {}}
+      />
+    )
+  }
+
   return (
     <Container>
       <Header>
-        <Logo>CASHFLOW</Logo>
-        <Subtitle>Escape the Rat Race</Subtitle>
+        <HeaderLeft>
+          <Logo>CASHFLOW</Logo>
+          <Subtitle>Escape the Rat Race</Subtitle>
+        </HeaderLeft>
+        <ProfessionBadge onClick={() => setShowCharacterSelect(true)}>
+          <ProfessionIcon>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </ProfessionIcon>
+          <span>{selectedProfession?.nameCn || selectedProfession?.name}</span>
+        </ProfessionBadge>
       </Header>
       <MainContent>
         <LeftSection>
@@ -77,6 +107,48 @@ const Subtitle = styled.span({
   [`@media (min-width: ${breakpoints.md})`]: {
     fontSize: '0.875rem',
   },
+})
+
+const HeaderLeft = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  [`@media (min-width: ${breakpoints.md})`]: {
+    alignItems: 'flex-start',
+  },
+})
+
+const ProfessionBadge = styled.button({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+  padding: '0.5rem 0.75rem',
+  marginTop: '0.5rem',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  borderRadius: '2rem',
+  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  color: '#ffffff',
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  cursor: 'pointer',
+  transition: 'all 0.15s ease',
+  '&:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  [`@media (min-width: ${breakpoints.md})`]: {
+    marginTop: 0,
+    fontSize: '0.875rem',
+  },
+})
+
+const ProfessionIcon = styled.span({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '1.5rem',
+  height: '1.5rem',
+  backgroundColor: '#10b981',
+  borderRadius: '50%',
 })
 
 const MainContent = styled.main({

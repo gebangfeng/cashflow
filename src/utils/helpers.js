@@ -2427,75 +2427,182 @@ export const MARKETS = [
 //#endregion MARKETS
 
 //#region PROFESSIONS
+export const PROFESSION_TIERS = [
+  { level: 1, name: '入门', nameEn: 'Starter', color: '#a855f7', unlocked: true },
+  { level: 2, name: '小资', nameEn: 'Petty Bourgeois', color: '#eab308', unlocked: true },
+  { level: 3, name: '中产', nameEn: 'Middle Class', color: '#6b7280', unlocked: true },
+  { level: 4, name: '富人', nameEn: 'Wealthy', color: '#f97316', unlocked: true },
+]
+
 export const PROFESSIONS = [
   {
     id: 1,
-    name: 'Doctor',
-    salary: 13200,
+    name: 'Office Clerk',
+    nameCn: '公司文员',
+    tier: 1,
+    avatarColor: '#a855f7',
+    salary: 2400,
     cash: 400,
-    expensePerChild: 640,
-    otherExpenses: 2880,
+    expensePerChild: 140,
+    otherExpenses: 520,
     liabilities: [
-      { id: 1, name: 'Home Mortgage', amount: 202000, type: 'home' }, // Home Mortgage
-      { id: 2, name: 'Car Loans', amount: 19000, type: 'car' }, // Car Loans
-      { id: 3, name: 'Credit Cards', amount: 9000, type: 'credit' }, // Credit Cards
-      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
+      { id: 1, name: 'Home Mortgage', amount: 38000, type: 'home' },
+      { id: 2, name: 'Car Loans', amount: 4000, type: 'car' },
+      { id: 3, name: 'Credit Cards', amount: 2000, type: 'credit' },
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' },
     ],
   },
   {
     id: 2,
-    name: 'Mechanic',
+    name: 'Delivery Driver',
+    nameCn: '快递小哥',
+    tier: 1,
+    avatarColor: '#ec4899',
     salary: 2000,
     cash: 400,
     expensePerChild: 110,
     otherExpenses: 450,
     liabilities: [
-      { id: 1, name: 'Home Mortgage', amount: 31000, type: 'home' }, // Home Mortgage
-      { id: 2, name: 'Car Loans', amount: 3000, type: 'car' }, // Car Loans
-      { id: 3, name: 'Credit Cards', amount: 2000, type: 'credit' }, // Credit Cards
-      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
+      { id: 1, name: 'Home Mortgage', amount: 31000, type: 'home' },
+      { id: 2, name: 'Car Loans', amount: 3000, type: 'car' },
+      { id: 3, name: 'Credit Cards', amount: 2000, type: 'credit' },
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' },
     ],
   },
   {
     id: 3,
     name: 'Nurse',
+    nameCn: '护士',
+    tier: 2,
+    avatarColor: '#facc15',
     salary: 3100,
     cash: 480,
     expensePerChild: 170,
     otherExpenses: 710,
     liabilities: [
-      { id: 1, name: 'Home Mortgage', amount: 47000, type: 'home' }, // Home Mortgage
-      { id: 2, name: 'Car Loans', amount: 5000, type: 'car' }, // Car Loans
-      { id: 3, name: 'Credit Cards', amount: 3000, type: 'credit' }, // Credit Cards
-      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
+      { id: 1, name: 'Home Mortgage', amount: 47000, type: 'home' },
+      { id: 2, name: 'Car Loans', amount: 5000, type: 'car' },
+      { id: 3, name: 'Credit Cards', amount: 3000, type: 'credit' },
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' },
     ],
   },
   {
     id: 4,
+    name: 'Sales',
+    nameCn: '销售',
+    tier: 2,
+    avatarColor: '#6ee7b7',
+    salary: 3300,
+    cash: 450,
+    expensePerChild: 180,
+    otherExpenses: 760,
+    liabilities: [
+      { id: 1, name: 'Home Mortgage', amount: 50000, type: 'home' },
+      { id: 2, name: 'Car Loans', amount: 5000, type: 'car' },
+      { id: 3, name: 'Credit Cards', amount: 3500, type: 'credit' },
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' },
+    ],
+  },
+  {
+    id: 5,
+    name: 'Bank Teller',
+    nameCn: '银行职员',
+    tier: 3,
+    avatarColor: '#94a3b8',
+    salary: 4200,
+    cash: 500,
+    expensePerChild: 220,
+    otherExpenses: 920,
+    liabilities: [
+      { id: 1, name: 'Home Mortgage', amount: 65000, type: 'home' },
+      { id: 2, name: 'Car Loans', amount: 6000, type: 'car' },
+      { id: 3, name: 'Credit Cards', amount: 3500, type: 'credit' },
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' },
+    ],
+  },
+  {
+    id: 6,
+    name: 'Journalist',
+    nameCn: '记者',
+    tier: 3,
+    avatarColor: '#5eead4',
+    salary: 4000,
+    cash: 480,
+    expensePerChild: 210,
+    otherExpenses: 880,
+    liabilities: [
+      { id: 1, name: 'Home Mortgage', amount: 60000, type: 'home' },
+      { id: 2, name: 'Car Loans', amount: 5500, type: 'car' },
+      { id: 3, name: 'Credit Cards', amount: 3200, type: 'credit' },
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' },
+    ],
+  },
+  {
+    id: 7,
+    name: 'E-commerce Operator',
+    nameCn: '网店运营',
+    tier: 4,
+    avatarColor: '#c4b5fd',
+    salary: 6500,
+    cash: 600,
+    expensePerChild: 340,
+    otherExpenses: 1400,
+    liabilities: [
+      { id: 1, name: 'Home Mortgage', amount: 100000, type: 'home' },
+      { id: 2, name: 'Car Loans', amount: 10000, type: 'car' },
+      { id: 3, name: 'Credit Cards', amount: 5000, type: 'credit' },
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' },
+    ],
+  },
+  {
+    id: 8,
+    name: 'Product Manager',
+    nameCn: '产品经理',
+    tier: 4,
+    avatarColor: '#fcd34d',
+    salary: 7200,
+    cash: 650,
+    expensePerChild: 380,
+    otherExpenses: 1550,
+    liabilities: [
+      { id: 1, name: 'Home Mortgage', amount: 120000, type: 'home' },
+      { id: 2, name: 'Car Loans', amount: 12000, type: 'car' },
+      { id: 3, name: 'Credit Cards', amount: 6000, type: 'credit' },
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' },
+    ],
+  },
+  {
+    id: 9,
+    name: 'Doctor',
+    nameCn: '医生',
+    tier: 4,
+    avatarColor: '#86efac',
+    salary: 13200,
+    cash: 400,
+    expensePerChild: 640,
+    otherExpenses: 2880,
+    liabilities: [
+      { id: 1, name: 'Home Mortgage', amount: 202000, type: 'home' },
+      { id: 2, name: 'Car Loans', amount: 19000, type: 'car' },
+      { id: 3, name: 'Credit Cards', amount: 9000, type: 'credit' },
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' },
+    ],
+  },
+  {
+    id: 10,
     name: 'Engineer',
+    nameCn: '工程师',
+    tier: 3,
+    avatarColor: '#93c5fd',
     salary: 4900,
     cash: 500,
     expensePerChild: 250,
     otherExpenses: 1090,
     liabilities: [
-      { id: 1, name: 'Home Mortgage', amount: 75000, type: 'home' }, // Home Mortgage
-      { id: 2, name: 'Car Loans', amount: 7000, type: 'car' }, // Car Loans
-      { id: 3, name: 'Credit Cards', amount: 4000, type: 'credit' }, // Credit Cards
-      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
-    ],
-  },
-  {
-    id: 5,
-    name: 'Business Manager',
-    salary: 4600,
-    cash: 400,
-    expensePerChild: 480,
-    otherExpenses: 1000,
-    liabilities: [
-      { id: 1, name: 'Home Mortgage', amount: 75000, type: 'home' }, // Home Mortgage
-      { id: 2, name: 'Car Loans', amount: 6000, type: 'car' }, // Car Loans
-      { id: 3, name: 'Credit Cards', amount: 3000, type: 'credit' }, // Credit Cards
-      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' }, // Retail Debt
+      { id: 1, name: 'Home Mortgage', amount: 75000, type: 'home' },
+      { id: 2, name: 'Car Loans', amount: 7000, type: 'car' },
+      { id: 3, name: 'Credit Cards', amount: 4000, type: 'credit' },
+      { id: 4, name: 'Retail Debt', amount: 1000, type: 'retail' },
     ],
   },
 ]

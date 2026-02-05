@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import {
   GameContext,
   generatePlayerData,
   getPayday,
   checkLosingCondition,
+  getMonthlyLoanPayment,
 } from '@/utils'
 import PropTypes from 'prop-types'
 
@@ -14,6 +15,59 @@ const GameProvider = ({ children }) => {
   const [playerData, setPlayerData] = useState(generatePlayerData)
   const [card, setCard] = useState(null)
   const [isSellingAssets, setIsSellingAssets] = useState(false)
+  const [selectedProfession, setSelectedProfession] = useState(null)
+
+  // Initialize player data from selected profession
+  const initializePlayerFromProfession = useCallback((profession) => {
+    const newPlayerData = {
+      profession: profession.name,
+      professionCn: profession.nameCn,
+      salary: profession.salary,
+      cash: profession.cash,
+      childNum: 0,
+      incomes: [
+        { id: 1, name: `${profession.name} Salary`, amount: profession.salary, type: 'salary' },
+      ],
+      assets: [],
+      liabilities: [...profession.liabilities],
+      expenses: [
+        { id: 1, name: 'Taxes', amount: Math.floor(profession.salary * 0.18) },
+        {
+          id: 2,
+          name: 'Home Mortgage Payment',
+          amount: getMonthlyLoanPayment(profession.liabilities[0]),
+        },
+        {
+          id: 3,
+          name: 'Car Loan Payment',
+          amount: getMonthlyLoanPayment(profession.liabilities[1]),
+        },
+        {
+          id: 4,
+          name: 'Credit Card Payment',
+          amount: getMonthlyLoanPayment(profession.liabilities[2]),
+        },
+        {
+          id: 5,
+          name: 'Retail Payment',
+          amount: getMonthlyLoanPayment(profession.liabilities[3]),
+        },
+        {
+          id: 6,
+          name: 'Other Expenses',
+          amount: profession.otherExpenses,
+        },
+      ],
+      expensePerChild: profession.expensePerChild,
+      diceNum: 1,
+      charityTurnLeft: 0,
+    }
+    setPlayerData(newPlayerData)
+    setSelectedProfession(profession)
+    setCurrentSlot(0)
+    setPrevSlot(-1)
+    setActionType('start')
+  }, [])
 
   useEffect(() => {
     if (prevSlot > 0) {
@@ -46,6 +100,9 @@ const GameProvider = ({ children }) => {
         setCard,
         isSellingAssets,
         setIsSellingAssets,
+        selectedProfession,
+        setSelectedProfession,
+        initializePlayerFromProfession,
       }}
     >
       {children}
