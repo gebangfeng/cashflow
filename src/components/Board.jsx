@@ -204,8 +204,8 @@ const RoadSection = styled.div({
 })
 
 const RoadArea = styled.div({
-  width: '100px',
-  minWidth: '100px',
+  width: '180px',
+  minWidth: '180px',
   backgroundColor: '#3D4B6A',
   position: 'relative',
   display: 'flex',
@@ -219,14 +219,14 @@ const LaneMarking = styled.div(({ side }) => ({
   position: 'absolute',
   top: '0',
   bottom: '0',
-  [side]: '15px',
-  width: '4px',
+  [side]: '25px',
+  width: '5px',
   background: `repeating-linear-gradient(
     to bottom,
     #C4A574 0px,
-    #C4A574 25px,
-    transparent 25px,
-    transparent 45px
+    #C4A574 30px,
+    transparent 30px,
+    transparent 55px
   )`,
 }))
 
@@ -234,13 +234,13 @@ const RoadText = styled.div({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: '1.5rem',
+  gap: '2rem',
   zIndex: 1,
 })
 
 const RoadChar = styled.span({
   color: '#5A6B8A',
-  fontSize: '1.8rem',
+  fontSize: '2.2rem',
   fontWeight: 700,
   textShadow: '0 2px 4px rgba(0,0,0,0.3)',
 })
@@ -260,66 +260,66 @@ const CharacterBody = styled.div({
 })
 
 const CharacterHat = styled.div({
-  width: '32px',
-  height: '12px',
+  width: '42px',
+  height: '16px',
   backgroundColor: '#6B21A8',
   borderRadius: '50% 50% 0 0',
   position: 'relative',
   '&::after': {
     content: '""',
     position: 'absolute',
-    bottom: '-3px',
-    left: '-5px',
-    right: '-5px',
-    height: '6px',
+    bottom: '-4px',
+    left: '-6px',
+    right: '-6px',
+    height: '8px',
     backgroundColor: '#6B21A8',
     borderRadius: '2px',
   },
 })
 
 const CharacterFace = styled.div({
-  width: '36px',
-  height: '36px',
+  width: '48px',
+  height: '48px',
   borderRadius: '50%',
   backgroundColor: '#F5F5F5',
-  marginTop: '3px',
+  marginTop: '4px',
   position: 'relative',
   boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
 })
 
 const CharacterTorso = styled.div({
-  width: '42px',
-  height: '28px',
+  width: '56px',
+  height: '36px',
   backgroundColor: '#7C3AED',
-  borderRadius: '21px 21px 0 0',
-  marginTop: '-8px',
+  borderRadius: '28px 28px 0 0',
+  marginTop: '-10px',
   boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
 })
 
 const MoneySign = styled.div({
   position: 'absolute',
   top: '50%',
-  right: '-35px',
+  right: '-45px',
   transform: 'translateY(-50%)',
   backgroundColor: '#FBBF24',
   color: '#1F2937',
-  padding: '0.4rem 0.6rem',
+  padding: '0.5rem 0.75rem',
   borderRadius: '4px',
   fontWeight: 700,
-  fontSize: '0.85rem',
+  fontSize: '1rem',
   boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
   zIndex: 15,
   '&::before': {
     content: '""',
     position: 'absolute',
-    left: '-8px',
+    left: '-10px',
     top: '50%',
     transform: 'translateY(-50%)',
     width: '0',
     height: '0',
-    borderTop: '6px solid transparent',
-    borderBottom: '6px solid transparent',
-    borderRight: '8px solid #FBBF24',
+    borderTop: '8px solid transparent',
+    borderBottom: '8px solid transparent',
+    borderRight: '10px solid #FBBF24',
   },
 })
 
