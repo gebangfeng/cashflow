@@ -88,17 +88,17 @@ const OpportunityEstateDetails = () => {
             <Note>{card.info}</Note>
             <Details>
               <DetailsColumn>
-                <Note>Cost: ${currencyFormatter.format(card.arg1)}</Note>
+                <Note>成本: ¥{currencyFormatter.format(card.arg1)}</Note>
                 {card.type === 'estate' && (
-                  <Note>Cashflow: ${currencyFormatter.format(card.arg4)}</Note>
+                  <Note>现金流: ¥{currencyFormatter.format(card.arg4)}</Note>
                 )}
                 {card.type === 'estate' && (
-                  <Note>Downpay: ${currencyFormatter.format(card.arg2)}</Note>
+                  <Note>首付: ¥{currencyFormatter.format(card.arg2)}</Note>
                 )}
               </DetailsColumn>
             </Details>
             {card.arg2 > playerData.cash && (
-              <ImportantNote>{`(You don't have enough cash. Must take a loan of $${currencyFormatter.format(
+              <ImportantNote>{`(现金不足，需贷款 ¥${currencyFormatter.format(
                 getLoanAmount(card.arg2 - playerData.cash)
               )})`}</ImportantNote>
             )}
@@ -118,10 +118,10 @@ const OpportunityEstateDetails = () => {
         <Bottom>
           <MainActions>
             <ActionButton variant="contained" onClick={handleBuy}>
-              BUY
+              购买
             </ActionButton>
             <ActionButton variant="contained" onClick={handleCancel}>
-              CANCEL
+              取消
             </ActionButton>
           </MainActions>
         </Bottom>

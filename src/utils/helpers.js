@@ -190,15 +190,15 @@ export const getPayday = (lastPos, currentPos, playerData) => {
   if (lastPos > currentPos) {
     paydaySlotsCount =
       BOARD_SLOTS.filter(
-        (s) => s.id > lastPos && s.id <= 23 && s.name === 'Payday'
+        (s) => s.id > lastPos && s.id <= 23 && s.type === 'payday'
       ).length +
       BOARD_SLOTS.filter(
-        (s) => s.id >= 0 && s.id <= currentPos && s.name === 'Payday'
+        (s) => s.id >= 0 && s.id <= currentPos && s.type === 'payday'
       ).length
   } else {
     // 常规情况：上一步位置编号 < 当前位置编号
     paydaySlotsCount = BOARD_SLOTS.filter(
-      (s) => s.id > lastPos && s.id <= currentPos && s.name === 'Payday'
+      (s) => s.id > lastPos && s.id <= currentPos && s.type === 'payday'
     ).length
   }
   return (totalIncome - totalExpense) * paydaySlotsCount
@@ -359,7 +359,7 @@ export const LOAN_DETAILS = {
 
 //#region 棋盘格子
 export const BOARD_SLOTS = [
-  { id: 0, name: 'Payday', type: 'payday' },
+  { id: 0, name: '发薪日', type: 'payday' },
   { id: 1, name: '机会', type: 'opportunity' },
   { id: 2, name: '市场', type: 'market' },
   { id: 3, name: '机会', type: 'opportunity' },
@@ -367,7 +367,7 @@ export const BOARD_SLOTS = [
   { id: 5, name: '机会', type: 'opportunity' },
   { id: 6, name: '添丁', type: 'baby' },
   { id: 7, name: '机会', type: 'opportunity' },
-  { id: 8, name: 'Payday', type: 'payday' },
+  { id: 8, name: '发薪日', type: 'payday' },
   { id: 9, name: '机会', type: 'opportunity' },
   { id: 10, name: '市场', type: 'market' },
   { id: 11, name: '机会', type: 'opportunity' },
@@ -375,7 +375,7 @@ export const BOARD_SLOTS = [
   { id: 13, name: '机会', type: 'opportunity' },
   { id: 14, name: '失业', type: 'downsized' },
   { id: 15, name: '机会', type: 'opportunity' },
-  { id: 16, name: 'Payday', type: 'payday' },
+  { id: 16, name: '发薪日', type: 'payday' },
   { id: 17, name: '机会', type: 'opportunity' },
   { id: 18, name: '市场', type: 'market' },
   { id: 19, name: '机会', type: 'opportunity' },

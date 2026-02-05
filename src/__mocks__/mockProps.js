@@ -7,37 +7,37 @@ export const mockFinancialStatus = {
 export const mockIncomes = [
   {
     id: 1,
-    name: 'Programmer Salary',
+    name: '程序员工资',
     amount: 2500,
     type: 'salary',
   },
   {
     id: 2,
-    name: '3/2 House',
+    name: '3室2厅房产',
     amount: 100,
     type: 'estate',
   },
   {
     id: 3,
-    name: '2/1 Condo',
+    name: '2室1厅公寓',
     amount: 2500,
     type: 'estate',
   },
   {
     id: 4,
-    name: '20 Shares of 2BIG',
+    name: '2BIG股票 20股',
     amount: 200,
     type: 'dividends',
   },
   {
     id: 5,
-    name: '100 Shares of CD',
+    name: 'CD股票 100股',
     amount: 2000,
     type: 'dividends',
   },
   {
     id: 6,
-    name: '100 Shares of AB',
+    name: 'AB股票 100股',
     amount: 4000,
     type: 'dividends',
   },
@@ -46,52 +46,52 @@ export const mockIncomes = [
 export const mockAssets = [
   {
     id: 1,
-    name: 'Shares of 2BIG',
+    name: '2BIG股票',
     quantity: 5,
     value: 1200,
-    type: 'Stocks/Funds/CDs',
+    type: '股票/基金/定存',
   },
   {
     id: 2,
-    name: 'Shares of ON2U',
+    name: 'ON2U股票',
     quantity: 10000,
     value: 5,
     type: '',
   },
   {
     id: 3,
-    name: 'Startup',
+    name: '创业公司',
     quantity: 1,
     value: 3000,
-    type: 'Real Estate/Business',
+    type: '房产/企业',
   },
   {
     id: 4,
-    name: 'Gold Coin',
+    name: '金币',
     quantity: 1,
     value: 3000,
-    type: 'Real Estate/Business',
+    type: '房产/企业',
   },
   {
     id: 5,
-    name: '2/1 CONDO',
+    name: '2室1厅公寓',
     quantity: 1,
     value: 60000,
-    type: 'Real Estate/Business',
+    type: '房产/企业',
   },
   {
     id: 6,
-    name: '3/2 HOUSE',
+    name: '3室2厅住宅',
     quantity: 1,
     value: 50000,
-    type: 'Real Estate/Business',
+    type: '房产/企业',
   },
   {
     id: 7,
-    name: 'PLEX',
+    name: '多户住宅',
     quantity: 1,
     value: 200000,
-    type: 'Real Estate/Business',
+    type: '房产/企业',
   },
 ]
 
@@ -103,109 +103,109 @@ export const mockChildExpense = {
 export const mockLiabilities = [
   {
     id: 1,
-    name: 'Home Mortgage',
+    name: '房屋贷款',
     value: 50000,
     type: 'home',
   },
   {
     id: 2,
-    name: 'Car Loans',
+    name: '汽车贷款',
     value: 3000,
     type: 'car',
   },
   {
     id: 3,
-    name: 'Credit Cards',
+    name: '信用卡',
     value: 3000,
     type: 'credit',
   },
   {
     id: 4,
-    name: 'Retail Debt',
+    name: '消费贷款',
     value: 1000,
     type: 'retail',
   },
   {
     id: 5,
-    name: 'Loan',
+    name: '银行贷款',
     value: 12000,
     type: 'bank',
   },
 ]
 
 export const mockStartDialog = {
-  playerName: 'Player',
-  description: 'When you are ready, roll the dice and take your turn',
-  note: 'Before you start your turn, review your financial statement. You may also use this time to repay liabilities or borrow money.',
+  playerName: '玩家',
+  description: '准备好后，掷骰子开始你的回合',
+  note: '在开始回合前，请查看你的财务报表。你也可以在此时还款或贷款。',
 }
 
 export const mockRepayDialog = {
-  title: 'PAY OFF LOAN',
-  description: 'Select a liability on your statement sheet to repay your debt.',
+  title: '还清贷款',
+  description: '在财务报表中选择一项负债进行还款',
   liabilities: mockLiabilities,
 }
 
 export const mockDownsizedDialog = {
-  title: 'DOWNSIZED!',
-  description: 'Pay a full set of your expenses and lose two turns and charity',
+  title: '失业!',
+  description: '支付全部月支出，失去两个回合，并取消慈善特权',
   expenses: 1500,
 }
 
 export const mockBabyDialogNew = {
-  title: 'NEW BABY!',
-  description: 'Congratulations! One child has been added to your dependents',
+  title: '喜得贵子!',
+  description: '恭喜！您的家庭新增了一个孩子',
   expenses: 110,
 }
 
 export const mockBabyDialogLimitReached = {
-  title: 'BABY LIMIT REACHED!',
-  description: 'You cannot have more than 3 child',
+  title: '已达子女上限!',
+  description: '每位玩家最多只能有3个孩子',
   expenses: 0,
 }
 
 export const mockOpportunityDialog = {
-  title: 'DEAL OPPORTUNITY',
-  description: 'Which deal type do you want?',
-  info: 'Small deals cost $5,000 or less. Big deals cost $6,000 or more.',
+  title: '投资机会',
+  description: '选择投资类型',
+  info: '小型投资成本在¥5,000以下，大型投资成本在¥6,000以上',
 }
 
 export const mockSmallDeal = {
   id: 1,
-  title: 'MUTUAL FUND - GRO4US FUND',
+  title: '共同基金 - GRO4US基金',
   description:
-    'Weak earnings by most companies lead to weak price of mutual fund.',
-  note: 'Trading Range: $10 to $30',
+    '大多数公司业绩疲软导致基金价格走低',
+  note: '交易区间: ¥10 至 ¥30',
   type: 'stock',
-  arg1: 10, // cost
-  arg2: 0, // cashflow
-  arg3: 10, // tradingMin
-  arg4: 30, // tradingMax
+  arg1: 10, // 成本
+  arg2: 0, // 现金流
+  arg3: 10, // 最低价
+  arg4: 30, // 最高价
 }
 
 export const mockBigDeal = {
   id: 1,
-  title: '8-plex for Sale',
+  title: '8套公寓出售',
   description:
-    'Professional person urgently needs cash to save partnership. 8-plex sale to raise capital, good opportunity for right person.',
+    '专业人士急需现金挽救合伙企业。出售8套公寓筹集资金，对合适的买家是个好机会。',
   type: 'real-estate',
-  arg1: 160000, // cost
-  arg2: 1700, // cashflow
-  arg3: 32000, // downpay
-  arg4: 128000, // mortgage
+  arg1: 160000, // 成本
+  arg2: 1700, // 现金流
+  arg3: 32000, // 首付
+  arg4: 128000, // 抵押贷款
 }
 
 export const mockMarket = {
   id: 1,
-  title: 'APARTMENT HOUSE BUYER',
+  title: '公寓买家',
   description:
-    'You are offered $25,000 per unit for all units in apartment houses of any size. Buyer has their own financing. If you sell, pay off the related mortgage and give up the cash flow you currently receive on this property.',
+    '有人出价每套¥25,000收购任何规模的公寓楼。买家自行安排融资。如果出售，需还清相关抵押贷款，并放弃该物业目前的现金流。',
   type: 'real-estate',
-  price: 25000, // selling cost
+  price: 25000, // 出售价格
 }
 
 export const mockDoodad = {
   id: 1,
-  title: 'GO OUT TO DINNER',
-  description: 'Pay $80',
-  cost: -80, // selling cost
+  title: '外出就餐',
+  description: '支付 ¥80',
+  cost: -80, // 支出金额
 }

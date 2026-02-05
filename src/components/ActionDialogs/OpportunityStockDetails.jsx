@@ -150,51 +150,49 @@ const OpportunityStockDetails = () => {
           </Header>
           <Description>{card.description}</Description>
           {card.info !== '' && <Note>{card.info}</Note>}
-          {card.type === 'stock' && (
-            <Details>
-              <DetailsColumn>
-                <Note>Cost: ${currencyFormatter.format(card.arg1)}</Note>
-                <Note>Cashflow: ${currencyFormatter.format(card.arg4)}</Note>
-              </DetailsColumn>
-              <DetailsColumn>
-                {card.type === 'stock' && (
-                  <Note>
-                    Trading Range: ${currencyFormatter.format(card.arg2)} to $
-                    {currencyFormatter.format(card.arg3)}
-                  </Note>
-                )}
-                {card.type === 'stock' && (
-                  <Note>
-                    {`Shares owned:
-                    ${playerData.assets
-                      .filter(
-                        (a) => a.type === 'stock' && a.name === card.title
-                      )
-                      .reduce((total, asset) => total + asset.quantity, 0)}`}
-                  </Note>
-                )}
-                {card.type === 'estate' && (
-                  <Note>Downpay: ${currencyFormatter.format(card.arg2)}</Note>
-                )}
-                {hasStock && (
-                  <ImportantNote>
-                    {`(Click SELL to sell ALL stocks for $${currencyFormatter.format(
-                      playerData.assets
+            {card.type === 'stock' && (
+              <Details>
+                <DetailsColumn>
+                  <Note>成本: ¥{currencyFormatter.format(card.arg1)}</Note>
+                  <Note>现金流: ¥{currencyFormatter.format(card.arg4)}</Note>
+                </DetailsColumn>
+                <DetailsColumn>
+                  {card.type === 'stock' && (
+                    <Note>
+                      交易区间: ¥{currencyFormatter.format(card.arg2)} 至 ¥{currencyFormatter.format(card.arg3)}
+                    </Note>
+                  )}
+                  {card.type === 'stock' && (
+                    <Note>
+                      {`持有股数: ${playerData.assets
                         .filter(
                           (a) => a.type === 'stock' && a.name === card.title
                         )
-                        .reduce((total, a) => total + a.quantity, 0) * card.arg1
-                    )})`}
-                  </ImportantNote>
-                )}
-              </DetailsColumn>
-            </Details>
-          )}
-          {card.arg2 > playerData.cash && (
-            <ImportantNote>{`(You don't have enough cash. Must take a loan of $${currencyFormatter.format(
-              getLoanAmount(card.arg2 - playerData.cash)
-            )})`}</ImportantNote>
-          )}
+                        .reduce((total, asset) => total + asset.quantity, 0)}`}
+                    </Note>
+                  )}
+                  {card.type === 'estate' && (
+                    <Note>首付: ¥{currencyFormatter.format(card.arg2)}</Note>
+                  )}
+                  {hasStock && (
+                    <ImportantNote>
+                      {`(点击出售可卖出全部股票，获得 ¥${currencyFormatter.format(
+                        playerData.assets
+                          .filter(
+                            (a) => a.type === 'stock' && a.name === card.title
+                          )
+                          .reduce((total, a) => total + a.quantity, 0) * card.arg1
+                      )})`}
+                    </ImportantNote>
+                  )}
+                </DetailsColumn>
+              </Details>
+            )}
+            {card.arg2 > playerData.cash && (
+              <ImportantNote>{`(现金不足，需贷款 ¥${currencyFormatter.format(
+                getLoanAmount(card.arg2 - playerData.cash)
+              )})`}</ImportantNote>
+            )}
         </Left>
         <Right>
           <ThumbnailImg src="/assets/images/stocks.png" />
@@ -204,7 +202,7 @@ const OpportunityStockDetails = () => {
         <BuyForm onSubmit={handleBuy}>
           <InputContainer>
             <StyledInput
-              label="Number of stock"
+              label="股票数量"
               size="small"
               type="text"
               value={quantity}
@@ -213,14 +211,14 @@ const OpportunityStockDetails = () => {
             />
             <InputActions>
               <InputButton
-                aria-label="increase stock amount"
+                aria-label="增加股票数量"
                 size="small"
                 onClick={increaseStockCount}
               >
                 <ArrowDropUpIcon />
               </InputButton>
               <InputButton
-                aria-label="decrease stock amount"
+                aria-label="减少股票数量"
                 size="small"
                 onClick={decreaseStockCount}
               >
@@ -231,17 +229,17 @@ const OpportunityStockDetails = () => {
             {hasStock && (
               <FormControlLabel
                 control={<Checkbox onChange={toggleBuyMode} />}
-                label="Buy more?"
+                label="继续购买?"
               />
             )}
             {/* Side note */}
             {quantity > 0 && (
               <SideNote>
-                {`Buy ${quantity} shares for $${currencyFormatter.format(
+                {`购买 ${quantity} 股，共 ¥${currencyFormatter.format(
                   quantity * card.arg1
                 )}`}
                 {quantity * card.arg1 > playerData.cash &&
-                  `. (Loan: $${getLoanAmount(
+                  ` (需贷款: ¥${getLoanAmount(
                     quantity * card.arg1 - playerData.cash
                   )})`}
               </SideNote>
@@ -255,7 +253,7 @@ const OpportunityStockDetails = () => {
               disableRipple
               disabled={quantity === 0}
             >
-              BUY
+              购买
             </ActionButton>
             {card.type === 'stock' &&
               playerData.assets.filter(
@@ -267,7 +265,7 @@ const OpportunityStockDetails = () => {
                   onClick={handleSell}
                   disabled={isBuyingMore}
                 >
-                  SELL
+                  出售
                 </ActionButton>
               )}
             <ActionButton
@@ -276,7 +274,7 @@ const OpportunityStockDetails = () => {
               onClick={handlePass}
               style={{ alignSelf: 'flex-end' }}
             >
-              PASS
+              跳过
             </ActionButton>
           </MainActions>
         </BuyForm>

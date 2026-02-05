@@ -21,14 +21,14 @@ const BuyDialog = ({
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    alert('Logic is not implemented at the moment')
+    alert('该功能暂未实现')
     setActionType('start')
   }
   return (
     <>
       <BuyForm onSubmit={handleSubmit}>
         <div>
-          Buy{' '}
+          购买{' '}
           <StyledInput
             type="text"
             value={amount}
@@ -37,11 +37,11 @@ const BuyDialog = ({
               setAmount(isNaN(num) ? 0 : num)
             }}
           />{' '}
-          for <span>${currencyFormatter.format(amount * cost)}</span>
+          份，共 <span>¥{currencyFormatter.format(amount * cost)}</span>
         </div>
         <MainActions>
           <ActionButton type="submit" variant="contained" disableRipple>
-            BUY
+            购买
           </ActionButton>
           <ActionButton
             variant="contained"
@@ -51,7 +51,7 @@ const BuyDialog = ({
             }}
             style={{ alignSelf: 'flex-end' }}
           >
-            CANCEL
+            取消
           </ActionButton>
         </MainActions>
       </BuyForm>

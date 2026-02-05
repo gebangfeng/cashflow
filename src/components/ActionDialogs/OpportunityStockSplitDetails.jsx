@@ -39,16 +39,14 @@ const OpportunityStockSplitDetails = () => {
       <Description>{card.description}</Description>
       <NoteImportant>{card.info}</NoteImportant>
       <Note>
-        {`You are having
-        ${playerData.assets
+        {`您当前持有该股票 ${playerData.assets
           .filter((a) => a.type === 'stock' && a.name === card.title)
-          .reduce((total, asset) => total + asset.quantity, 0)}
-        shares of this stock.`}
+          .reduce((total, asset) => total + asset.quantity, 0)} 股`}
       </Note>
       <span style={{ flex: 1 }} />
       <MainActions>
         <ActionButton variant="contained" onClick={handleOK}>
-          OK
+          确定
         </ActionButton>
       </MainActions>
     </>

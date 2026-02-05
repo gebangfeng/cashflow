@@ -22,17 +22,17 @@ const BabyDialog = () => {
       newPlayerData.childNum += 1
       newPlayerData.expenses.push({
         id: newPlayerData.expenses.length + 1,
-        name: `Child Expenses (${newPlayerData.childNum})`,
+        name: `子女支出 (${newPlayerData.childNum})`,
         amount: newPlayerData.childNum * newPlayerData.expensePerChild,
       })
     } else if (childNum < 3) {
       let idx = newPlayerData.expenses.findIndex(
-        (e) => e.name === `Child Expenses (${playerData.childNum})`
+        (e) => e.name === `子女支出 (${playerData.childNum})`
       )
       newPlayerData.childNum += 1
       newPlayerData.expenses[
         idx
-      ].name = `Child Expenses (${newPlayerData.childNum})`
+      ].name = `子女支出 (${newPlayerData.childNum})`
       newPlayerData.expenses[idx].amount =
         newPlayerData.childNum * newPlayerData.expensePerChild
     }
@@ -44,25 +44,24 @@ const BabyDialog = () => {
     <>
       <Header>
         <Title>
-          {playerData.childNum < 3 ? 'NEW BABY!' : 'BABY LIMIT REACHED!'}
+          {playerData.childNum < 3 ? '喜得贵子!' : '已达子女上限!'}
         </Title>
         <ThumbnailImg src="./assets/images/baby-thumb.png" />
       </Header>
       <Description>
         {playerData.childNum < 3
-          ? 'Congratulations! One child has been added to your dependents'
-          : 'Each player cannot have more than 3 child.'}
+          ? '恭喜！您的家庭新增了一个孩子'
+          : '每位玩家最多只能有3个孩子'}
       </Description>
       {childNum < 3 && (
         <Note style={{ color: colors.red.base }}>
-          Child Expenses will be increased by $
-          {currencyFormatter.format(playerData.expensePerChild)}
+          子女支出将增加 ¥{currencyFormatter.format(playerData.expensePerChild)}
         </Note>
       )}
       <Note style={{ flex: 1 }} />
       <MainActions>
         <ActionButton variant="contained" disableRipple onClick={handleBaby}>
-          OK
+          确定
         </ActionButton>
       </MainActions>
     </>

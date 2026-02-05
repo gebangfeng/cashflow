@@ -52,19 +52,19 @@ const DownsizedDialog = () => {
   return (
     <>
       <Header>
-        <Title>DOWNSIZED!</Title>
+        <Title>失业!</Title>
         <ThumbnailImg src="./assets/images/downsized-thumb.png" />
       </Header>
-      <Description>Pay a full set of your expenses and charity</Description>
+      <Description>支付全部月支出作为失业补偿</Description>
       <Note>
-        Pay ${currencyFormatter.format(getTotalExpenseAmount(playerData))}
+        需支付 ¥{currencyFormatter.format(getTotalExpenseAmount(playerData))}
       </Note>
       {playerData.cash - getTotalExpenseAmount(playerData) < 0 && (
         <Note
           style={{ color: colors.red.base }}
-        >{`(You don't have enough cash.You must take a loan of $${getLoanAmount(
+        >{`(现金不足，需贷款 ¥${getLoanAmount(
           getTotalExpenseAmount(playerData) - playerData.cash
-        )} to afford this.)`}</Note>
+        )} 来支付)`}</Note>
       )}
       <Note style={{ flex: 1 }} />
       <MainActions>
@@ -73,7 +73,7 @@ const DownsizedDialog = () => {
           disableRipple
           onClick={handleDownsized}
         >
-          PAY
+          支付
         </ActionButton>
       </MainActions>
     </>

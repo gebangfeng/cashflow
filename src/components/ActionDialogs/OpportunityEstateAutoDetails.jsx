@@ -49,14 +49,14 @@ const OpportunityEstateAutoDetails = () => {
             {card.type === 'estate' && (
               <Details>
                 <DetailsColumn>
-                  <Note>Cost: ${currencyFormatter.format(card.arg1)}</Note>
-                  <Note>Cashflow: ${currencyFormatter.format(card.arg4)}</Note>
-                  <Note>Downpay: ${currencyFormatter.format(card.arg2)}</Note>
+                  <Note>成本: ¥{currencyFormatter.format(card.arg1)}</Note>
+                  <Note>现金流: ¥{currencyFormatter.format(card.arg4)}</Note>
+                  <Note>首付: ¥{currencyFormatter.format(card.arg2)}</Note>
                 </DetailsColumn>
               </Details>
             )}
             {card.arg1 > playerData.cash && (
-              <ImportantNote>{`(You don't have enough cash. Must take a loan of $${currencyFormatter.format(
+              <ImportantNote>{`(现金不足，需贷款 ¥${currencyFormatter.format(
                 getLoanAmount(card.arg1 - playerData.cash)
               )})`}</ImportantNote>
             )}
@@ -68,7 +68,7 @@ const OpportunityEstateAutoDetails = () => {
         <Bottom>
           <MainActions>
             <ActionButton variant="contained" onClick={handleOK}>
-              OK
+              确定
             </ActionButton>
           </MainActions>
         </Bottom>
